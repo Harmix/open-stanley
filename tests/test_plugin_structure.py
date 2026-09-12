@@ -29,7 +29,7 @@ class StructureTests(unittest.TestCase):
     def test_gitignore_in_template(self):
         self.assertIn(".stanley-scripts/", (ROOT / "vault-template/.gitignore").read_text())
     def test_no_private_fixtures_tracked(self):
-        self.assertIn("evals/private/", (ROOT / ".gitignore").read_text())
+        self.assertIn("tests/evals/private/", (ROOT / ".gitignore").read_text())
 
 if __name__ == "__main__":
     unittest.main()

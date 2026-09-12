@@ -110,7 +110,7 @@ Since 2 Aug 2026 every word Claude generates carries Anthropic's SynthID-Text wa
 - The browser flows in `scout`, `publish`, `recap` are instructions; they have not been run end to end as the plugin (the same browser mechanics worked in this session by hand).
 - `learn`'s clustering of diffs into rule candidates is judgment in prose, not code.
 - The Prolific/Microworkers/Textbroker API calls in `humanpass` are described, not scripted.
-- Behavioral evals (`evals/evals.json`) exist but have not been run through skill-creator; the deterministic tests have.
+- Behavioral evals (`tests/evals/evals.json`) exist but have not been run through skill-creator; the deterministic tests have.
 - Preview PNGs need Playwright on your Mac (`pip install playwright && playwright install chromium`); otherwise you get HTML.
 
 ## 7. Running it beside Stanley: a fair test
@@ -126,8 +126,8 @@ Two weeks, same lanes, both tools fed the same inputs.
 
 ## 8. Before pushing to GitHub
 
-- Confirm `.gitignore` covers the export, `transcript.txt`, `stanley-vault/`, `evals/private/` (it does).
+- Confirm `.gitignore` covers the export, `transcript.txt`, `stanley-vault/`, `tests/evals/private/` (it does).
 - Decide the repo name and whether "Stanley" in the name is a trademark problem you're comfortable with.
 - Fill `author.url` / `repository` in `.claude-plugin/plugin.json` with the real GitHub path.
 - Run `make test` once more on the Mac; `claude plugin validate .`.
-- Then the go-to-market plan in `DESIGN.md` §8: build-in-public series drafted by the plugin from its own `runs.jsonl`, marketplace and ClawHub/skills.sh submissions, the 20 DMs, Product Hunt.
+- Then the go-to-market plan in `docs/DESIGN.md` §8: build-in-public series drafted by the plugin from its own `runs.jsonl`, marketplace and ClawHub/skills.sh submissions, the 20 DMs, Product Hunt.

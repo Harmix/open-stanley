@@ -19,6 +19,20 @@ npx skills add Harmix/open-stanley
 
 Then say: **"set up Stanley"**. Onboarding reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, proposes three lanes, builds a voice profile from your own words, and asks where the vault should live (a plain folder in your synced Google Drive, so scheduled runs on your laptop can read it).
 
+## Repo layout
+
+```
+.claude-plugin/   manifest + marketplace entry
+skills/           14 skills; stanley/scripts/ holds the 5 CLI scripts, stanley/references/ the shared rules
+agents/           critic, fact-checker, scout subagents
+templates/        scheduled-task prompts (laptop and cloud preambles) and the launchd drain job
+vault-template/   the empty vault a new user starts from
+hooks/            one SessionStart hook: reports queued items (cloud mode)
+tests/            unit tests + tests/evals (audit fixtures, behavioral evals)
+docs/             HOW-IT-WORKS, DESIGN, RESEARCH, CONTRIBUTING, research notes
+dist/             open-stanley.plugin for installing into Cowork by file
+```
+
 ## What it does
 
 | You say | It does |
@@ -49,7 +63,7 @@ There isn't one, on purpose. And there is a watermark to think about: since 2 Au
 
 ## Recommended MCPs
 
-The plugin works with whatever you have connected and suggests, once, one server per gap from `skills/stanley/references/recommended-mcps.md`: Buffer or Typefully for posting, the official X MCP for X search and analytics, Pam Memory & Notetaker for meetings and memory in one server (built by the author's company, so read that as a maintainer's pick; Fathom/Granola/Fireflies work the same for transcripts), Exa for fact-checking (no key needed), Replicate or Recraft for images, Canva for carousels, Deepgram for voice notes, Slack for approvals, GPTZero or Pangram for detection scores, Prolific for the paid human lane. Ready-to-copy entries are in `mcp/recommended.mcp.json` (not auto-loaded). No LinkedIn scrapers, ever.
+The plugin works with whatever you have connected and suggests, once, one server per gap from `skills/stanley/references/recommended-mcps.md`: Buffer or Typefully for posting, the official X MCP for X search and analytics, Pam Memory & Notetaker for meetings and memory in one server (built by the author's company, so read that as a maintainer's pick; Fathom/Granola/Fireflies work the same for transcripts), Exa for fact-checking (no key needed), Replicate or Recraft for images, Canva for carousels, Deepgram for voice notes, Slack for approvals, GPTZero or Pangram for detection scores, Prolific for the paid human lane. Ready-to-copy entries are in `skills/stanley/references/recommended.mcp.json` (not auto-loaded). No LinkedIn scrapers, ever.
 
 ## How it learns, and how it experiments
 
@@ -63,7 +77,7 @@ The plugin works with whatever you have connected and suggests, once, one server
 
 ## Why it works in 2026
 
-LinkedIn silently demotes "generic AI" posts (May 2026) and a million people have clicked "seems like AI slop" (Aug 2026). Detectors measure post-training style, not authorship: text that starts as your words and is edited by a model reads human to both readers and classifiers; text generated from a prompt and then "humanized" does not. The biggest AI builders on LinkedIn now write "no AI was used" on their posts. Open Stanley is built for that environment: it only ever edits what you gave it, and it shows you the receipt. The research behind this is in `research/` and `RESEARCH.md`.
+LinkedIn silently demotes "generic AI" posts (May 2026) and a million people have clicked "seems like AI slop" (Aug 2026). Detectors measure post-training style, not authorship: text that starts as your words and is edited by a model reads human to both readers and classifiers; text generated from a prompt and then "humanized" does not. The biggest AI builders on LinkedIn now write "no AI was used" on their posts. Open Stanley is built for that environment: it only ever edits what you gave it, and it shows you the receipt. The research behind this is in `docs/research/` and `docs/RESEARCH.md`.
 
 ## Vault
 
@@ -77,11 +91,11 @@ Two modes. **Laptop mode (default):** the vault is a plain folder inside your de
 
 ## Tests, versioning, CI
 
-`make test` runs the deterministic audit fixtures and 23 unit tests (`tests/`: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
+`make test` runs the deterministic audit fixtures and 23 unit tests (`tests/`: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `tests/evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
 
 ## Contributing
 
-Rules are measurable. `evals/run_audit_tests.py` runs the deterministic tests; `evals/evals.json` holds the behavioral evals for skill-creator. A rule PR needs a fixture that proves it. See `CONTRIBUTING.md`. If you opt in inside the plugin, it will prepare a monthly, text-free contribution of which rules fired and which edits you made (schema in `skills/learn/references/contribution-schema.md`).
+Rules are measurable. `tests/evals/run_audit_tests.py` runs the deterministic tests; `tests/evals/evals.json` holds the behavioral evals for skill-creator. A rule PR needs a fixture that proves it. See `docs/CONTRIBUTING.md`. If you opt in inside the plugin, it will prepare a monthly, text-free contribution of which rules fired and which edits you made (schema in `skills/learn/references/contribution-schema.md`).
 
 ## Status
 

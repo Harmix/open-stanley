@@ -1,6 +1,6 @@
 # Creator shapes, September 2026
 
-Derived from live reads of each feed on 8 Sep 2026 (see the parent repo's `research/live-feeds-2026-09-08.md`) and, for Paul Graham, from his X feed as read by the user and the paid product in Aug 2026. Shapes, not sentences. Quoted fragments are pointers under 15 words.
+Derived from live reads of each feed on 8 Sep 2026 (see the parent repo's `docs/research/live-feeds-2026-09-08.md`) and, for Paul Graham, from his X feed as read by the user and the paid product in Aug 2026. Shapes, not sentences. Quoted fragments are pointers under 15 words.
 
 ## Paul Graham — X (@paulg)
 

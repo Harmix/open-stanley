@@ -2,6 +2,10 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.6.2 — 2026-09-12
+
+Housekeeping after the hackathon push. README and manifest point at `Harmix/open-stanley`; the last "private repo" wording is gone (laptop mode is the story everywhere). The root is now ten entries: `RESEARCH.md`, `DESIGN.md`, `CONTRIBUTING.md` and `research/` moved under `docs/`, `evals/` under `tests/`, and `mcp/recommended.mcp.json` next to the reference that describes it. No behaviour change.
+
 ## 0.6.1 — 2026-09-12
 
 From the first laptop-mode Scout run: the device shell cannot see the plugin, so the run spent three minutes searching for the scripts and then improvised a copy. Now the convention: scripts are installed into `<vault>/.stanley-scripts/` with a `VERSION` stamp, re-installed only when the plugin version changes, via one staged-file commit (never by reading the scripts into the conversation). `stanley` skill step 1a, the laptop preamble and `scheduling.md` say so; the vault template gains a `.gitignore` for it. Laptop runs also clear leftover cloud-mode queue items.

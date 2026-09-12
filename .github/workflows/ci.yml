@@ -8,7 +8,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: python -m py_compile skills/stanley/scripts/stanley-audit skills/stanley/scripts/stanley-vault skills/stanley/scripts/stanley-stats skills/stanley/scripts/stanley-preview
-      - run: python evals/run_audit_tests.py
+      - run: python tests/evals/run_audit_tests.py
       - run: python -m unittest discover -s tests -v
       - name: validate plugin manifest
         run: |

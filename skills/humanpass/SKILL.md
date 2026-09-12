@@ -20,7 +20,7 @@ So the human pass is not "a human polishes Claude's draft." That costs money and
 | 4 | **Textbroker TeamOrder** (SOAP API): a standing hand-picked writer group that learns the voice | ~$6–9 per 250 words at 3–4★ | hours–days | Posts that matter, once you've found writers who nail it |
 | 5 | **human-mcp.io** (19 MCP tools, escrow, `post_task`/`request_revision`/`approve_and_pay`, $1 min) or **Upwork MCP** (official, OAuth; a human must confirm hires and pay on upwork.com) | $1.15+ / freelancer rate | unverified / hours–days | Agent-native experiments; liquidity unproven, say so to the user |
 
-Not usable: Amazon MTurk (closes 30 Sep 2026), Fiverr (no ordering API), RentAHuman (physical tasks only), Rev (transcription only), "Hire Human" (hirehuman.ai is a job-training program, not a marketplace). Full research with prices and links: the parent repo's `research/human-rewrite-and-mcps.md`.
+Not usable: Amazon MTurk (closes 30 Sep 2026), Fiverr (no ordering API), RentAHuman (physical tasks only), Rev (transcription only), "Hire Human" (hirehuman.ai is a job-training program, not a marketplace). Full research with prices and links: the parent repo's `docs/research/human-rewrite-and-mcps.md`.
 
 ## 2. The brief, never the draft
 

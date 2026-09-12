@@ -1,6 +1,6 @@
 # Audit rules and the evidence behind them
 
-Rule ids match the linter output. "Evidence" cites the research bundle in the parent repo (`research/detection-and-platforms.md`) unless noted.
+Rule ids match the linter output. "Evidence" cites the research bundle in the parent repo (`docs/research/detection-and-platforms.md`) unless noted.
 
 | id | level | what | why |
 |---|---|---|---|

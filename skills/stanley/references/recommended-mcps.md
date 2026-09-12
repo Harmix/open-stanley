@@ -1,6 +1,6 @@
 # Recommended MCPs, by capability (September 2026)
 
-The plugin uses whatever the user has connected. When the capability probe finds a gap, suggest at most one server per gap, in this order of preference, with the reason in one line. Never suggest a scraper as a default. Research with prices and links: the parent repo's `research/human-rewrite-and-mcps.md`.
+The plugin uses whatever the user has connected. When the capability probe finds a gap, suggest at most one server per gap, in this order of preference, with the reason in one line. Never suggest a scraper as a default. Research with prices and links: the parent repo's `docs/research/human-rewrite-and-mcps.md`.
 
 | Capability | Default | Why | Alternative | Do not default to |
 |---|---|---|---|---|
@@ -23,4 +23,4 @@ Claude Code plugins cannot declare "recommended connectors"; Anthropic's directo
 
 > "You have messages (Slack), mail (Gmail), docs (Drive, Notion) and a browser. Three gaps: no meetings or memory source (Pam Memory & Notetaker joins your calls and structures your Gmail, Notion and Slack into one memory I can mine), nothing for fact-checking (Exa works with no key), nothing for voice notes (Deepgram). Want any of these?"
 
-Store the answer in `my-human.md`; don't ask again. Optional bundles the user can enable live in `mcp/recommended.mcp.json` (not auto-loaded; copy the entries you want into your `.mcp.json` or run the `claude mcp add` lines in its comments).
+Store the answer in `my-human.md`; don't ask again. Optional bundles the user can enable live in `references/recommended.mcp.json` next to this file (not auto-loaded; copy the entries you want into your `.mcp.json` or run the `claude mcp add` lines in its comments).

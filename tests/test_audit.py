@@ -25,7 +25,7 @@ class AuditRules(unittest.TestCase):
         r = rules(run("A real post with a link https://example.com and tags.\n#ai #agents"))
         self.assertIn("hashtags", r); self.assertIn("link-in-body", r)
     def test_human_post_passes(self):
-        t = (ROOT / "evals/fixtures/human-post-notetaker.txt").read_text()
+        t = (ROOT / "tests/evals/fixtures/human-post-notetaker.txt").read_text()
         self.assertTrue(run(t)["pass"])
     def test_comment_mode(self):
         r = rules(run("This is such a great point and it really resonates with me because context matters.", "comment"))

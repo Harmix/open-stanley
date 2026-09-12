@@ -1,6 +1,6 @@
 # Platform rules, September 2026
 
-Numbers are the current best evidence from the sources in `research/` of the parent repo; they drift, so treat bands as bands. The audit script enforces the hard ones.
+Numbers are the current best evidence from the sources in `docs/research/` of the parent repo; they drift, so treat bands as bands. The audit script enforces the hard ones.
 
 ## LinkedIn
 

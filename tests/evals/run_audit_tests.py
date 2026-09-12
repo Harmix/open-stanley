@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Run the deterministic audit tests in evals/evals.json. Exit 1 on any failure."""
+"""Run the deterministic audit tests in tests/evals/evals.json. Exit 1 on any failure."""
 import json, subprocess, sys
 from pathlib import Path
-ROOT = Path(__file__).resolve().parent.parent
-tests = json.loads((ROOT / "evals/evals.json").read_text())["audit_tests"]
+ROOT = Path(__file__).resolve().parent.parent.parent
+tests = json.loads((ROOT / "tests/evals/evals.json").read_text())["audit_tests"]
 fails = 0
 for t in tests:
-    f = ROOT / "evals" / t["file"]
+    f = ROOT / "tests/evals" / t["file"]
     if not f.exists():
         if t.get("optional"): print(f"skip  {t['file']} (missing)"); continue
         print(f"FAIL  {t['file']} missing"); fails += 1; continue

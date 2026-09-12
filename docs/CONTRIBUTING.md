@@ -4,8 +4,8 @@ Two kinds of contribution, one gate.
 
 ## 1. Rules and skills (pull requests)
 
-- A new audit rule goes in `skills/stanley/scripts/stanley-audit` with a row in `skills/audit/references/rules.md` (what, why, evidence) and at least one fixture in `evals/fixtures/` that fires it, plus one human-written fixture that must not. `python3 evals/run_audit_tests.py` must pass.
-- A skill change ships with an eval in `evals/evals.json` describing the prompt and the expected output. Maintainers run the skill-creator blind comparison (old vs new) on the eval set; the change merges when the comparator prefers it and a maintainer agrees.
+- A new audit rule goes in `skills/stanley/scripts/stanley-audit` with a row in `skills/audit/references/rules.md` (what, why, evidence) and at least one fixture in `tests/evals/fixtures/` that fires it, plus one human-written fixture that must not. `python3 tests/evals/run_audit_tests.py` must pass.
+- A skill change ships with an eval in `tests/evals/evals.json` describing the prompt and the expected output. Maintainers run the skill-creator blind comparison (old vs new) on the eval set; the change merges when the comparator prefers it and a maintainer agrees.
 - Voice rules that are personal (this person never says X) do not belong here; they belong in that person's `voice.md`. Only rules that generalize across authors are accepted.
 - No humanizer/paraphraser integrations. No telemetry hooks. No prompts that impersonate native UI.
 
@@ -22,7 +22,7 @@ A style pack is a sub-skill with its own exemplars and yaml overrides (e.g. "fou
 ## Running the evals
 
 ```
-python3 evals/run_audit_tests.py            # deterministic
+python3 tests/evals/run_audit_tests.py            # deterministic
 # behavioral, with the skill-creator plugin:
-/skill-creator  →  point it at this repo, evals/evals.json
+/skill-creator  →  point it at this repo, tests/evals/evals.json
 ```
