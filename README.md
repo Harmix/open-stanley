@@ -9,7 +9,8 @@ It is the loop that "AI head of content" products sell for $47–149 a month, re
 ## Install
 
 ```
-# Claude Code / Cowork
+# Cowork: Plugins → Add → Add marketplace → Harmix/open-stanley, then install Open Stanley
+# Claude Code:
 /plugin marketplace add Harmix/open-stanley
 /plugin install open-stanley@open-stanley
 
@@ -21,8 +22,10 @@ Then say: **"set up Stanley"**. Onboarding reads your last 40–60 posts through
 
 ## Repo layout
 
+The repo is a one-plugin marketplace: `.claude-plugin/marketplace.json` at the root points at `open-stanley/`, which is the plugin (paths in this README are relative to it).
+
 ```
-.claude-plugin/   manifest + marketplace entry
+open-stanley/.claude-plugin/   plugin manifest
 skills/           14 skills; stanley/scripts/ holds the 5 CLI scripts, stanley/references/ the shared rules
 agents/           critic, fact-checker, scout subagents
 templates/        scheduled-task prompts (laptop and cloud preambles) and the launchd drain job
@@ -30,7 +33,6 @@ vault-template/   the empty vault a new user starts from
 hooks/            one SessionStart hook: reports queued items (cloud mode)
 tests/            unit tests + tests/evals (audit fixtures, behavioral evals)
 docs/             HOW-IT-WORKS, DESIGN, RESEARCH, CONTRIBUTING, research notes
-dist/             open-stanley.plugin for installing into Cowork by file
 ```
 
 ## What it does

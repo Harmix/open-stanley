@@ -9,6 +9,7 @@ _to_delete/
 .DS_Store
 # vault instances and private evals are never committed
 stanley-vault/
-tests/evals/private/
+open-stanley/tests/evals/private/
+dist/
 *.skill
 __pycache__/

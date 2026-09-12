@@ -1,6 +1,6 @@
 {
   "name": "open-stanley",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "An open head of content for Claude: mines your meetings, Slack, email and notes through whatever MCPs you have connected, drafts LinkedIn/X posts and comments in your voice by editing your own material, audits every draft against 2026 AI-slop and platform rules, publishes through your own browser, runs the daily rituals as scheduled tasks, and learns from your edits.",
   "author": {
     "name": "Nazar Ponochevnyi",

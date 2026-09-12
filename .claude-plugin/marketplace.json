@@ -6,9 +6,9 @@
   "plugins": [
     {
       "name": "open-stanley",
-      "source": ".",
+      "source": "./open-stanley",
       "description": "Open head of content: source-first LinkedIn/X drafting in your voice, feed scouting and comments, scheduled rituals, learning from your edits.",
-      "version": "0.7.0",
+      "version": "0.7.1",
       "category": "productivity",
       "tags": [
         "linkedin",
