@@ -8,6 +8,15 @@ Every scheduled task runs **on the user's own computer** (Cowork: Scheduled → 
 
 Cost: runs fire only while the computer is awake. Cowork shows "Only runs while your computer is awake"; a task that fires with the lid closed is missed, not caught up. Fine for people whose laptop is open during the day (set the daily jobs inside that window); wrong for people who need runs with the laptop closed for days. Keep the Mac from sleeping on power if 08:00 matters.
 
+Missed runs: a device-bound task that comes due while the computer is asleep or offline is not queued for later. Observed in Cowork on 12 Sep 2026: the task was switched off with the reason `device_absent` and its next run moved to the following week, so the miss also silences every later firing until someone re-enables it. The plugin treats this like anacron:
+
+1. `my-human.md` carries the schedule (`- schedule: mine=weekly sat 18:00; ...`, local time) and `- catch_up:` (the jobs worth running late: recap, weekly drafts, mine, monthly; a late soapbox or scout is noise). `stanley-vault missed` compares it with `ledger/runs.jsonl` and lists what did not run; exit 1 when a catch-up job is missing.
+2. Every laptop-mode run calls `missed` after its own `run-start` and does one overdue catch-up job after its own work, with its own run-start/run-end, so the 22:00 scout picks up a 18:00 mine the same evening without a human.
+3. The plugin's `SessionStart` hook prints the same one-liner at the top of any chat or Claude Code session, so the user sees "missed: mine" as soon as they open the laptop and can say "catch up".
+4. On "catch up" in a chat: run `missed`; if the `Claude Code Remote` MCP is connected (`list_triggers`, `update_trigger`, `fire_trigger`), find the tasks named `Open Stanley — …`, re-enable any that show `suspension_reason: device_absent` (`update_trigger enabled=true`; no prompt change, so no re-signing), and `fire_trigger` the ones `missed` marked catch-up, passing "Catch-up run: the scheduled firing was missed because the laptop was offline". Without that MCP, do the job in the current session from its template, then tell the user to re-enable the task in Scheduled.
+
+Keep the computer awake when it matters (System Settings → Battery → prevent sleeping on power, or `caffeinate`), and put weekly jobs at hours the laptop is normally open.
+
 Concurrency: tasks that overlap append to the same jsonl files; appends are line-atomic, nothing to merge.
 
 Scripts: the device shell cannot see the plugin, so the bundled scripts are installed once into `<vault>/.stanley-scripts/` (with a `VERSION` file) and re-installed only when the plugin version changes; the `stanley` skill, step 1a, has the exact commands. The first run of a new version costs one extra minute; every later run costs nothing. `.stanley-scripts/` is in the vault's `.gitignore` and is safe to delete.

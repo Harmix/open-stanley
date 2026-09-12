@@ -277,6 +277,86 @@ def cmd_is_self(a):
     h = (m.group(1) if m else a.target).lower().lstrip("@")
     sys.exit(0 if h in hs else 1)
 
+
+# ---- missed runs (anacron for scheduled tasks) ----
+_DOW = {"mon":0,"tue":1,"wed":2,"thu":3,"fri":4,"sat":5,"sun":6}
+
+def _human_lines(v):
+    p = v / "my-human.md"
+    return p.read_text(encoding="utf-8").splitlines() if p.exists() else []
+
+def _tz(v):
+    for line in _human_lines(v):
+        m = re.search(r"\b([A-Z][A-Za-z_]+/[A-Za-z_]+(?:/[A-Za-z_]+)?)\b", line)
+        if m and ("tz" in line.lower() or "time zone" in line.lower() or "timezone" in line.lower()):
+            try:
+                from zoneinfo import ZoneInfo; return ZoneInfo(m.group(1))
+            except Exception: pass
+    return dt.timezone.utc
+
+def schedule(v):
+    """Parse `- schedule: job=daily HH:MM[,HH:MM]; job=weekly dow HH:MM; job=monthly D HH:MM` and `- catch_up: a, b` from my-human.md."""
+    sched, catch = {}, set()
+    for line in _human_lines(v):
+        low = line.strip().lower()
+        if low.startswith("- schedule:"):
+            for part in line.split(":", 1)[1].split(";"):
+                if "=" not in part: continue
+                job, spec = [x.strip() for x in part.split("=", 1)]
+                toks = spec.split()
+                if not toks: continue
+                kind = toks[0].lower()
+                if kind == "daily" and len(toks) >= 2: sched[job] = ("daily", None, toks[1].split(","))
+                elif kind == "weekly" and len(toks) >= 3: sched[job] = ("weekly", _DOW.get(toks[1][:3].lower(), 0), [toks[2]])
+                elif kind == "monthly" and len(toks) >= 3: sched[job] = ("monthly", int(toks[1]), [toks[2]])
+        elif low.startswith("- catch_up:") or low.startswith("- catch-up:"):
+            catch = {x.strip() for x in line.split(":", 1)[1].split("#")[0].split(",") if x.strip()}
+    return sched, catch
+
+def _last_due(kind, when, times, now_local):
+    """Most recent due datetime <= now_local for one job."""
+    best = None
+    for t in times:
+        hh, mm = [int(x) for x in t.split(":")]
+        for back in range(0, 40):
+            d = now_local.date() - dt.timedelta(days=back)
+            if kind == "weekly" and d.weekday() != when: continue
+            if kind == "monthly" and d.day != when: continue
+            cand = dt.datetime(d.year, d.month, d.day, hh, mm, tzinfo=now_local.tzinfo)
+            if cand <= now_local:
+                if best is None or cand > best: best = cand
+                break
+    return best
+
+def missed(v, grace_min=20, max_age_h=None):
+    sched, catch = schedule(v)
+    tz = _tz(v); now_local = dt.datetime.now(tz)
+    runs = read_jsonl(v, "ledger/runs.jsonl")
+    out = []
+    for job, (kind, when, times) in sched.items():
+        due = _last_due(kind, when, times, now_local)
+        if due is None: continue
+        age_h = (now_local - due).total_seconds() / 3600
+        if age_h * 60 < grace_min: continue                      # may still be starting
+        if max_age_h is not None and age_h > max_age_h: continue  # too old to be worth doing
+        window = due - dt.timedelta(minutes=15)
+        ran = any(r.get("job") == job and r.get("started") and dt.datetime.fromisoformat(r["started"].replace("Z", "+00:00")) >= window for r in runs)
+        if not ran:
+            out.append({"job": job, "due": due.isoformat(timespec="minutes"), "hours_ago": round(age_h, 1), "catch_up": job in catch})
+    return out
+
+def cmd_missed(a):
+    v = resolve(a.vault)
+    rows = missed(v, max_age_h=a.max_age_hours)
+    if a.json: print(json.dumps(rows, ensure_ascii=False))
+    elif a.brief:
+        worth = [r["job"] for r in rows if r["catch_up"]]
+        if worth: print(f"open-stanley: missed scheduled run(s) worth catching up: {', '.join(worth)}. Say 'catch up' to run them now.")
+    else:
+        for r in rows: print(f"MISSED {r['job']} due {r['due']} ({r['hours_ago']}h ago) catch-up:{'yes' if r['catch_up'] else 'no'}")
+        if not rows: print("nothing missed")
+    sys.exit(1 if any(r["catch_up"] for r in rows) else 0)
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--vault")
     sp = ap.add_subparsers(dest="cmd", required=True)
@@ -300,6 +380,7 @@ def main():
     p = sp.add_parser("queue-add"); p.add_argument("--job", required=True); p.add_argument("--payload", required=True); p.add_argument("--expires-hours", type=float, default=24); p.set_defaults(f=cmd_queue_add)
     p = sp.add_parser("queue-check"); p.add_argument("--brief", action="store_true"); p.set_defaults(f=cmd_queue_check)
     p = sp.add_parser("queue-done"); p.add_argument("id"); p.add_argument("--result"); p.add_argument("--failed", action="store_true"); p.set_defaults(f=cmd_queue_done)
+    p = sp.add_parser("missed", help="scheduled runs that did not happen (needs `- schedule:` in my-human.md)"); p.add_argument("--brief", action="store_true"); p.add_argument("--json", action="store_true"); p.add_argument("--max-age-hours", type=float, default=None); p.set_defaults(f=cmd_missed)
     p = sp.add_parser("is-self"); p.add_argument("target"); p.set_defaults(f=cmd_is_self)
     a = ap.parse_args(); a.f(a)
 

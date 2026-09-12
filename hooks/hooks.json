@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/skills/stanley/scripts/stanley-vault queue-check --brief 2>/dev/null || true"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/skills/stanley/scripts/stanley-vault missed --brief 2>/dev/null; \"${CLAUDE_PLUGIN_ROOT}\"/skills/stanley/scripts/stanley-vault queue-check --brief 2>/dev/null || true"
           }
         ]
       }

@@ -2,6 +2,10 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.7.0 — 2026-09-12
+
+Missed runs. The Saturday 18:00 mine job came due while the laptop was closed; Cowork switched the task off (`device_absent`) rather than running it later, which would also have silenced every following Saturday. New `stanley-vault missed` reads a `- schedule:` and `- catch_up:` line from `my-human.md`, compares with `ledger/runs.jsonl`, and lists what did not run. Every laptop-mode run does one overdue catch-up job after its own; the `SessionStart` hook prints "missed: mine" at the top of the next session; "catch up" in a chat re-enables the suspended task and fires it through the Claude Code Remote MCP when it is connected. `scheduling.md` has the procedure; the vault template carries the default schedule.
+
 ## 0.6.2 — 2026-09-12
 
 Housekeeping after the hackathon push. README and manifest point at `Harmix/open-stanley`; the last "private repo" wording is gone (laptop mode is the story everywhere). The root is now ten entries: `RESEARCH.md`, `DESIGN.md`, `CONTRIBUTING.md` and `research/` moved under `docs/`, `evals/` under `tests/`, and `mcp/recommended.mcp.json` next to the reference that describes it. No behaviour change.
