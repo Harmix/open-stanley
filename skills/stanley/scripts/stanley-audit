@@ -1,0 +1,368 @@
+#!/usr/bin/env python3
+"""stanley-audit: deterministic lint for a social post draft.
+
+Checks a draft against (1) the AI-slop tells that LinkedIn's 2026 classifier,
+third-party detectors and human readers all key on, (2) platform rules,
+(3) receipts (every number/name/date must be backed by a story file),
+(4) self-plagiarism against the ledger, and (5) the user's own voice rules.
+
+Usage:
+  stanley-audit DRAFT.md --platform linkedin|x [--vault DIR] [--json] [--strict]
+
+Exit code 0 = passes, 1 = blocking findings. Findings are printed as
+  LEVEL  rule-id  message  [excerpt]
+Levels: BLOCK (must fix), WARN (should fix), INFO (for the human pass).
+
+No network calls, no external deps. Only stdout enters the model's context.
+"""
+import argparse, json, math, os, re, sys
+from collections import Counter
+from pathlib import Path
+
+# ---------- lexicon ----------
+# Measured excess vocabulary (Kobak et al. 2024; Juzek & Ward COLING 2025) plus
+# the LinkedIn-guru phrases readers flag. Each entry: pattern -> (level, note)
+BANNED = {
+    r"\bdelv(e|es|ed|ing)\b": "delve",
+    r"\bleverag(e|es|ed|ing)\b": "leverage (say 'use')",
+    r"\bharness(es|ed|ing)?\b": "harness",
+    r"\bpivotal\b": "pivotal",
+    r"\bintricate\b": "intricate",
+    r"\bmeticulous(ly)?\b": "meticulous",
+    r"\bunderscor(e|es|ed|ing)\b": "underscore",
+    r"\bshowcas(e|es|ed|ing)\b": "showcase",
+    r"\brealm\b": "realm",
+    r"\btestament\b": "testament",
+    r"\blandscape\b": "landscape (as metaphor)",
+    r"\bnavigat(e|es|ed|ing)\b": "navigate (as metaphor)",
+    r"\bunlock(s|ed|ing)?\b": "unlock",
+    r"\belevat(e|es|ed|ing)\b": "elevate",
+    r"\brobust\b": "robust",
+    r"\bseamless(ly)?\b": "seamless",
+    r"\btapestry\b": "tapestry",
+    r"\bever-evolving\b": "ever-evolving",
+    r"\bgame-?changer\b": "game-changer",
+    r"\bparadigm\b": "paradigm",
+    r"\bsynerg(y|ies|istic)\b": "synergy",
+    r"\bcutting-edge\b": "cutting-edge",
+    r"\bin today'?s (fast-paced|rapidly|ever)": "in today's fast-paced...",
+    r"\bhere'?s the thing\b": "here's the thing",
+    r"\blet that sink in\b": "let that sink in",
+    r"\bread that again\b": "read that again",
+    r"\bgame changer\b": "game changer",
+    r"\bthe (real|hard) (truth|part|question) is\b": "the real truth/part is",
+    r"\bat the end of the day\b": "at the end of the day",
+    r"\bit'?s worth noting\b": "it's worth noting",
+    r"\bimportantly,": "importantly,",
+    r"\bmoreover\b": "moreover",
+    r"\bfurthermore\b": "furthermore",
+    r"\badditionally\b": "additionally",
+    r"\bcrucial(ly)?\b": "crucial",
+    r"\bcompelling\b": "compelling",
+    r"\bprofound(ly)?\b": "profound",
+    r"\bfoundational shift\b": "foundational shift",
+    r"\bfundamental(ly)? (shift|change)\b": "fundamental shift",
+    r"\bthe implications (are|of)\b": "the implications are",
+    r"\bmakes you wonder\b": "makes you wonder",
+    r"\bit'?s (super|really|genuinely|truly) interesting\b": "it's interesting (filler opener)",
+    r"\bthis (really )?(resonates|hits)\b": "this resonates / hits (empty agreement)",
+    r"\bgreat (point|post|insight)\b": "great point (empty agreement)",
+    r"\bcouldn'?t agree more\b": "couldn't agree more",
+    r"\bspot on\b": "spot on",
+    r"\bwell said\b": "well said",
+    r"\bagree\?\s*$": "trailing 'Agree?'",
+    r"\bthoughts\?\s*$": "trailing 'Thoughts?'",
+    r"\bwhat do you think\?\s*$": "trailing 'What do you think?'",
+    r"\bfollow (me )?for more\b": "follow for more",
+    r"\b(ps|p\.s\.)?\s*repost if\b": "repost if",
+}
+
+WEASEL = [r"\bexperts (say|agree|argue)\b", r"\bstudies show\b", r"\bresearch (shows|suggests)\b",
+          r"\bsome (critics|people|observers) (argue|say|note)\b", r"\bit is widely (known|accepted)\b",
+          r"\brecent literature\b", r"\bindustry reports\b"]
+
+EDITORIAL_TAIL = r",\s*(highlighting|underscoring|emphasizing|showcasing|demonstrating|reflecting|signaling|marking)\s+(the|a|an|its|how)\b"
+
+NOT_X_BUT_Y = [
+    r"\b(it'?s|this is|that'?s|they'?re|we'?re)\s+not\s+(just|only|about|simply)?\s*[^.\n]{2,60}?[,;.]\s*(it'?s|this is|that'?s|but)\s+",
+    r"\bnot\s+[^.\n]{2,50}?\s*[—–-]\s*(it'?s|but)\s+",
+    r"\bisn'?t\s+(just|only|about)\s+[^.\n]{2,50}?[,;.]\s*(it'?s|but)\s+",
+]
+
+def load_text(p):
+    return Path(p).read_text(encoding="utf-8")
+
+def sentences(text):
+    t = re.sub(r"\s+", " ", text.strip())
+    parts = re.split(r"(?<=[.!?])\s+(?=[A-Z\"'(\[0-9])", t)
+    return [s for s in parts if len(s.split()) > 0]
+
+def words(text):
+    return re.findall(r"[A-Za-z0-9'’\-]+", text)
+
+def find_all(pattern, text):
+    return [m for m in re.finditer(pattern, text, flags=re.I | re.M)]
+
+def excerpt(text, m, width=60):
+    a = max(0, m.start() - width // 2); b = min(len(text), m.end() + width // 2)
+    return re.sub(r"\s+", " ", text[a:b]).strip()
+
+def cosine(a, b):
+    ca, cb = Counter(a), Counter(b)
+    num = sum(ca[k] * cb[k] for k in ca)
+    da = math.sqrt(sum(v * v for v in ca.values())); db = math.sqrt(sum(v * v for v in cb.values()))
+    return num / (da * db) if da and db else 0.0
+
+def shingles(text, n=3):
+    w = [x.lower() for x in words(text)]
+    return [" ".join(w[i:i + n]) for i in range(max(0, len(w) - n + 1))]
+
+def load_voice(vault):
+    """voice.md may carry a fenced ```yaml block with overrides."""
+    cfg = {"banned_extra": [], "allowed": [], "closing_question": "allow", "em_dash": "ban",
+           "max_hashtags": 0, "min_sentence_stdev": 4.0, "freshness_days": 1}
+    if not vault: return cfg
+    p = Path(vault) / "voice.md"
+    if not p.exists(): return cfg
+    m = re.search(r"```yaml\n(.*?)```", p.read_text(encoding="utf-8"), re.S)
+    if not m: return cfg
+    for line in m.group(1).splitlines():
+        if ":" not in line: continue
+        k, v = [x.strip() for x in line.split(":", 1)]
+        v = v.split("#", 1)[0].strip()  # strip inline comments
+        if k in ("banned_extra", "allowed"):
+            cfg[k] = [x.strip() for x in v.strip("[]").split(",") if x.strip()]
+        elif k in ("max_hashtags", "freshness_days"):
+            cfg[k] = int(v)
+        elif k == "min_sentence_stdev":
+            cfg[k] = float(v)
+        else:
+            cfg[k] = v
+    return cfg
+
+def load_ledger_posts(vault):
+    out = []
+    if not vault: return out
+    p = Path(vault) / "ledger" / "posts.jsonl"
+    if not p.exists(): return out
+    for line in p.read_text(encoding="utf-8").splitlines():
+        try:
+            j = json.loads(line); out.append(j)
+        except Exception:
+            pass
+    return out
+
+def load_story_receipts(vault):
+    """Collect every number / proper noun / date that appears in story files, as the receipt set."""
+    tokens = set()
+    if not vault: return tokens
+    d = Path(vault) / "stories"
+    if not d.exists(): return tokens
+    for f in d.glob("*.md"):
+        t = f.read_text(encoding="utf-8")
+        tokens.update(x.lower() for x in re.findall(r"\b\d[\d,.]*%?\b", t))
+        tokens.update(x.lower() for x in re.findall(r"\b[A-Z][a-zA-Z0-9]+(?:\s+[A-Z][a-zA-Z0-9]+)*\b", t))
+    return tokens
+
+def audit(text, platform, vault=None, strict=False):
+    F = []  # (level, rule, msg, excerpt)
+    def add(level, rule, msg, ex=""): F.append((level, rule, msg, ex))
+    cfg = load_voice(vault)
+    allowed = set(a.lower() for a in cfg["allowed"])
+    body = text.strip()
+    # prose = body minus hashtag-only / emoji-only trailing lines, for opener/closer checks
+    prose_lines = [l for l in body.splitlines() if l.strip() and not re.fullmatch(r"(\s*#\w+)+\s*", l) and not re.fullmatch(r"[\W\d_]+", l)]
+    prose = "\n".join(prose_lines)
+    sents = sentences(prose)
+    wds = words(body)
+    n_words = len(wds)
+    n_chars = len(body)
+
+    # ---- 1. lexicon ----
+    for pat, label in BANNED.items():
+        for m in find_all(pat, body):
+            if m.group(0).lower().strip() in allowed: continue
+            add("BLOCK", "lexicon", f"AI-flagged phrase: {label}", excerpt(body, m))
+    for extra in cfg["banned_extra"]:
+        for m in find_all(r"\b" + re.escape(extra) + r"\b", body):
+            add("BLOCK", "lexicon-user", f"On your personal ban list: '{extra}'", excerpt(body, m))
+    for pat in WEASEL:
+        for m in find_all(pat, body):
+            add("BLOCK", "weasel", "Unattributed authority. Name the source or cut it.", excerpt(body, m))
+
+    # ---- 2. structure ----
+    for pat in NOT_X_BUT_Y:
+        for m in find_all(pat, body):
+            add("BLOCK", "not-x-but-y", "Negative parallelism ('not X, it's Y'). Say the Y directly.", excerpt(body, m))
+    for m in find_all(EDITORIAL_TAIL, body):
+        add("WARN", "editorial-tail", "Editorializing tail glued to a fact. Cut it or make it its own claim.", excerpt(body, m))
+    em = len(re.findall(r"—", body)) + len(re.findall(r"\s–\s", body))
+    if em and cfg["em_dash"] == "ban":
+        add("BLOCK", "em-dash", f"{em} em dash(es). This user does not use them; use a comma, period, or ' - '.")
+    elif em / max(1, n_words / 100) > 0.15:
+        add("WARN", "em-dash-density", f"Em-dash density {em / max(1, n_words/100):.2f}/100 words (human band ~0.1).")
+    # tricolons: three comma-separated items ending a sentence, or three parallel short lines
+    for m in find_all(r"\b(\w+), (\w+),? and (\w+)\b", body):
+        a, b, c = m.group(1), m.group(2), m.group(3)
+        if all(len(x) > 3 for x in (a, b, c)) and len({a, b, c}) == 3:
+            add("INFO", "tricolon", "Rule-of-three list. Fine once; more than once reads generated.", excerpt(body, m))
+    lines = [l.strip() for l in body.splitlines() if l.strip()]
+    short_run = 0; max_run = 0
+    for s in sents:
+        if len(s.split()) <= 8: short_run += 1; max_run = max(max_run, short_run)
+        else: short_run = 0
+    if max_run >= 3:
+        add("BLOCK", "choppy", f"{max_run} consecutive sentences under 8 words. Staccato reads generated; join or expand them.")
+    lens = [len(s.split()) for s in sents]
+    if len(lens) >= 4:
+        mean = sum(lens) / len(lens); sd = math.sqrt(sum((x - mean) ** 2 for x in lens) / len(lens))
+        if sd < cfg["min_sentence_stdev"]:
+            add("WARN", "uniform-length", f"Sentence length stdev {sd:.1f} (mean {mean:.1f}). Vary it: one long, one short.")
+    one_liners = sum(1 for l in lines if len(l.split()) <= 6)
+    if len(lines) >= 6 and one_liners / len(lines) > 0.5:
+        add("WARN", "one-line-paragraphs", "Most paragraphs are one short line (LinkedIn-guru scaffolding).")
+    if re.search(r"\*\*[^*]+\*\*\s*:", body):
+        add("BLOCK", "bold-colon-list", "Bolded-term-colon list items are a classic generated pattern.")
+    # closing question
+    last = sents[-1] if sents else ""
+    if last.endswith("?"):
+        if cfg["closing_question"] == "ban":
+            add("BLOCK", "closing-question", "Ends with an audience question; this user does not do that.", last)
+        elif re.search(r"\b(you|your)\b", last, re.I) and re.search(r"\b(agree|think|thoughts|experience)\b", last, re.I):
+            add("WARN", "closing-question", "Generic engagement-bait closer. A specific open question is fine; 'what do you think?' is not.", last)
+    # setup sentence
+    if sents and re.match(r"^(In (today|the)\b|As (we|AI|the) |With (the|AI) |It'?s no secret|We (all|often) |Have you ever|Ever wondered|Let'?s (talk|dive|face)|Picture this|Imagine )", sents[0], re.I):
+        add("BLOCK", "setup-sentence", "Opens with a throat-clearing setup line. Start on the claim.", sents[0])
+    if sents and re.match(r"^(This|That|It) (is|was) (so|really|super|very|genuinely) ", sents[0], re.I):
+        add("WARN", "empty-opener", "Opener is a reaction, not a thought. Comments that start 'This is so real' read generated.", sents[0])
+    # conclusion wrap-up (check the last two sentences: the wrap-up is often followed by a bait question)
+    for s_ in sents[-2:]:
+        if re.match(r"^(In (short|summary|conclusion)|To (sum|wrap) up|Ultimately|The (bottom line|takeaway|lesson|key takeaways?)|Bottom line|Key takeaways?)", s_, re.I):
+            add("BLOCK", "wrap-up", "Ends with a summary/conclusion line. Cut it; end on the last real sentence.", s_); break
+    # specificity
+    has_number = bool(re.search(r"\b\d", body))
+    has_proper = bool(re.search(r"\b[A-Z][a-z]{2,}\b(?!\s*[.!?]$)", " ".join(s.split(" ", 1)[1] if len(s.split()) > 1 else "" for s in sents)))
+    if not has_number and not has_proper and n_words > 60:
+        add("WARN", "no-specifics", "No numbers, names, dates or places anywhere. Generic-true reads generated; add the thing only you know.")
+    if not re.search(r"\b(I|we|my|our|me|us)\b", body):
+        add("WARN", "no-first-person", "No first person at all. Where were you in this story?")
+    # emoji density
+    emojis = re.findall(r"[\U0001F300-\U0001FAFF☀-➿]", body)
+    if len(emojis) > 2:
+        add("WARN", "emoji", f"{len(emojis)} emoji. One is a signature; several is a template.")
+    hashtags = re.findall(r"(?<!\w)#\w+", body)
+    if len(hashtags) > cfg["max_hashtags"]:
+        add("BLOCK", "hashtags", f"{len(hashtags)} hashtag(s); 2026 reach data says zero.")
+
+    # ---- 3. platform ----
+    if platform == "comment":
+        if n_words > 70:
+            add("WARN", "comment-length", f"{n_words} words. The comments this user actually posts are 1-3 sentences; long comments read like a blog post pasted in.")
+        if sents and re.match(r"^(This|That|Great|Love|So|Such|Absolutely|Totally|Yes|Exactly)\b", sents[0]) and re.search(r"\b(true|real|point|post|resonates|hits|agree|crucial|important|interesting)\b", sents[0], re.I):
+            add("BLOCK", "agreement-opener", "Opens by agreeing with the post. Start on your own observation; the agreement is implied by replying.", sents[0])
+        if not re.search(r"\b(I|we|my|our|me|us)\b", body):
+            pass  # already warned above; comments without first person are common
+    elif platform == "linkedin":
+        if re.search(r"https?://", body):
+            add("BLOCK", "link-in-body", "Link in LinkedIn body. Put it in the first comment or drop it.")
+        if n_chars > 3000: add("BLOCK", "length", f"{n_chars} chars > LinkedIn 3,000 limit.")
+        elif n_chars > 2000: add("WARN", "length", f"{n_chars} chars; 1,300-1,900 is the band that holds dwell.")
+        elif n_chars < 400: add("INFO", "length", f"{n_chars} chars; short is fine for an aphorism, thin for a story.")
+        hook = body.split("\n")[0]
+        if len(hook) > 210 and len(lines) > 1:
+            add("WARN", "hook-length", f"First line is {len(hook)} chars; only ~140 show before 'see more'. Make the cut point land on a complete thought.")
+        if re.search(r"\b(please )?(like|share|repost|comment) (if|this|below)\b", body, re.I):
+            add("BLOCK", "engagement-bait", "Explicit like/share/comment ask is demoted.")
+    elif platform == "x":
+        tweets = [t.strip() for t in re.split(r"\n\s*\n---+\s*\n|\n\s*\n\s*\n", body) if t.strip()]
+        if len(tweets) == 1 and len(body) > 280:
+            add("INFO", "x-length", f"{len(body)} chars: needs X Premium for a single post, else split into a thread with '---' separators.")
+        if len(tweets) > 7:
+            add("WARN", "thread-length", f"{len(tweets)} tweets; 5-7 max, and only if the story is sequential.")
+        for i, t in enumerate(tweets):
+            if len(t) > 280 and len(tweets) > 1:
+                add("BLOCK", "tweet-length", f"Tweet {i+1} is {len(t)} chars (>280).")
+        if re.search(r"https?://", tweets[0] if tweets else ""):
+            add("WARN", "link-in-first", "Link in the first tweet; put it in the first reply.")
+
+    # ---- 4. receipts ----
+    receipts = load_story_receipts(vault)
+    if vault and receipts:
+        for m in re.finditer(r"\b\d[\d,.]*%?\b", body):
+            tok = m.group(0).lower()
+            if tok in receipts or re.fullmatch(r"(1|2|3|5|10|20|24|30|100|2026)", tok): continue
+            add("WARN", "receipt-number", f"Number '{m.group(0)}' has no receipt in stories/. Where is it from?", excerpt(body, m))
+        for m in re.finditer(r"\b(?:20[12]\d|19\d\d)\b", body):
+            add("INFO", "dated-claim", f"Year {m.group(0)} mentioned; check it is within the freshness window if it is presented as news.", excerpt(body, m))
+    elif vault:
+        add("INFO", "no-stories", "No stories/ in the vault yet, so numbers and names could not be checked against receipts.")
+    for m in find_all(r"\b(just (released|announced|launched|dropped|shipped|published|came out|got|hit|acquired)|yesterday|today|this (week|morning)|breaking(?: news)?)\b", body):
+        add("INFO", "freshness", "Time-relative claim. Confirm the source date before publishing.", excerpt(body, m))
+    for m in find_all(r"\b(a|one) (recent )?(study|paper|survey|report) (found|shows|says)\b", body):
+        add("BLOCK", "uncited-study", "A study is cited without a name/venue/year. Name it or cut it.", excerpt(body, m))
+
+    # ---- 5. self-plagiarism ----
+    posts = load_ledger_posts(vault)
+    if posts:
+        mine = set(shingles(body))
+        best = (0.0, None)
+        for p in posts:
+            other = set(shingles(p.get("text", "")))
+            if not other: continue
+            j = len(mine & other) / max(1, len(mine | other))
+            if j > best[0]: best = (j, p)
+        if best[0] > 0.35:
+            add("BLOCK", "self-plagiarism", f"{best[0]:.0%} 3-gram overlap with your post from {best[1].get('date','?')} ({best[1].get('url','')}).")
+        elif best[0] > 0.15:
+            add("WARN", "self-overlap", f"{best[0]:.0%} overlap with your post from {best[1].get('date','?')}; make sure this says something new.")
+
+    return F, {"words": n_words, "chars": n_chars, "sentences": len(sents),
+               "mean_sentence_len": round(sum(len(s.split()) for s in sents) / max(1, len(sents)), 1)}
+
+SELFTEST = {
+    # (platform, text, expect_pass)
+    "human comment": ("comment", "how do you know which project context is still relevant? most projects are highly dynamic, and decisions may change between meetings and emails", True),
+    "slop comment": ("comment", "Great post! In today's fast-paced world, it's crucial to leverage robust memory. Thoughts?", False),
+    "slop post": ("linkedin", "In today's fast-paced world, AI agents are a game-changer. Here's the thing:\n\nIt's not about tools. It's about mindset.\n\n\u2022 Innovation: Embrace it.\n\u2022 Growth: Drive it.\n\u2022 Impact: Deliver it.\n\nWhat do you think? #AI #Innovation #Leadership", False),
+}
+
+def selftest(vault):
+    """Lint three bundled texts so a fresh session can confirm the linter runs end to end. Exit 0 when every expectation holds."""
+    ok = True
+    for name, (platform, text, expect_pass) in SELFTEST.items():
+        findings, _ = audit(text, platform, vault, False)
+        passed = not any(f[0] == "BLOCK" for f in findings)
+        good = passed == expect_pass
+        ok &= good
+        print(f"{'ok  ' if good else 'FAIL'} {name:14} expected {'PASS' if expect_pass else 'BLOCK'}, got {'PASS' if passed else 'BLOCK'} ({len(findings)} findings)")
+    print("selftest:", "ok" if ok else "FAILED")
+    sys.exit(0 if ok else 1)
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("draft", nargs="?", help="path, '-' for stdin, or 'selftest'")
+    ap.add_argument("--platform", default="linkedin", choices=["linkedin", "x", "comment"])
+    ap.add_argument("--vault", default=os.environ.get("STANLEY_VAULT"))
+    ap.add_argument("--json", action="store_true")
+    ap.add_argument("--strict", action="store_true", help="treat WARN as blocking")
+    a = ap.parse_args()
+    if a.draft in (None, "selftest"):
+        if a.draft is None: ap.error("the following arguments are required: draft (or 'selftest')")
+        return selftest(a.vault)
+    text = load_text(a.draft) if a.draft != "-" else sys.stdin.read()
+    findings, stats = audit(text, a.platform, a.vault, a.strict)
+    order = {"BLOCK": 0, "WARN": 1, "INFO": 2}
+    findings.sort(key=lambda f: order[f[0]])
+    blocking = [f for f in findings if f[0] == "BLOCK" or (a.strict and f[0] == "WARN")]
+    if a.json:
+        print(json.dumps({"stats": stats, "pass": not blocking,
+                          "findings": [dict(level=l, rule=r, msg=m, excerpt=e) for l, r, m, e in findings]}, indent=1))
+    else:
+        print(f"stats: {stats}")
+        for l, r, m, e in findings:
+            print(f"{l:5} {r:18} {m}" + (f"  [{e}]" if e else ""))
+        print("RESULT:", "PASS" if not blocking else f"BLOCKED ({len(blocking)} blocking finding(s))")
+    sys.exit(0 if not blocking else 1)
+
+if __name__ == "__main__":
+    main()

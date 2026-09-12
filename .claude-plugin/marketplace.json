@@ -1,0 +1,23 @@
+{
+  "name": "open-stanley",
+  "owner": {
+    "name": "Nazar Ponochevnyi"
+  },
+  "plugins": [
+    {
+      "name": "open-stanley",
+      "source": ".",
+      "description": "Open head of content: source-first LinkedIn/X drafting in your voice, feed scouting and comments, scheduled rituals, learning from your edits.",
+      "version": "0.6.1",
+      "category": "productivity",
+      "tags": [
+        "linkedin",
+        "x",
+        "content",
+        "writing",
+        "social-media"
+      ]
+    }
+  ],
+  "description": "Open Stanley: an open head of content for Claude, Codex and any agent that reads SKILL.md."
+}

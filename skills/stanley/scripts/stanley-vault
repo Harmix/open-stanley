@@ -1,0 +1,307 @@
+#!/usr/bin/env python3
+"""stanley-vault: the single entry point for Open Stanley state.
+
+The vault is a folder of markdown + jsonl (see vault-template/). It can live in a
+local folder or a git repo (recommended: a private GitHub repo, because remote
+scheduled runs can clone it). This script hides which.
+
+Commands
+  init [DIR] [--git URL]        create a vault from vault-template (clone URL first if given)
+  path                          print the resolved vault path
+  sync                          git pull --rebase && push if the vault is a git repo (no-op otherwise)
+  run-start JOB                 append a run record; prints the run id
+  run-end ID --delivered TEXT [--error TEXT] [--shown N] [--queued N] [--browser yes|no]
+  surfaced-check URL...         exit 1 and print the ones already surfaced
+  surfaced-add URL --author H --platform P [--reason R]
+  post-add --platform P --url U --text-file F [--story S ...] [--hook H] [--lane L] [--shape opener:event ...] [--experiment name=variant ...]
+  metrics-add --url U --bucket 1h|24h|7d --impressions N --reactions N --comments N --reposts N [--saves N]
+  comment-add --platform P --url U --text-file F [--skipped --reason R]
+  diff-add --draft-file D --final-file F --platform P [--kind post|comment]
+  stories-index                 rebuild stories/index.md from the story files' frontmatter
+  queue-add --job J --payload JSON [--expires-hours H]   cloud runs park browser-only work here
+  queue-check [--brief]         list pending, unexpired items (exit 1 if any); --brief prints one line for hooks
+  queue-done ID [--result TEXT] [--failed]               mark an item done (or failed, kept for the recap)
+  is-self URL_OR_HANDLE         exit 0 if this belongs to the user (from my-human.md handles)
+  snapshot                      record sha256 of every vault file (call right after mirroring from Drive/Notion)
+  changed                       list files added/changed/deleted since the snapshot (what to upload back)
+
+Resolution order for the vault path: --vault, $STANLEY_VAULT, ./stanley-vault, ~/stanley-vault.
+"""
+import argparse, datetime as dt, json, os, re, subprocess, sys, uuid, shutil
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent            # skills/stanley/scripts
+PLUGIN_ROOT = Path(os.environ.get("CLAUDE_PLUGIN_ROOT") or HERE.parent.parent.parent)
+TEMPLATE = PLUGIN_ROOT / "vault-template"
+
+def now(): return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+
+def resolve(explicit=None):
+    for c in [explicit, os.environ.get("STANLEY_VAULT"), "./stanley-vault", str(Path.home() / "stanley-vault")]:
+        if c and Path(c).expanduser().exists():
+            return Path(c).expanduser().resolve()
+    sys.exit("no vault found; run: stanley-vault init [DIR]")
+
+def is_git(v): return (v / ".git").exists()
+
+def git(v, *args, check=True):
+    return subprocess.run(["git", "-C", str(v), *args], check=check, capture_output=True, text=True)
+
+def append(v, rel, obj):
+    p = v / rel; p.parent.mkdir(parents=True, exist_ok=True)
+    with p.open("a", encoding="utf-8") as f: f.write(json.dumps(obj, ensure_ascii=False) + "\n")
+
+def read_jsonl(v, rel):
+    p = v / rel
+    if not p.exists(): return []
+    out = []
+    for line in p.read_text(encoding="utf-8").splitlines():
+        try: out.append(json.loads(line))
+        except Exception: pass
+    return out
+
+def norm_url(u):
+    u = u.strip().split("?")[0].rstrip("/")
+    u = re.sub(r"^https?://(www\.)?", "", u)
+    return u.lower()
+
+def handles(v):
+    p = v / "my-human.md"
+    if not p.exists(): return set()
+    t = p.read_text(encoding="utf-8")
+    hs = set(h.lower() for h in re.findall(r"(?:linkedin\.com/in/|x\.com/|twitter\.com/|@)([A-Za-z0-9_\-]+)", t))
+    return hs
+
+def cmd_init(a):
+    target = Path(a.dir or "./stanley-vault").expanduser()
+    if a.git:
+        subprocess.run(["git", "clone", a.git, str(target)], check=True)
+    target.mkdir(parents=True, exist_ok=True)
+    for src in TEMPLATE.rglob("*"):
+        rel = src.relative_to(TEMPLATE); dst = target / rel
+        if src.is_dir(): dst.mkdir(parents=True, exist_ok=True)
+        elif not dst.exists(): shutil.copy2(src, dst)
+    if not is_git(target) and not a.no_git:
+        subprocess.run(["git", "init", "-q", str(target)], check=False)
+    print(target.resolve())
+
+def _ensure_identity(v):
+    if not git(v, "config", "user.email", check=False).stdout.strip():
+        git(v, "config", "user.email", "open-stanley@noreply.invalid", check=False)
+        git(v, "config", "user.name", "Open Stanley", check=False)
+
+def _resolve_conflicts(v):
+    """jsonl: keep both sides' lines (append-only ledgers). Everything else: take the incoming (newer) side."""
+    out = git(v, "diff", "--name-only", "--diff-filter=U", check=False).stdout.split()
+    for rel in out:
+        p = v / rel
+        if rel.endswith(".jsonl"):
+            ours = git(v, "show", f":2:{rel}", check=False).stdout.splitlines()
+            theirs = git(v, "show", f":3:{rel}", check=False).stdout.splitlines()
+            seen, merged = set(), []
+            for line in ours + theirs:
+                if line and line not in seen: seen.add(line); merged.append(line)
+            p.write_text("\n".join(merged) + "\n", encoding="utf-8")
+        else:
+            git(v, "checkout", "--theirs", "--", rel, check=False)
+        git(v, "add", "--", rel, check=False)
+    return out
+
+def cmd_sync(a):
+    v = resolve(a.vault)
+    if not is_git(v): print("not a git vault; nothing to sync"); return
+    _ensure_identity(v)
+    git(v, "add", "-A", check=False)
+    git(v, "commit", "-qm", f"stanley sync {now()}", check=False)
+    r = git(v, "remote", check=False)
+    if not r.stdout.strip(): print("synced (no remote)"); return
+    merged = []
+    for attempt in range(3):
+        pr = git(v, "pull", "--rebase", "-q", check=False)
+        if pr.returncode != 0:
+            conflicted = _resolve_conflicts(v)
+            if conflicted:
+                merged += conflicted
+                git(v, "-c", "core.editor=true", "rebase", "--continue", check=False)
+            else:
+                git(v, "rebase", "--abort", check=False); print(f"sync: pull failed: {pr.stderr.strip()[:200]}"); sys.exit(1)
+        ps = git(v, "push", "-q", check=False)
+        if ps.returncode == 0:
+            print("synced" + (f" (merged {', '.join(sorted(set(merged)))})" if merged else "")); return
+    print(f"sync: push rejected after 3 attempts; commit kept locally: {ps.stderr.strip()[:200]}"); sys.exit(1)
+
+def cmd_run_start(a):
+    v = resolve(a.vault); rid = uuid.uuid4().hex[:8]
+    append(v, "ledger/runs.jsonl", {"id": rid, "job": a.job, "started": now(), "promised": a.promised or ""})
+    print(rid)
+
+def cmd_run_end(a):
+    v = resolve(a.vault)
+    row = {"id": a.id, "ended": now(), "delivered": a.delivered, "error": a.error or ""}
+    if a.shown is not None: row["shown"] = a.shown            # candidates/drafts/items actually shown to the human
+    if a.queued is not None: row["queued"] = a.queued         # items parked for the laptop
+    if a.browser is not None: row["browser"] = a.browser      # "yes" if a browser was available this run
+    append(v, "ledger/runs.jsonl", row)
+    print("ok")
+
+def cmd_surfaced_check(a):
+    v = resolve(a.vault)
+    seen = {norm_url(r["url"]) for r in read_jsonl(v, "ledger/surfaced.jsonl") if "url" in r}
+    dup = [u for u in a.urls if norm_url(u) in seen]
+    for u in dup: print(u)
+    sys.exit(1 if dup else 0)
+
+def cmd_surfaced_add(a):
+    v = resolve(a.vault)
+    for u in a.urls:
+        append(v, "ledger/surfaced.jsonl", {"url": u, "author": a.author or "", "platform": a.platform, "reason": a.reason or "", "at": now()})
+    print("ok")
+
+def cmd_post_add(a):
+    v = resolve(a.vault)
+    text = Path(a.text_file).read_text(encoding="utf-8")
+    shape = dict(kv.split(":", 1) for kv in (a.shape or []) if ":" in kv)
+    exp = dict(kv.split("=", 1) for kv in (a.experiment or []) if "=" in kv)
+    append(v, "ledger/posts.jsonl", {"platform": a.platform, "url": a.url, "date": now()[:10], "hook": a.hook or text.split("\n")[0][:140],
+                                     "stories": a.story or [], "lane": a.lane or "", "shape": shape, "experiment": exp, "text": text, "metrics": {}})
+    print("ok")
+
+def cmd_metrics_add(a):
+    v = resolve(a.vault); p = v / "ledger/posts.jsonl"
+    rows = read_jsonl(v, "ledger/posts.jsonl"); hit = False
+    for r in rows:
+        if norm_url(r.get("url", "")) == norm_url(a.url):
+            r.setdefault("metrics", {})[a.bucket] = {"impressions": a.impressions, "reactions": a.reactions, "comments": a.comments, "reposts": a.reposts, "saves": a.saves, "at": now()}
+            hit = True
+    if not hit: sys.exit("no ledger post with that url")
+    p.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8"); print("ok")
+
+def cmd_comment_add(a):
+    v = resolve(a.vault)
+    text = Path(a.text_file).read_text(encoding="utf-8")
+    append(v, "ledger/comments.jsonl", {"platform": a.platform, "url": a.url, "date": now()[:10], "text": text,
+                                        "skipped": bool(a.skipped), "reason": a.reason or ""})
+    print("ok")
+
+def cmd_diff_add(a):
+    v = resolve(a.vault)
+    d = Path(a.draft_file).read_text(encoding="utf-8"); f = Path(a.final_file).read_text(encoding="utf-8")
+    append(v, "learn/diffs.jsonl", {"at": now(), "platform": a.platform, "kind": a.kind, "draft": d, "final": f,
+                                    "draft_words": len(d.split()), "final_words": len(f.split())})
+    print("ok")
+
+def cmd_queue_add(a):
+    v = resolve(a.vault); qid = uuid.uuid4().hex[:8]
+    exp = (dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=a.expires_hours)).isoformat(timespec="seconds")
+    append(v, "ledger/local-queue.jsonl", {"id": qid, "job": a.job, "payload": json.loads(a.payload), "created": now(), "expires": exp, "status": "pending"})
+    print(qid)
+
+def queue_state(v):
+    items = {}
+    for r in read_jsonl(v, "ledger/local-queue.jsonl"):
+        if "status" in r and r.get("id") in items and "job" not in r:
+            items[r["id"]].update(r)
+        elif "job" in r:
+            items[r["id"]] = r
+    n = now()
+    pending, expired = [], []
+    for it in items.values():
+        if it.get("status") != "pending": continue
+        (expired if it.get("expires", "9999") <= n else pending).append(it)
+    return pending, expired
+
+def cmd_queue_check(a):
+    v = resolve(a.vault); pending, expired = queue_state(v)
+    for it in expired:
+        append(v, "ledger/local-queue.jsonl", {"id": it["id"], "status": "expired", "at": now()})
+    if a.brief:
+        if pending: print(f"open-stanley: {len(pending)} queued job(s) need this machine's browser (oldest {min(p['created'] for p in pending)[:16]}). Run /open-stanley:drain first." + (f" {len(expired)} expired." if expired else ""))
+    else:
+        for it in pending: print(json.dumps(it, ensure_ascii=False))
+    sys.exit(1 if pending else 0)
+
+def cmd_queue_done(a):
+    v = resolve(a.vault)
+    append(v, "ledger/local-queue.jsonl", {"id": a.id, "status": "failed" if a.failed else "done", "result": a.result or "", "at": now()})
+    print("ok")
+
+def cmd_stories_index(a):
+    v = resolve(a.vault); d = v / "stories"
+    rows = []
+    for f in sorted(d.glob("*.md")):
+        if f.name == "index.md" or f.name.startswith("_"): continue
+        t = f.read_text(encoding="utf-8")
+        fm = re.search(r"^---\n(.*?)\n---", t, re.S)
+        meta = {}
+        if fm:
+            for line in fm.group(1).splitlines():
+                if ":" in line:
+                    k, val = line.split(":", 1); meta[k.strip()] = val.split("#", 1)[0].strip()
+        rows.append((meta.get("topic", "uncategorized"), f.stem, meta.get("lesson", ""), meta.get("status", "fresh"), meta.get("source", "")))
+    by_topic = {}
+    for topic, slug, lesson, status, source in rows: by_topic.setdefault(topic, []).append((slug, lesson, status, source))
+    out = ["# Stories index", "", f"{len(rows)} stories. Status: fresh = unused, used = published (see ledger), needs-material = idea without a receipt.", ""]
+    for topic in sorted(by_topic):
+        out.append(f"## {topic} ({len(by_topic[topic])})")
+        for slug, lesson, status, source in by_topic[topic]:
+            out.append(f"- [{slug}]({slug}.md) — {lesson}  `{status}`" + (f"  (source: {source})" if source else ""))
+        out.append("")
+    (d / "index.md").write_text("\n".join(out), encoding="utf-8")
+    print(f"indexed {len(rows)} stories")
+
+def _hashes(v):
+    import hashlib
+    out = {}
+    for f in v.rglob("*"):
+        if f.is_file() and ".git" not in f.parts and f.name != ".stanley-snapshot.json":
+            out[str(f.relative_to(v))] = hashlib.sha256(f.read_bytes()).hexdigest()
+    return out
+
+def cmd_snapshot(a):
+    v = resolve(a.vault); h = _hashes(v)
+    (v / ".stanley-snapshot.json").write_text(json.dumps({"at": now(), "files": h}, indent=0), encoding="utf-8")
+    print(f"snapshot of {len(h)} files")
+
+def cmd_changed(a):
+    v = resolve(a.vault); p = v / ".stanley-snapshot.json"
+    old = json.loads(p.read_text(encoding="utf-8"))["files"] if p.exists() else {}
+    new = _hashes(v)
+    rows = [("added", k) for k in new if k not in old] + [("changed", k) for k in new if k in old and old[k] != new[k]] + [("deleted", k) for k in old if k not in new]
+    for kind, k in sorted(rows, key=lambda r: r[1]): print(f"{kind:8} {k}")
+    if not rows: print("no changes")
+    # Always exit 0: the list is the result. (Earlier versions exited 1 when there were changes, which wrappers read as failure.)
+
+def cmd_is_self(a):
+    v = resolve(a.vault); hs = handles(v)
+    m = re.search(r"(?:linkedin\.com/in/|x\.com/|twitter\.com/|@)([A-Za-z0-9_\-]+)", a.target)
+    h = (m.group(1) if m else a.target).lower().lstrip("@")
+    sys.exit(0 if h in hs else 1)
+
+def main():
+    ap = argparse.ArgumentParser(); ap.add_argument("--vault")
+    sp = ap.add_subparsers(dest="cmd", required=True)
+    p = sp.add_parser("init"); p.add_argument("dir", nargs="?"); p.add_argument("--git"); p.add_argument("--no-git", action="store_true"); p.set_defaults(f=cmd_init)
+    p = sp.add_parser("path"); p.set_defaults(f=lambda a: print(resolve(a.vault)))
+    p = sp.add_parser("sync"); p.set_defaults(f=cmd_sync)
+    p = sp.add_parser("run-start"); p.add_argument("job"); p.add_argument("--promised"); p.set_defaults(f=cmd_run_start)
+    p = sp.add_parser("run-end"); p.add_argument("id"); p.add_argument("--delivered", required=True); p.add_argument("--error")
+    p.add_argument("--shown", type=int); p.add_argument("--queued", type=int); p.add_argument("--browser", choices=["yes", "no"]); p.set_defaults(f=cmd_run_end)
+    p = sp.add_parser("surfaced-check"); p.add_argument("urls", nargs="+"); p.set_defaults(f=cmd_surfaced_check)
+    p = sp.add_parser("surfaced-add"); p.add_argument("urls", nargs="+"); p.add_argument("--author"); p.add_argument("--platform", required=True); p.add_argument("--reason"); p.set_defaults(f=cmd_surfaced_add)
+    p = sp.add_parser("post-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--story", action="append"); p.add_argument("--hook"); p.add_argument("--lane"); p.add_argument("--shape", action="append", help="opener:event ending:flat"); p.add_argument("--experiment", action="append", help="name=variant"); p.set_defaults(f=cmd_post_add)
+    p = sp.add_parser("metrics-add"); p.add_argument("--url", required=True); p.add_argument("--bucket", required=True, choices=["1h", "24h", "7d"]);
+    for k in ("impressions", "reactions", "comments", "reposts", "saves"): p.add_argument("--" + k, type=int, default=0)
+    p.set_defaults(f=cmd_metrics_add)
+    p = sp.add_parser("comment-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--skipped", action="store_true"); p.add_argument("--reason"); p.set_defaults(f=cmd_comment_add)
+    p = sp.add_parser("diff-add"); p.add_argument("--draft-file", required=True); p.add_argument("--final-file", required=True); p.add_argument("--platform", required=True); p.add_argument("--kind", default="post"); p.set_defaults(f=cmd_diff_add)
+    p = sp.add_parser("stories-index"); p.set_defaults(f=cmd_stories_index)
+    p = sp.add_parser("snapshot"); p.set_defaults(f=cmd_snapshot)
+    p = sp.add_parser("changed"); p.set_defaults(f=cmd_changed)
+    p = sp.add_parser("queue-add"); p.add_argument("--job", required=True); p.add_argument("--payload", required=True); p.add_argument("--expires-hours", type=float, default=24); p.set_defaults(f=cmd_queue_add)
+    p = sp.add_parser("queue-check"); p.add_argument("--brief", action="store_true"); p.set_defaults(f=cmd_queue_check)
+    p = sp.add_parser("queue-done"); p.add_argument("id"); p.add_argument("--result"); p.add_argument("--failed", action="store_true"); p.set_defaults(f=cmd_queue_done)
+    p = sp.add_parser("is-self"); p.add_argument("target"); p.set_defaults(f=cmd_is_self)
+    a = ap.parse_args(); a.f(a)
+
+if __name__ == "__main__":
+    main()

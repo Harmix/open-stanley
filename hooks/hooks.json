@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/skills/stanley/scripts/stanley-vault queue-check --brief 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

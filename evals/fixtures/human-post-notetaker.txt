@@ -1,0 +1,9 @@
+Ran a quick experiment with my team this weekend.
+
+After our management sync, I asked three of us to pick the top 5 summary items from our AI note-taker.
+
+The average overlap between our lists was only 2.0 out of 5. Because each of us owns a distinct area of responsibility, our day-to-day priorities naturally pulled our attention in different directions, and we each favored the facts that directly affected our own domain.
+
+When we ran the same test on an R&D planning session, our overlap jumped to 3.0 out of 5. That meeting was far less about reporting status and much more observational, with all of us evaluating new results from the R&D team. Instead of filtering by functional ownership, we were paying attention to whatever we thought was most critical for overall business health and growth based on individual judgment.
+
+Interesting. How should an AI agent building company memory balance this?

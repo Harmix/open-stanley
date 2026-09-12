@@ -1,0 +1,7 @@
+One of the debates I've had for 15+ years (and pretty much always lost) is the one around having friction in the customer signup process and how many questions you ask.
+
+Back in the early years we had a sign-up form with about 8 to 10 questions. My intuition said don't ask so many, it irritates people. The counter-argument was usually that we had A/B tested it and more questions didn't lower conversion much.
+
+I love A/B tests. But many individual tests will show negligible impact when you ask for more information, and it's easy to conclude there's no downside. Put the entire experience together and compare it to one that just minimizes friction and you might get a different result. Not always. Sometimes.
+
+My intuition still tells me that over the fullness of time, lower friction always wins.

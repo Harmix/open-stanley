@@ -1,0 +1,1 @@
+What makes it tricky is that state is not static. If two tools write contradictory facts into memory ten minutes apart, the model has no way to know which one represents the current state of the world

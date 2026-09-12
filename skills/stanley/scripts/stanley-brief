@@ -1,0 +1,120 @@
+#!/usr/bin/env python3
+"""stanley-brief: the human-pass contract.
+
+Two commands.
+
+  make   STORY.md --claim "one sentence" [--vault DIR] [--platform linkedin|x] [--length 180]
+         → prints a JSON brief for a human writer: the claim, the facts with sources, required
+           and forbidden terms, length, ending style, and a short negative style guide drawn
+           from voice.md. No prose. A human who is handed prose lightly edits it; a human who
+           is handed a brief writes, and only written text is free of any model watermark.
+
+  verify BRIEF.json HUMAN.txt [--draft CLAUDE_DRAFT.txt]
+         → checks the returned text: every fact string present, no forbidden term, length in
+           band, ending style honored, and (if --draft given) low 3-gram overlap with the model
+           draft so a "rewrite" that is really a copy is caught. Exit 1 on failure.
+
+Facts are matched literally (numbers and quoted phrases), so keep them short in the story file.
+"""
+import argparse, json, re, sys
+from pathlib import Path
+
+def frontmatter(text):
+    m = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.S)
+    meta = {}
+    body = text
+    if m:
+        for line in m.group(1).splitlines():
+            if ":" in line:
+                k, v = line.split(":", 1); meta[k.strip()] = v.split("#", 1)[0].strip()
+        body = m.group(2)
+    return meta, body
+
+def voice_rules(vault):
+    rules = ["Open on the event or the claim; no setup sentence.", "No 'not X, it's Y'.", "No list of three.",
+             "No summary or 'in short' ending.", "No hashtags. No links in the body.", "Vary sentence length; no three short sentences in a row."]
+    forbidden = ["delve", "leverage", "robust", "pivotal", "seamless", "game-changer", "here's the thing", "let that sink in",
+                 "in today's", "moreover", "furthermore", "crucial", "unlock", "elevate", "navigate", "landscape", "testament"]
+    ending = "flat"
+    if vault:
+        p = Path(vault) / "voice.md"
+        if p.exists():
+            t = p.read_text(encoding="utf-8")
+            y = re.search(r"```yaml\n(.*?)```", t, re.S)
+            if y:
+                for line in y.group(1).splitlines():
+                    if line.startswith("banned_extra"):
+                        forbidden += [x.strip() for x in line.split(":", 1)[1].split("#")[0].strip("[] ").split(",") if x.strip()]
+                    if line.startswith("em_dash") and "ban" in line: rules.append("No em dashes.")
+                    if line.startswith("closing_question") and "allow" in line: ending = "flat or one specific open question"
+            how = re.search(r"## How this person writes.*?\n(.*?)\n## ", t, re.S)
+            if how:
+                rules += [l.strip("- ").strip() for l in how.group(1).splitlines() if l.strip().startswith("-")][:6]
+    return rules, sorted(set(forbidden)), ending
+
+def facts_from(body):
+    facts = []
+    for m in re.finditer(r"\b\d[\d,.]*\s?(?:%|out of \d+|/\d+|[kKM]\b|x\b)?", body):
+        s = m.group(0).strip()
+        if len(s) > 1 and s not in facts: facts.append(s)
+    for q in re.findall(r"[\"“]([^\"”]{8,140})[\"”]", body): facts.append(q.strip())
+    return facts[:12]
+
+def cmd_make(a):
+    meta, body = frontmatter(Path(a.story).read_text(encoding="utf-8"))
+    rules, forbidden, ending = voice_rules(a.vault)
+    brief = {
+        "task": "Write this post yourself, in your own words, from the material below. Do not paste or lightly edit any text you were given elsewhere; every sentence should be yours.",
+        "platform": a.platform,
+        "claim": a.claim,
+        "material": body.strip()[:2500],
+        "facts_to_keep_exactly": facts_from(body),
+        "source": meta.get("source", ""),
+        "sensitivity": meta.get("sensitivity", "anonymize"),
+        "required_terms": [t for t in (a.require or [])],
+        "forbidden_terms": forbidden,
+        "length_words": [int(a.length * 0.75), int(a.length * 1.25)],
+        "ending": ending,
+        "style_rules": rules,
+        "first_line": "Must be a complete thought that works on its own; it is all a reader sees before clicking 'more'.",
+    }
+    print(json.dumps(brief, indent=1, ensure_ascii=False))
+
+def shingles(t, n=3):
+    w = re.findall(r"[a-z0-9']+", t.lower()); return {" ".join(w[i:i+n]) for i in range(max(0, len(w)-n+1))}
+
+def cmd_verify(a):
+    brief = json.loads(Path(a.brief).read_text(encoding="utf-8"))
+    text = Path(a.human).read_text(encoding="utf-8").strip()
+    problems, checks = [], []
+    low = text.lower()
+    for f in brief.get("facts_to_keep_exactly", []):
+        if f.lower() not in low: checks.append(f"fact not found verbatim (dropped on purpose, or changed?): {f!r}")
+    for t in brief.get("required_terms", []):
+        if t.lower() not in low: problems.append(f"required term missing: {t!r}")
+    for t in brief.get("forbidden_terms", []):
+        if re.search(r"\b" + re.escape(t.lower()) + r"\b", low): problems.append(f"forbidden term used: {t!r}")
+    n = len(text.split()); lo, hi = brief.get("length_words", [0, 10**9])
+    if not (lo <= n <= hi): problems.append(f"length {n} words outside {lo}-{hi}")
+    if brief.get("ending") == "flat" and text.rstrip().endswith("?"): problems.append("ends with a question but brief asked for a flat ending")
+    if re.search(r"(?<!\w)#\w+", text): problems.append("hashtag present")
+    if a.draft:
+        d = Path(a.draft).read_text(encoding="utf-8")
+        s1, s2 = shingles(text), shingles(d)
+        j = len(s1 & s2) / max(1, len(s1 | s2))
+        if j > 0.25: problems.append(f"3-gram overlap with the model draft is {j:.0%}; this is an edit, not a rewrite")
+        else: print(f"overlap with model draft: {j:.0%} (good, this is new text)")
+    for c in checks: print("CHECK", c)
+    for p in problems: print("FAIL", p)
+    print("RESULT:", "PASS" if not problems else f"{len(problems)} problem(s)")
+    sys.exit(1 if problems else 0)
+
+def main():
+    ap = argparse.ArgumentParser(); sp = ap.add_subparsers(dest="cmd", required=True)
+    p = sp.add_parser("make"); p.add_argument("story"); p.add_argument("--claim", required=True); p.add_argument("--vault")
+    p.add_argument("--platform", default="linkedin"); p.add_argument("--length", type=int, default=180); p.add_argument("--require", action="append"); p.set_defaults(f=cmd_make)
+    p = sp.add_parser("verify"); p.add_argument("brief"); p.add_argument("human"); p.add_argument("--draft"); p.set_defaults(f=cmd_verify)
+    a = ap.parse_args(); a.f(a)
+
+if __name__ == "__main__":
+    main()

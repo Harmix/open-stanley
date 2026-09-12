@@ -1,0 +1,14 @@
+# private: the Stanley Telegram export and anything extracted from it
+ChatExport_Stanley.zip
+ChatExport_Stanley/
+ChatExport_*/
+*.zip
+transcript.txt
+Claude outputs/
+_to_delete/
+.DS_Store
+# vault instances and private evals are never committed
+stanley-vault/
+evals/private/
+*.skill
+__pycache__/

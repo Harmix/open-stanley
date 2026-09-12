@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+"""stanley-stats: what is working, computed from the ledger, not remembered.
+
+Reads ledger/posts.jsonl (each line may carry `lane`, `shape` (opener/body/ending
+tags), `platform`, `text`, `metrics` {bucket: {impressions, reactions, comments, reposts, saves}})
+and ledger/comments.jsonl. Prints medians and lifts by lane, shape, and hook
+feature, plus the status of every experiment declared in strategy.md.
+
+Usage:
+  stanley-stats [--vault DIR] [--platform linkedin|x] [--metric reactions|comments|impressions|engagement] [--days 90] [--json]
+
+An experiment in strategy.md is a line like:
+  - experiment: number-in-hook | variants: with, without | metric: engagement | min_n: 4
+Posts opt into a variant with `experiment: {"number-in-hook": "with"}` in their ledger entry.
+The script reports per-variant medians and whether min_n is met; it does not claim significance
+below n=8 per arm, and says so.
+"""
+import argparse, json, os, re, statistics as st, sys, datetime as dt
+from pathlib import Path
+
+def read_jsonl(p):
+    if not p.exists(): return []
+    out = []
+    for line in p.read_text(encoding="utf-8").splitlines():
+        try: out.append(json.loads(line))
+        except Exception: pass
+    return out
+
+def metric_of(post, metric, bucket_pref=("7d", "24h", "1h")):
+    m = post.get("metrics") or {}
+    for b in bucket_pref:
+        if b in m and isinstance(m[b], dict):
+            d = m[b]
+            if metric == "engagement":
+                return (d.get("reactions", 0) or 0) + 2 * (d.get("comments", 0) or 0) + 3 * (d.get("reposts", 0) or 0) + (d.get("saves", 0) or 0)
+            return d.get(metric)
+    return None
+
+SHAPE_AXES = ("opener", "body", "ending")
+
+def shape_keys(post):
+    """Categorical shape keys only. Free-text fields (receipt, note) become presence flags so they never split into n=1 buckets."""
+    sh = post.get("shape") or {}
+    keys = [f"{k}:{sh[k]}" for k in SHAPE_AXES if sh.get(k)]
+    if "receipt" in sh: keys.append("receipt:" + ("yes" if sh.get("receipt") else "no"))
+    if "hashtags" in sh: keys.append("hashtags:" + ("0" if not sh.get("hashtags") else "1+"))
+    return keys
+
+def hook_features(text):
+    hook = (text or "").strip().split("\n")[0]
+    return {
+        "number-in-hook": bool(re.search(r"\d", hook)),
+        "question-hook": hook.strip().endswith("?"),
+        "first-person-hook": bool(re.search(r"\b(I|we|my|our)\b", hook)),
+        "short-hook(<=80c)": len(hook) <= 80,
+        "ends-with-question": (text or "").strip().endswith("?"),
+        "has-em-dash": "—" in (text or ""),
+        "story-length(900-2000c)": 900 <= len(text or "") <= 2000,
+    }
+
+def median(xs):
+    xs = [x for x in xs if x is not None]
+    return (st.median(xs), len(xs)) if xs else (None, 0)
+
+def lift_table(rows, key_fn, metric, base_median):
+    groups = {}
+    for p in rows:
+        for k in key_fn(p):
+            groups.setdefault(k, []).append(metric_of(p, metric))
+    out = []
+    for k, vals in groups.items():
+        med, n = median(vals)
+        if med is None: continue
+        lift = (med / base_median) if base_median else None
+        out.append({"key": k, "n": n, "median": med, "lift": round(lift, 2) if lift else None})
+    return sorted(out, key=lambda r: -(r["lift"] or 0))
+
+def parse_experiments(vault):
+    p = vault / "strategy.md"
+    if not p.exists(): return []
+    exps = []
+    for line in p.read_text(encoding="utf-8").splitlines():
+        m = re.search(r"experiment:\s*([\w\-]+)\s*\|\s*variants:\s*([^|]+)\|\s*metric:\s*(\w+)(?:\s*\|\s*min_n:\s*(\d+))?", line)
+        if m:
+            exps.append({"name": m.group(1), "variants": [v.strip() for v in m.group(2).split(",")], "metric": m.group(3), "min_n": int(m.group(4) or 4)})
+    return exps
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--vault", default=os.environ.get("STANLEY_VAULT", "./stanley-vault"))
+    ap.add_argument("--platform"); ap.add_argument("--metric", default="engagement"); ap.add_argument("--days", type=int, default=90)
+    ap.add_argument("--json", action="store_true")
+    a = ap.parse_args()
+    v = Path(a.vault).expanduser()
+    posts = read_jsonl(v / "ledger/posts.jsonl")
+    cutoff = (dt.date.today() - dt.timedelta(days=a.days)).isoformat()
+    posts = [p for p in posts if p.get("date", "9999") >= cutoff and (not a.platform or p.get("platform") == a.platform)]
+    with_metrics = [p for p in posts if metric_of(p, a.metric) is not None]
+    base, n = median([metric_of(p, a.metric) for p in with_metrics])
+    report = {"posts": len(posts), "posts_with_metrics": n, "metric": a.metric, "median": base, "by_lane": [], "by_shape": [], "by_hook_feature": [], "experiments": []}
+    if n:
+        report["by_lane"] = lift_table(with_metrics, lambda p: [p.get("lane")] if p.get("lane") else [], a.metric, base)
+        report["by_shape"] = lift_table(with_metrics, shape_keys, a.metric, base)
+        report["by_hook_feature"] = lift_table(with_metrics, lambda p: [k for k, on in hook_features(p.get("text", "")).items() if on], a.metric, base)
+        report["top"] = sorted(({"url": p.get("url"), "hook": p.get("hook"), "value": metric_of(p, a.metric)} for p in with_metrics), key=lambda r: -r["value"])[:3]
+        # Reach vs pull: the post people saw most is often not the post people reacted to most.
+        by_imp = [p for p in posts if metric_of(p, "impressions") is not None]
+        if by_imp:
+            top_imp = max(by_imp, key=lambda p: metric_of(p, "impressions"))
+            report["top_by_reach"] = {"url": top_imp.get("url"), "hook": top_imp.get("hook"), "impressions": metric_of(top_imp, "impressions"), "engagement": metric_of(top_imp, "engagement")}
+        report["bottom"] = sorted(({"url": p.get("url"), "hook": p.get("hook"), "value": metric_of(p, a.metric)} for p in with_metrics), key=lambda r: r["value"])[:3]
+    for e in parse_experiments(v):
+        arms = {}
+        for p in with_metrics:
+            var = (p.get("experiment") or {}).get(e["name"])
+            if var: arms.setdefault(var, []).append(metric_of(p, e["metric"]))
+        arm_stats = {k: {"n": len(xs), "median": median(xs)[0]} for k, xs in arms.items()}
+        ready = all(arm_stats.get(vname, {}).get("n", 0) >= e["min_n"] for vname in e["variants"])
+        verdict = "not enough posts yet" if not ready else ("directional only (n<8 per arm)" if any(s["n"] < 8 for s in arm_stats.values()) else "compare medians")
+        report["experiments"].append({**e, "arms": arm_stats, "status": verdict})
+    if a.json:
+        print(json.dumps(report, indent=1)); return
+    print(f"{report['posts']} posts in {a.days}d, {n} with metrics. Median {a.metric}: {base}")
+    for title, rows in (("by lane", report["by_lane"]), ("by shape", report["by_shape"]), ("by hook feature", report["by_hook_feature"])):
+        if rows:
+            print(f"\n{title}:")
+            for r in rows: print(f"  {r['key']:32} n={r['n']:<3} median={r['median']:<8} lift={r['lift']}")
+    if report.get("top_by_reach"):
+        r = report["top_by_reach"]
+        print(f"\ntop by reach: {r['impressions']} impressions / {r['engagement']} engagement  {r['hook'][:70]}")
+        if report.get("top") and report["top"][0]["url"] != r["url"] and a.metric != "impressions":
+            print("  note: the most-seen post is not the most-reacted-to post. Reach and pull are different games; read both before naming a 'best post'.")
+    if report.get("top"):
+        print("\ntop:"); [print(f"  {r['value']:<6} {r['hook'][:70]}") for r in report["top"]]
+        print("bottom:"); [print(f"  {r['value']:<6} {r['hook'][:70]}") for r in report["bottom"]]
+    for e in report["experiments"]:
+        print(f"\nexperiment {e['name']} ({e['metric']}): {e['status']}")
+        for k, s in e["arms"].items(): print(f"  {k:12} n={s['n']} median={s['median']}")
+    if n and n < 8:
+        print("\nnote: fewer than 8 posts with metrics; treat every lift above as a hint, not a finding.")
+
+if __name__ == "__main__":
+    main()

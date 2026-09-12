@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.open-stanley.drain</string>
+  <!-- Runs every 30 minutes; the script itself enforces the window (default 08:00–23:00 local) and exits
+       immediately when the queue is empty. launchd fires missed calendar jobs on wake from sleep, which is
+       the retry: a closed lid at 10:00 becomes a run at 10:31 when you open it. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>-lc</string>
+    <string>"$HOME/.claude/plugins/open-stanley-drain.sh"</string>
+  </array>
+  <key>StartInterval</key><integer>1800</integer>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>/tmp/open-stanley-drain.log</string>
+  <key>StandardErrorPath</key><string>/tmp/open-stanley-drain.log</string>
+</dict>
+</plist>

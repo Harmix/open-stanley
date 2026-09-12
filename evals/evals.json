@@ -1,0 +1,20 @@
+{
+  "skill_name": "open-stanley",
+  "notes": "Deterministic audit tests run with evals/run_audit_tests.py. Behavioral evals (write/scout) run with skill-creator; private fixtures from the original chat export live in evals/private/ and are gitignored.",
+  "audit_tests": [
+    {"file": "fixtures/slop-post-generic.txt", "platform": "linkedin", "expect": "BLOCK",
+     "must_fire": ["lexicon", "not-x-but-y", "weasel", "bold-colon-list", "hashtags", "wrap-up", "setup-sentence", "choppy"]},
+    {"file": "fixtures/slop-comment-generic.txt", "platform": "comment", "expect": "BLOCK",
+     "must_fire": ["lexicon", "not-x-but-y", "agreement-opener"]},
+    {"file": "fixtures/human-post-notetaker.txt", "platform": "linkedin", "expect": "PASS", "must_not_fire": ["lexicon", "not-x-but-y", "choppy", "setup-sentence"]},
+    {"file": "fixtures/human-comment-state.txt", "platform": "comment", "expect": "PASS", "must_not_fire": ["agreement-opener", "comment-length"]},
+    {"file": "fixtures/human-post-dharmesh-style.txt", "platform": "linkedin", "expect": "PASS", "must_not_fire": ["lexicon", "choppy", "wrap-up"]},
+    {"file": "private/fixtures/stanley-comment-cloudflare.txt", "platform": "comment", "expect": "BLOCK", "must_fire": ["lexicon"], "optional": true},
+    {"file": "private/fixtures/stanley-comment-containers.txt", "platform": "comment", "expect": "BLOCK", "must_fire": ["agreement-opener", "comment-length"], "optional": true}
+  ],
+  "evals": [
+    {"id": 1, "prompt": "Here's the transcript of my Monday management sync (attached). Anything in there worth a LinkedIn post? Draft one if so.", "expected_output": "A story file with a receipt pointing at the upload, one draft that opens on the event, passes stanley-audit, and a single question asking the user for their claim; no invented numbers.", "files": ["fixtures/transcript-sample.md"]},
+    {"id": 2, "prompt": "Find me 3 posts on LinkedIn and X to comment on today and draft the comments. Don't show me anything you've shown me before.", "expected_output": "2–3 picks per platform with link, author, one-line why, and a 1–3 sentence comment each; none by the user; none in surfaced.jsonl; comments pass --platform comment audit."},
+    {"id": 3, "prompt": "This sounds like AI. Rewrite it so it sounds like me: <draft>", "expected_output": "A rewrite that removes the flagged patterns, keeps every specific, uses the voice.md exemplars' rhythm, stores the diff, and names the pattern that was fixed in one line."}
+  ]
+}

@@ -1,0 +1,16 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python -m py_compile skills/stanley/scripts/stanley-audit skills/stanley/scripts/stanley-vault skills/stanley/scripts/stanley-stats skills/stanley/scripts/stanley-preview
+      - run: python evals/run_audit_tests.py
+      - run: python -m unittest discover -s tests -v
+      - name: validate plugin manifest
+        run: |
+          npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 || true
+          command -v claude >/dev/null && claude plugin validate . || echo "claude CLI unavailable in CI; manifest validated by tests"

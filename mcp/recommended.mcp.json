@@ -1,0 +1,28 @@
+{
+  "_comment": "Optional servers that complement open-stanley. NOT auto-loaded. Copy the entries you want into your project's .mcp.json, or run the equivalent `claude mcp add` commands. Remote servers use OAuth; nothing here needs a secret in the file except where a ${user_config...} placeholder appears.",
+  "_claude_mcp_add": [
+    "claude mcp add --transport http pam https://api.pam.harmix.ai/v1/mcp/memory",
+    "claude mcp add --transport http exa https://mcp.exa.ai/mcp",
+    "claude mcp add --transport http x https://api.x.com/mcp",
+    "claude mcp add --transport http typefully https://mcp.typefully.com/mcp",
+    "claude mcp add --transport http fathom https://api.fathom.ai/mcp",
+    "claude mcp add --transport http granola https://mcp.granola.ai/mcp",
+    "claude mcp add --transport http slack https://mcp.slack.com/mcp",
+    "claude mcp add --transport http canva https://mcp.canva.com/mcp",
+    "claude mcp add --transport http recraft https://mcp.recraft.ai/mcp",
+    "claude mcp add --transport http replicate https://mcp.replicate.com",
+    "claude mcp add --transport http supermemory https://mcp.supermemory.ai/mcp"
+  ],
+  "mcpServers": {
+    "pam": { "type": "http", "url": "https://api.pam.harmix.ai/v1/mcp/memory", "_setup": "Claude app: Settings > Connectors > Add custom connector, paste the URL, Add, sign in to Pam, Approve memory:read" },
+    "exa": { "type": "http", "url": "https://mcp.exa.ai/mcp" },
+    "x": { "type": "http", "url": "https://api.x.com/mcp" },
+    "typefully": { "type": "http", "url": "https://mcp.typefully.com/mcp" },
+    "fathom": { "type": "http", "url": "https://api.fathom.ai/mcp" },
+    "slack": { "type": "http", "url": "https://mcp.slack.com/mcp" },
+    "canva": { "type": "http", "url": "https://mcp.canva.com/mcp" },
+    "replicate": { "type": "http", "url": "https://mcp.replicate.com" },
+    "playwright": { "type": "stdio", "command": "npx", "args": ["-y", "@playwright/mcp@latest"] },
+    "deepgram": { "type": "stdio", "command": "dg", "args": ["mcp"], "env": { "DEEPGRAM_API_KEY": "${user_config.deepgram_key}" } }
+  }
+}

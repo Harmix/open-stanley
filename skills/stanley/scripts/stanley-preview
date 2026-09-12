@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""stanley-preview: render a post draft as a LinkedIn or X preview card (PNG).
+
+This is the "Edit this draft" card the paid product sends: the post as it will
+look in the feed, with the fold marked, so the human reviews the real thing.
+
+Usage:
+  stanley-preview DRAFT.md --platform linkedin|x --out preview.png
+                  [--name "Nazar Ponochevnyi"] [--headline "Founder & CEO at Harmix"]
+                  [--handle nazar_198] [--avatar path.jpg] [--dark]
+
+Needs Playwright (python) with Chromium. Falls back to writing the HTML next to
+--out (preview.html) if Playwright is unavailable, so a browser tool can render it.
+"""
+import argparse, base64, html, re, sys
+from pathlib import Path
+
+CSS = """
+*{box-sizing:border-box} body{margin:0;background:#f3f2ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+.card{width:640px;margin:32px auto;background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.15);padding:16px 20px;color:#1a1a1a}
+.hd{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.av{width:48px;height:48px;border-radius:50%;background:#ccc;object-fit:cover}
+.nm{font-weight:600;font-size:15px}.sub{color:#666;font-size:12px}
+.body{font-size:15px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word}
+.fold{border-top:1px dashed #d33;color:#d33;font-size:11px;padding-top:4px;margin:10px 0 6px}
+.ft{display:flex;justify-content:space-between;color:#666;font-size:12px;margin-top:14px;border-top:1px solid #eee;padding-top:10px}
+.x body{background:#000}.x .card{background:#000;color:#e7e9ea;border:1px solid #2f3336;box-shadow:none}.x .nm{color:#e7e9ea}.x .sub{color:#71767b}.x .ft{color:#71767b;border-top-color:#2f3336}
+.x .tweet{border-bottom:1px solid #2f3336;padding:10px 0}.x .tweet:last-child{border:none}
+.badge{position:absolute;top:8px;right:16px;font-size:11px;color:#999}
+"""
+
+def esc(t): return html.escape(t)
+
+def linkedin_html(text, name, headline, avatar, chars):
+    fold_at = 210
+    first = text[:fold_at]; rest = text[fold_at:]
+    body = esc(first) + ('<div class="fold">— fold: "…more" appears about here (%d chars shown) —</div>' % fold_at if rest else "") + esc(rest)
+    return f"""<div class="card"><div class="hd"><img class="av" src="{avatar}"><div><div class="nm">{esc(name)}</div><div class="sub">{esc(headline)}</div><div class="sub">Now · 🌐</div></div></div>
+<div class="body">{body}</div><div class="ft"><span>👍 ❤️ 💡</span><span>{chars} characters</span></div></div>"""
+
+def x_html(text, name, handle, avatar):
+    tweets = [t.strip() for t in re.split(r"\n\s*---+\s*\n", text) if t.strip()]
+    parts = []
+    for i, t in enumerate(tweets):
+        over = len(t) > 280
+        parts.append(f'<div class="tweet"><div class="hd"><img class="av" src="{avatar}"><div><div class="nm">{esc(name)} <span class="sub">@{esc(handle)} · now</span></div></div></div>'
+                     f'<div class="body">{esc(t)}</div><div class="ft"><span>💬 🔁 ♡ 📊</span><span style="color:{"#d33" if over else "inherit"}">{len(t)}/280{" — over" if over else ""}</span></div></div>')
+    return '<div class="card">' + "".join(parts) + "</div>"
+
+def build(text, platform, name, headline, handle, avatar_path):
+    if avatar_path and Path(avatar_path).exists():
+        b = base64.b64encode(Path(avatar_path).read_bytes()).decode()
+        avatar = f"data:image/jpeg;base64,{b}"
+    else:
+        avatar = "data:image/svg+xml;base64," + base64.b64encode(b'<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><circle cx="24" cy="24" r="24" fill="#c9c9c9"/></svg>').decode()
+    inner = linkedin_html(text, name, headline, avatar, len(text)) if platform == "linkedin" else x_html(text, name, handle, avatar)
+    return f"<!doctype html><html class='{platform}'><head><meta charset='utf-8'><style>{CSS}</style></head><body>{inner}</body></html>"
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("draft"); ap.add_argument("--platform", default="linkedin", choices=["linkedin", "x"])
+    ap.add_argument("--out", default="preview.png"); ap.add_argument("--name", default="Your Name")
+    ap.add_argument("--headline", default="Your headline"); ap.add_argument("--handle", default="handle"); ap.add_argument("--avatar")
+    a = ap.parse_args()
+    text = Path(a.draft).read_text(encoding="utf-8") if a.draft != "-" else sys.stdin.read()
+    page = build(text.strip(), a.platform, a.name, a.headline, a.handle, a.avatar)
+    out = Path(a.out); html_path = out.with_suffix(".html"); html_path.write_text(page, encoding="utf-8")
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            b = p.chromium.launch(); pg = b.new_page(viewport={"width": 704, "height": 400}, device_scale_factor=2)
+            pg.set_content(page); pg.locator(".card").screenshot(path=str(out)); b.close()
+        print(out)
+    except Exception as e:
+        print(f"{html_path} (Playwright unavailable: {e}; open the HTML with a browser tool to screenshot)")
+
+if __name__ == "__main__":
+    main()
