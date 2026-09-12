@@ -4,10 +4,10 @@
   "description": "An open head of content for Claude: mines your meetings, Slack, email and notes through whatever MCPs you have connected, drafts LinkedIn/X posts and comments in your voice by editing your own material, audits every draft against 2026 AI-slop and platform rules, publishes through your own browser, runs the daily rituals as scheduled tasks, and learns from your edits.",
   "author": {
     "name": "Nazar Ponochevnyi",
-    "url": "https://github.com/nazar-ponochevnyi"
+    "url": "https://github.com/NazarPonochevnyi"
   },
-  "homepage": "https://github.com/nazar-ponochevnyi/open-stanley",
-  "repository": "https://github.com/nazar-ponochevnyi/open-stanley",
+  "homepage": "https://github.com/Harmix/open-stanley",
+  "repository": "https://github.com/Harmix/open-stanley",
   "license": "MIT",
   "keywords": [
     "linkedin",

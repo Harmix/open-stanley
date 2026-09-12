@@ -118,7 +118,7 @@ Since 2 Aug 2026 every word Claude generates carries Anthropic's SynthID-Text wa
 Two weeks, same lanes, both tools fed the same inputs.
 
 1. Install locally first: `claude --plugin-dir ~/Downloads/temp/open-stanley` (or push to GitHub and `/plugin marketplace add`). Say "set up Stanley" and let onboarding build `voice.md` from your real posts; check the yaml block matches how you write.
-2. Create the vault as a private repo; add the scheduled tasks (scout 10/22, recap 22, soapbox 08) in Cowork.
+2. Create the vault as a folder in your synced Google Drive, connect it to the chat; add the scheduled tasks (scout 10/22, recap 22, soapbox 08) in Cowork with "Require this computer" and that folder.
 3. Each morning, give both tools the same material (the same voice note or the same Pam meeting). Keep both drafts.
 4. Score, per draft, in `ledger/` and a note for Stanley: minutes you spent editing, words changed (diff), whether it shipped, and 7-day engagement. Comments: relevance (posted / skipped and why), and whether the target was fresh.
 5. Two things to watch that the export says Stanley loses on: repeats/own-post suggestions (should be zero here), and whether feedback sticks after three days.

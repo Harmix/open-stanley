@@ -10,14 +10,14 @@ It is the loop that "AI head of content" products sell for $47–149 a month, re
 
 ```
 # Claude Code / Cowork
-/plugin marketplace add nazar-ponochevnyi/open-stanley
+/plugin marketplace add Harmix/open-stanley
 /plugin install open-stanley@open-stanley
 
 # Codex, or any agent that reads SKILL.md (Agent Skills standard)
-npx skills add nazar-ponochevnyi/open-stanley
+npx skills add Harmix/open-stanley
 ```
 
-Then say: **"set up Stanley"**. Onboarding reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, proposes three lanes, builds a voice profile from your own words, and asks where the vault should live (a private GitHub repo if you want scheduled runs).
+Then say: **"set up Stanley"**. Onboarding reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, proposes three lanes, builds a voice profile from your own words, and asks where the vault should live (a plain folder in your synced Google Drive, so scheduled runs on your laptop can read it).
 
 ## What it does
 
@@ -67,11 +67,11 @@ LinkedIn silently demotes "generic AI" posts (May 2026) and a million people hav
 
 ## Vault
 
-Your state is a folder of markdown and jsonl (`vault-template/`): who you are, your strategy, your voice with verbatim exemplars, standing instructions, stories with sources, a ledger of every post/comment/run/surfaced link, and your draft→final diffs. Keep it in a private repo; scheduled runs clone it.
+Your state is a folder of markdown and jsonl (`vault-template/`): who you are, your strategy, your voice with verbatim exemplars, standing instructions, stories with sources, a ledger of every post/comment/run/surfaced link, and your draft→final diffs. Keep it in a plain folder inside your synced Google Drive (laptop mode) or mirror it through the Drive/Notion MCP (cloud mode); git is an option for Claude Code and CI.
 
-## Scheduled tasks: cloud + laptop
+## Scheduled tasks: laptop or cloud
 
-Cowork scheduled tasks run in the cloud even when your laptop is closed, with your MCPs but without your browser. So the rituals are split. Cloud runs (from `templates/scheduled-tasks/`) mine, draft, audit, post to X through the official X MCP, and pull analytics through your posting MCP; anything that needs LinkedIn's UI or an X reply box is parked in the vault's local queue with an expiry. Whenever your laptop is online, the queue is drained: a `SessionStart` hook tells Claude at the top of any session that items are waiting, and a launchd job (`templates/launchd/`) runs `claude -p "/open-stanley:drain" --chrome` every 30 minutes inside a window (default 08:00–23:00), re-firing after sleep. Every run records what it promised and what it delivered; a run that finds nothing still reports.
+The rituals (`templates/scheduled-tasks/`) run as Cowork scheduled tasks or Claude Code routines. Every run records what it promised and what it delivered; a run that finds nothing still reports.
 
 Two modes. **Laptop mode (default):** the vault is a plain folder inside your desktop-synced Google Drive (or iCloud/Dropbox), every scheduled task runs on your computer with that folder and your browser, so each job reads LinkedIn and X itself; runs happen only while the computer is awake. **Cloud mode:** tasks run in the cloud with your connectors and no browser; the vault is mirrored through the Google Drive (or Notion) MCP and browser-only work waits in a queue for the `drain` task on your laptop. Git is for Claude Code users running jobs from their own machine; Cowork scheduled tasks can't clone a private repo. Details and costs: `skills/stanley/references/vault-backends.md` and `scheduling.md`. Your own rule overrides live in the vault's `skills/` folder and load in every run, local or cloud. The plugin is the same on Cowork and Claude Code; Claude Code inherits your claude.ai connectors when you're logged in with the subscription.
 
