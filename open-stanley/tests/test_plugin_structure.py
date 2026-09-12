@@ -5,7 +5,9 @@ ROOT = Path(__file__).resolve().parent.parent
 class StructureTests(unittest.TestCase):
     def test_manifest_and_marketplace_versions_match(self):
         pj = json.loads((ROOT / ".claude-plugin/plugin.json").read_text())
-        mk = json.loads((ROOT.parent / ".claude-plugin/marketplace.json").read_text())
+        mkp = ROOT.parent / ".claude-plugin/marketplace.json"
+        if not mkp.exists(): self.skipTest("installed copy: no marketplace root")
+        mk = json.loads(mkp.read_text())
         self.assertEqual(pj["version"], mk["plugins"][0]["version"])
         self.assertIn(pj["version"], (ROOT / "CHANGELOG.md").read_text())
     def test_every_skill_has_valid_frontmatter(self):
@@ -29,7 +31,9 @@ class StructureTests(unittest.TestCase):
     def test_gitignore_in_template(self):
         self.assertIn(".stanley-scripts/", (ROOT / "vault-template/.gitignore").read_text())
     def test_no_private_fixtures_tracked(self):
-        self.assertIn("tests/evals/private/", (ROOT.parent / ".gitignore").read_text())
+        gi = ROOT.parent / ".gitignore"
+        if not gi.exists(): self.skipTest("installed copy: no repo root")
+        self.assertIn("tests/evals/private/", gi.read_text())
 
 if __name__ == "__main__":
     unittest.main()
