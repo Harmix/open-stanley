@@ -95,5 +95,5 @@ Two modes. **Laptop mode (default):** the vault is a plain folder inside your de
 
 ## Contributing
 
-Rules are measurable. `tests/evals/run_audit_tests.py` runs the deterministic tests; `tests/evals/evals.json` holds the behavioral evals for skill-creator. A rule PR needs a fixture that proves it. See `docs/CONTRIBUTING.md`. If you opt in inside the plugin, it will prepare a monthly, text-free contribution of which rules fired and which edits you made (schema in `skills/learn/references/contribution-schema.md`).
+Rules are measurable. `tests/evals/run_audit_tests.py` runs the deterministic tests; `tests/evals/evals.json` holds the behavioral evals for skill-creator. A rule PR needs a fixture that proves it. See `docs/CONTRIBUTING.md`. If you opt in inside the plugin, it will prepare a monthly, text-free contribution of which rules fired and which edits you made (schema in `skills/learn/references/contribution-schema.md`). MIT.
 
