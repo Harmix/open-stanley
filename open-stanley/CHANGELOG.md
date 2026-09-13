@@ -2,6 +2,10 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.7.2 — 2026-09-13
+
+A weekly-drafts run (Opus, marketplace install) produced three good drafts with the plugin's own fact-checker agent and then told the user the plugin was not installed, because `ListPlugins` does not list marketplace plugins and a skill search returned nothing. The `stanley` skill now says so (step 1c): if this file loaded, the plugin is installed; load the other skills by exact `open-stanley:<name>` id, fall back to reading `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md`, and never report the plugin missing from inside it. Both preambles name the skill ids.
+
 ## 0.7.1 — 2026-09-12
 
 The repo is now a marketplace with the plugin in `open-stanley/` (Cowork's Add marketplace refused a plugin at the marketplace root; `source: "./open-stanley"` is the layout Anthropic's own marketplaces use). `dist/open-stanley.plugin` is gone: install from the marketplace in Cowork or Claude Code.
