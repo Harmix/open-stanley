@@ -42,7 +42,7 @@ Sidebar → Scheduled → New: name, prompt (from `templates/scheduled-tasks/<jo
 
 Every template starts with the mode's preamble: find the vault, probe capabilities, `run-start`, `stanley-audit selftest`, do the job, `run-end` with `--shown/--queued/--browser`, deliver the result in the session output (or via the user's `notify` capability). The delivered message says what it looked at and what it found even when the answer is "nothing".
 
-Times are the user's local time; Cowork takes local times, `create_trigger` takes UTC cron. Defaults (from `strategy.md`): soapbox 08:00, scout 10:00 and 22:00, recap 22:00, **tune Friday 17:00**, mine Saturday 18:00, weekly drafts Sunday 10:00, orbit + strategy check-in on the 1st.
+Times are the user's local time; Cowork takes local times, `create_trigger` takes UTC cron. Defaults (from `strategy.md`): soapbox 08:00, scout 10:00 and 22:00, recap 22:00, mine Saturday 18:00, weekly drafts Sunday 10:00, orbit + strategy check-in on the 1st.
 
 ## The cadence ladder
 
@@ -50,12 +50,12 @@ Each rung reads a signal that actually accumulates at that frequency. Putting a 
 
 | Rung | Job | Reads | Produces |
 |---|---|---|---|
+| Continuously | every run | the user's corrections, in the moment they are made | a diff and a standing instruction the next draft reads |
 | Daily | soapbox, scout, recap | today's feed, today's numbers, open threads on both sides | material, comments, a reaction |
-| Weekly | **tune** (Fri) → mine (Sat) → drafts (Sun) | the week's edits, skips and audit overrides; then the week's meetings | rule changes, then stories, then three posts |
-| Monthly | orbit + strategy check-in | 30 days of metrics, who kept showing up, the experiment's arms | one strategy change, a verdict, one studied creator |
-| Quarterly | the monthly, every third month | lanes and goal against a quarter of evidence | keep/drop a lane; one `longform` flagship |
+| Weekly | mine (Sat) → tune + drafts (Sun) | the week's meetings; then repeated corrections and the experiment's arms | stories, then promoted rules, then three posts |
+| Monthly | orbit + strategy check-in | 30 days of metrics, who kept showing up, one creator studied from outside | one strategy change, a verdict, one new format to test |
 
-Friday → Saturday → Sunday is deliberate: the tune's rule changes land before the week's material is mined, which lands before the drafts are written.
+The learning is not concentrated in one job: corrections apply immediately, the weekly run promotes what recurred, and the monthly is where a change to the strategy itself gets proposed. Nothing waits a month to be noticed.
 
 ## Which model runs each job
 
@@ -63,7 +63,7 @@ The skills carry the judgment; the runs mostly execute them.
 
 | Job | Model | Why |
 |---|---|---|
-| soapbox, scout (both), recap, mine, tune, monthly, drain | Sonnet | reading, linting, one short message; no writing in the user's voice |
+| soapbox, scout (both), recap, mine, monthly, drain | Sonnet | reading, linting, one short message; no writing in the user's voice |
 | weekly drafts, longform | Opus | writes in the user's voice and runs the critic and fact-checker |
 
 Change it per task in Scheduled → task → model. Model ids accepted in September 2026: `claude-sonnet-5`, `claude-opus-5`.

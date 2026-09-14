@@ -9,14 +9,11 @@ Only ever with text the user approved verbatim (or a lane marked `autonomous: tr
 
 ## 1. Choose the adapter
 
-Writing on the user's own behalf has an official path on both platforms, and the browser is the fallback — not the other way round. Full table, with what is and is not self-serve, in `../stanley/references/platform-access.md`; read it before you automate a platform this skill does not already cover. `my-human.md` records the decision per platform as `post_path:`, so check there first and do not re-derive it every run.
+1. **An MCP the user already has connected** for this platform (`post` capability, or an official one they set up such as X's hosted MCP at `api.x.com/mcp`). Confirm it returns a URL.
+2. **Browser** (the user's own logged-in session). Correct for everything at this volume — a post or two a day is a person using their account, not automation worth routing around. Post at human pace and space the parts of a thread: an X thread on 12 Sep 2026 went out as four writes in about two minutes and the account was suspended the next day. Cause unknown, but velocity is the part worth not repeating.
+3. Otherwise: hand the final text back formatted for copy-paste and say why you couldn't post.
 
-1. **A connected MCP that covers this platform** (`post` capability, or the official X MCP at `api.x.com/mcp` — it posts, replies, and publishes Articles; the free X tier covers writes). Confirm it returns a URL.
-2. **An official first-party API the user has set up**: on LinkedIn, a developer app with the `w_member_social` scope posts, comments and likes as the authenticated member, self-serve and free. If they have not set one up, offer it once, and keep going with the browser meanwhile.
-3. **Browser** (the user's own logged-in session) — the fallback, and the only path for anything the official surfaces do not cover. Post at human pace: one action, a real pause, never a burst. A four-tweet X thread posted through the browser on 12 Sep 2026 was followed by a suspension the next day; unproven as cause, but the reason writes prefer the official path.
-4. Otherwise: hand the final text back formatted for copy-paste and say why you couldn't post.
-
-Record which path you used in the ledger row (`--via mcp|api|browser`) so a later suspension or rate-limit has something to correlate against.
+`my-human.md` records `post_path:` per platform; check it rather than re-deriving. Official APIs exist for writing on both platforms and are in `../stanley/references/platform-access.md` — mention one once if the user hits a limit or asks, never as a prerequisite. Record which path you used in the ledger row (`--via mcp|browser`).
 
 ## 2. LinkedIn via browser
 

@@ -49,7 +49,7 @@ Audit each with `skills/stanley/scripts/stanley-audit - --platform comment --vau
 
 For each pick: the link, the author, one line of why, then the comment on its own lines so it can be copied. Then ask: post which? The user may answer with numbers.
 
-- Reading is the half with no official self-serve path on either LinkedIn or X (X's free API tier has no reads at all), so the browser is correct here — but check `my-human.md`'s `post_path:` and the user's MCPs before assuming it, and see `../stanley/references/platform-access.md` for pacing rules when the browser is the only way in.
+- Scanning is the highest-volume thing this plugin does, so the pacing discipline belongs here rather than around posting: the 25-posts-per-run cap, one page at a time, and stop-and-report on any captcha or rate-limit notice. `../stanley/references/platform-access.md` has the rules and the reasoning.
 - A reply to someone who answered the user's comment is a different register from a first comment: see the *Conversations* section of the `recap` skill and the *Reply voice* block in `voice.md`; the no-agreement-opener rule does not apply there.
 - Approved → post through the browser (LinkedIn comment box; X reply box, which works for any account, unlike the API) or through a `post` MCP; then `skills/stanley/scripts/stanley-vault comment-add`.
 - Skipped → `comment-add --skipped --reason "<their words>"`; the reason tunes the next scan.

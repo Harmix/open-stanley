@@ -11,7 +11,13 @@ Usage:
 
 An experiment in strategy.md is a line like:
   - experiment: number-in-hook | variants: with, without | metric: engagement | min_n: 4
+  - experiment: ending | variants: open-question, flat | metric: comments | min_n: 4 | classify: ends-with-question
 Posts opt into a variant with `experiment: {"number-in-hook": "with"}` in their ledger entry.
+If the experiment names an observable property of the text -- either the experiment name is
+itself a hook feature, or `classify:` names one -- every untagged post is classified from its
+text instead (true -> first variant, false -> second). Arms then fill from history rather than
+waiting on a tag nobody remembers to write; posts published outside the write/publish path
+still count. Tags win over classification where both exist.
 The script reports per-variant medians and whether min_n is met; it does not claim significance
 below n=8 per arm, and says so.
 """
@@ -80,9 +86,10 @@ def parse_experiments(vault):
     if not p.exists(): return []
     exps = []
     for line in p.read_text(encoding="utf-8").splitlines():
-        m = re.search(r"experiment:\s*([\w\-]+)\s*\|\s*variants:\s*([^|]+)\|\s*metric:\s*(\w+)(?:\s*\|\s*min_n:\s*(\d+))?", line)
+        m = re.search(r"experiment:\s*([\w\-]+)\s*\|\s*variants:\s*([^|]+)\|\s*metric:\s*(\w+)(?:\s*\|\s*min_n:\s*(\d+))?(?:\s*\|\s*classify:\s*([\w\-()<=]+))?", line)
         if m:
-            exps.append({"name": m.group(1), "variants": [v.strip() for v in m.group(2).split(",")], "metric": m.group(3), "min_n": int(m.group(4) or 4)})
+            exps.append({"name": m.group(1), "variants": [v.strip() for v in m.group(2).split(",")],
+                         "metric": m.group(3), "min_n": int(m.group(4) or 4), "classify": m.group(5)})
     return exps
 
 def main():
@@ -110,14 +117,22 @@ def main():
             report["top_by_reach"] = {"url": top_imp.get("url"), "hook": top_imp.get("hook"), "impressions": metric_of(top_imp, "impressions"), "engagement": metric_of(top_imp, "engagement")}
         report["bottom"] = sorted(({"url": p.get("url"), "hook": p.get("hook"), "value": metric_of(p, a.metric)} for p in with_metrics), key=lambda r: r["value"])[:3]
     for e in parse_experiments(v):
+        classified = 0
         arms = {}
         for p in with_metrics:
             var = (p.get("experiment") or {}).get(e["name"])
+            if not var:
+                # observable property? classify from the text instead of waiting on a tag.
+                feats = hook_features(p.get("text", ""))
+                key = e.get("classify") or e["name"]
+                if key in feats and len(e["variants"]) == 2:
+                    var = e["variants"][0] if feats[key] else e["variants"][1]
+                    classified += 1
             if var: arms.setdefault(var, []).append(metric_of(p, e["metric"]))
         arm_stats = {k: {"n": len(xs), "median": median(xs)[0]} for k, xs in arms.items()}
         ready = all(arm_stats.get(vname, {}).get("n", 0) >= e["min_n"] for vname in e["variants"])
         verdict = "not enough posts yet" if not ready else ("directional only (n<8 per arm)" if any(s["n"] < 8 for s in arm_stats.values()) else "compare medians")
-        report["experiments"].append({**e, "arms": arm_stats, "status": verdict})
+        report["experiments"].append({**e, "arms": arm_stats, "status": verdict, "classified": classified})
     if a.json:
         print(json.dumps(report, indent=1)); return
     print(f"{report['posts']} posts in {a.days}d, {n} with metrics. Median {a.metric}: {base}")
@@ -134,7 +149,7 @@ def main():
         print("\ntop:"); [print(f"  {r['value']:<6} {r['hook'][:70]}") for r in report["top"]]
         print("bottom:"); [print(f"  {r['value']:<6} {r['hook'][:70]}") for r in report["bottom"]]
     for e in report["experiments"]:
-        print(f"\nexperiment {e['name']} ({e['metric']}): {e['status']}")
+        print(f"\nexperiment {e['name']} ({e['metric']}): {e['status']}" + (f"  [{e['classified']} arm(s) read from the text, not tagged]" if e.get("classified") else ""))
         for k, s in e["arms"].items(): print(f"  {k:12} n={s['n']} median={s['median']}")
     if n and n < 8:
         print("\nnote: fewer than 8 posts with metrics; treat every lift above as a hint, not a finding.")

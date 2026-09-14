@@ -5,9 +5,9 @@ description: Write one long piece — a teardown, a field report, or a build log
 
 # Longform
 
-A post is worth a day. A good long piece is worth a quarter: it is the thing people link to, quote back at you, and remember you for, and it feeds four to six posts that each point at it. Most people's content loop never produces one because there is no slot for it. This is the slot.
+A post is worth a day. A good long piece is worth a quarter: it is the thing people link to, quote back at you, and remember you for, and it feeds four to six posts that each point at it.
 
-Run it at most monthly. A thin long piece is worse than no long piece.
+This is a format the plugin knows how to execute, not a ritual with a slot in the calendar. Use it when the user asks for it, or when the monthly strategy check-in proposes it as an experiment because the evidence says long pieces work in their lane. Do not schedule it on a hunch, and never pad one out: a thin long piece is worse than no long piece.
 
 ## 1. Does the material carry a long piece?
 

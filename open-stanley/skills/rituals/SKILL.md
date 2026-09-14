@@ -25,19 +25,17 @@ Do not skip a meeting because most of it is inside the private line (investor ca
 
 Three drafts, each from a different fresh story and a different lane, each run through `write` (so audited, with receipts and the one question attached). Deliver as three hooks with one line each and the drafts below; ask which to schedule and when. Nothing is scheduled without a yes. Record the three as `drafts/` files; anything not chosen in 14 days is archived, and the user is told once ("archived two stale drafts; reversible in drafts/archive/").
 
-## Tune (weekly, ~Friday 17:00)
+## Tune (inside the Sunday run, before drafting)
 
-The improvement loop. Everything else in this plugin produces content; this is the only ritual whose output is a change to how the plugin works, and it runs weekly because the signals it reads accumulate weekly — where the monthly numbers do not.
+Corrections already land the moment they happen: when the user rewrites a draft, a comment or a reply, the running skill files the diff to `learn/diffs.jsonl` and any standing instruction to `instructions.md`, and the next draft reads both. That loop works and does not need a scheduled meeting.
 
-Load `/open-stanley:learn` and work only from what happened this week:
+What nothing does is the step the vault's own design calls for: `learn/rules.md` says "candidates live in diffs.jsonl until confirmed", and nothing ever promotes them. So once a week, at the top of the weekly-drafts run and before writing anything:
 
-- **Draft→final diffs** (`learn/diffs/`): what the user cut, added, or reworded in the 2–3 drafts they actually posted, plus any comment or reply they rewrote before sending. This is the densest signal the plugin gets, it arrives every week, and one clear pattern beats a month of engagement noise.
-- **Skips**: scout picks shown and not used, drafts left unposted. Ask why in one line if the reason is not obvious from the ledger; a skip with a reason retunes scoring, a skip without one is noise.
-- **Rules that fired**: which `stanley-audit` rules tripped repeatedly, and whether the user overrode any of them. A rule the user overrides twice is a rule that is wrong for them.
+- **Promote** any correction that has now appeared twice from a candidate diff to a confirmed line in `learn/rules.md`. Twice is the bar; once is a one-off and stays a diff.
+- **Retire** a confirmed rule the user has overridden twice since it was written. A rule that keeps getting overridden is wrong, and leaving it in makes every future draft worse.
+- **Check the arms** of the experiments in `strategy.md` with `stanley-stats --experiments`. Report counts, call no winner before both arms hold `min_n`, and if one arm is starving say so with a number ("open-question endings: 1 of 4; three of this week's drafts should end on a question"). Then write those drafts so the thin arm fills — that is the one place the plugin should let the experiment steer what it writes.
 
-Then the **active experiment**, which lives under `## Experiments` in `strategy.md`. At most one runs at a time; `write` assigns the arm for each new post and tags it (`--experiment name=variant`). Report `stanley-stats --experiments` arm counts plainly and *do not* call a winner until both arms have at least four posts, however tempting the gap looks. Observation alone cannot separate a shape from its topic, its timing, and its luck — the experiment is the only thing here that produces a real answer, so protect it from being read early.
-
-Update `voice.md` and `learn/rules.md` with anything that recurred at least twice. Propose at most two changes and apply none without a yes. A week with nothing to learn from gets one honest line, not an invented rule.
+Two changes at most, and none applied without a yes.
 
 ## Repackage (every two weeks)
 
@@ -55,7 +53,7 @@ Three things the monthly owns that the weekly Tune deliberately does not:
 
 - **Close or rotate the experiment.** If both arms have 4+ posts, declare the verdict, write it into `## Resolved bets` with the numbers and the date, and propose the next experiment. If an experiment has been open for two months without filling its arms, it is the wrong experiment — kill it and pick one that every post can be tagged with.
 - **Bring in something from outside.** Self-observation recombines what the user already does; it cannot add a move they have never made. Once a month run `/open-stanley:study` on one person who is winning in one of their lanes (not the same person twice running) and add the shapes to the catalog. Propose one to try next month.
-- **Flagship check.** Has a `longform` piece run in the last quarter? If not, say which story cluster is closest to meeting one of the three entry conditions in the `longform` skill.
+- **Find a format gap.** From the creators studied this month, name a format or shape that works in the user's lane and that the user has never tried — a carousel, a short video, a teardown, a build-in-public series, whatever the evidence actually shows. Propose exactly one, as the next experiment with its arms and `min_n`, not as a thing to go do. The plugin should arrive at new formats by watching what works and testing it, never by adopting whatever someone mentioned in passing.
 
 ## Trend alert (on event)
 
