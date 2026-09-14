@@ -11,6 +11,7 @@
 - Connected sources the skill may mine (filled by the capability probe): meetings= · messages= · docs= · calendar= · memory= · post= · notify=
 - mode: laptop                # laptop (tasks run on my computer with this folder and my browser) | cloud (Drive/Notion mirror, queue + drain)
 - vault: local                # local | drive | notion | git
+- post_path: linkedin=browser; x=browser   # how each platform is reached for WRITES: mcp | api | browser. See skills/stanley/references/platform-access.md; official beats browser.
 - vault_path:                 # laptop mode: the synced folder, e.g. ~/Library/CloudStorage/GoogleDrive-<account>/My Drive/Work/stanley-vault
-- schedule: soapbox=daily 08:00; scout=daily 10:00,22:00; recap=daily 22:00; weekly-drafts=weekly sun 10:00; mine=weekly sat 18:00; monthly=monthly 1 09:00   # local time; `stanley-vault missed` compares this with ledger/runs.jsonl
-- catch_up: recap, weekly-drafts, mine, monthly   # jobs worth running late; a late soapbox or scout is noise
+- schedule: soapbox=daily 08:00; scout=daily 10:00,22:00; recap=daily 22:00; tune=weekly fri 17:00; mine=weekly sat 18:00; weekly-drafts=weekly sun 10:00; monthly=monthly 1 09:00   # local time; `stanley-vault missed` compares this with ledger/runs.jsonl
+- catch_up: recap, tune, weekly-drafts, mine, monthly   # jobs worth running late; a late soapbox or scout is noise

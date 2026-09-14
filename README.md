@@ -26,7 +26,7 @@ The repo is a one-plugin marketplace: `.claude-plugin/marketplace.json` at the r
 
 ```
 open-stanley/.claude-plugin/   plugin manifest
-skills/           14 skills; stanley/scripts/ holds the 5 CLI scripts, stanley/references/ the shared rules
+skills/           15 skills; stanley/scripts/ holds the 5 CLI scripts, stanley/references/ the shared rules
 agents/           critic, fact-checker, scout subagents
 templates/        scheduled-task prompts (laptop and cloud preambles) and the launchd drain job
 vault-template/   the empty vault a new user starts from
@@ -43,6 +43,7 @@ docs/             HOW-IT-WORKS, DESIGN, RESEARCH, CONTRIBUTING, research notes
 | "write it" | `write`: edits the story into a post in your voice, audits it, hands it over with one question |
 | "does this sound like AI?" | `audit`: the linter (`skills/stanley/scripts/stanley-audit`) plus an editor's read: claims, freshness, novelty |
 | "find posts to comment on" | `scout`: your feeds through your browser, hard filters (not yours, not shown before, not stale), 1–3 sentence comments |
+| "write an article / a teardown" | `longform`: one long piece a month from the vault's receipts, cut down into the posts that point at it |
 | "post it to both" | `publish`: LinkedIn + X through your browser (threads, first-comment links, scheduling), ledger updated |
 | "how did it do?" | `recap`: deltas, who showed up, one recommendation |
 | morning question, Sunday drafts, repackage, orbit, strategy check-in | `rituals`, as scheduled tasks from `templates/scheduled-tasks/` |

@@ -9,9 +9,14 @@ Only ever with text the user approved verbatim (or a lane marked `autonomous: tr
 
 ## 1. Choose the adapter
 
-1. **Browser** (default; the user's own session). Safest for both platforms: LinkedIn has no public posting API for individuals, and X's API blocks replies/quotes to non-mentioning accounts and draws automation scrutiny.
-2. **Posting MCP** if present (`post` capability): use it when the user asked for it or the browser is unavailable (remote scheduled runs usually have no browser). Confirm the MCP returns a URL.
-3. Otherwise: hand the final text back formatted for copy-paste and say why you couldn't post.
+Writing on the user's own behalf has an official path on both platforms, and the browser is the fallback — not the other way round. Full table, with what is and is not self-serve, in `../stanley/references/platform-access.md`; read it before you automate a platform this skill does not already cover. `my-human.md` records the decision per platform as `post_path:`, so check there first and do not re-derive it every run.
+
+1. **A connected MCP that covers this platform** (`post` capability, or the official X MCP at `api.x.com/mcp` — it posts, replies, and publishes Articles; the free X tier covers writes). Confirm it returns a URL.
+2. **An official first-party API the user has set up**: on LinkedIn, a developer app with the `w_member_social` scope posts, comments and likes as the authenticated member, self-serve and free. If they have not set one up, offer it once, and keep going with the browser meanwhile.
+3. **Browser** (the user's own logged-in session) — the fallback, and the only path for anything the official surfaces do not cover. Post at human pace: one action, a real pause, never a burst. A four-tweet X thread posted through the browser on 12 Sep 2026 was followed by a suspension the next day; unproven as cause, but the reason writes prefer the official path.
+4. Otherwise: hand the final text back formatted for copy-paste and say why you couldn't post.
+
+Record which path you used in the ledger row (`--via mcp|api|browser`) so a later suspension or rate-limit has something to correlate against.
 
 ## 2. LinkedIn via browser
 

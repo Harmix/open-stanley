@@ -12,6 +12,8 @@ Declare the capability you need, then find any server that satisfies it. Tool na
 | `docs` | `drive`, `notion`, `search_files`, `read_file_content`, `fetch` | Google Drive, Notion, Confluence, Dropbox | mine (memos, decks, specs the user wrote) |
 | `crm` / `data` | `sql`, `query`, `hubspot`, `execute_sql` | Cloud SQL, HubSpot, Postgres | mine (real numbers for receipts; read-only queries only) |
 | `browser` | `navigate`, `get_page_text`, `read_page`, `find`, `computer` | Claude in Chrome, built-in browser | scout (feeds), publish (LinkedIn/X UI), fact-check (open the source) |
+<!-- Before automating a platform, read platform-access.md: official MCP/API for writes, browser for reads. -->
+
 | `post` | `post`, `tweet`, `publish`, `schedule_post`, `create_post` | SocialClaw, Postiz, post-bridge, X API, `bird` CLI | publish (fallback when no browser) |
 | `notify` / `approve` | `send_message`, `create_draft`, `schedule_message`, elicitation | Slack DM to self, Telegram, email draft | rituals (deliver the morning question), approval loops in remote runs |
 | `research` | `web_search`, `web_fetch`, `search` | WebSearch/WebFetch | fact-check, trend alerts |
