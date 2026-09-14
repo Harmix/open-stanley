@@ -49,6 +49,7 @@ Audit each with `skills/stanley/scripts/stanley-audit - --platform comment --vau
 
 For each pick: the link, the author, one line of why, then the comment on its own lines so it can be copied. Then ask: post which? The user may answer with numbers.
 
+- A reply to someone who answered the user's comment is a different register from a first comment: see the *Conversations* section of the `recap` skill and the *Reply voice* block in `voice.md`; the no-agreement-opener rule does not apply there.
 - Approved → post through the browser (LinkedIn comment box; X reply box, which works for any account, unlike the API) or through a `post` MCP; then `skills/stanley/scripts/stanley-vault comment-add`.
 - Skipped → `comment-add --skipped --reason "<their words>"`; the reason tunes the next scan.
 - Everything shown → `skills/stanley/scripts/stanley-vault surfaced-add <urls> --author <handle> --platform <p>`.

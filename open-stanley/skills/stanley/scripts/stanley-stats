@@ -72,7 +72,7 @@ def lift_table(rows, key_fn, metric, base_median):
         med, n = median(vals)
         if med is None: continue
         lift = (med / base_median) if base_median else None
-        out.append({"key": k, "n": n, "median": med, "lift": round(lift, 2) if lift else None})
+        out.append({"key": k, "n": n, "median": med, "lift": round(lift, 2) if lift else None, "signal": n >= 3})
     return sorted(out, key=lambda r: -(r["lift"] or 0))
 
 def parse_experiments(vault):
@@ -124,7 +124,7 @@ def main():
     for title, rows in (("by lane", report["by_lane"]), ("by shape", report["by_shape"]), ("by hook feature", report["by_hook_feature"])):
         if rows:
             print(f"\n{title}:")
-            for r in rows: print(f"  {r['key']:32} n={r['n']:<3} median={r['median']:<8} lift={r['lift']}")
+            for r in rows: print(f"  {r['key']:32} n={r['n']:<3} median={r['median']:<8} lift={r['lift']}" + ("   (n<3: not a signal)" if r['n'] < 3 else ""))
     if report.get("top_by_reach"):
         r = report["top_by_reach"]
         print(f"\ntop by reach: {r['impressions']} impressions / {r['engagement']} engagement  {r['hook'][:70]}")

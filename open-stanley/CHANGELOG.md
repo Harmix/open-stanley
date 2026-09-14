@@ -2,6 +2,10 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.8.0 — 2026-09-14
+
+From the first real recap. (1) Recap now checks both sides of every conversation: comments on the user's posts *and* replies under comments the user left on other people's posts (ledger plus the profile's comments page), and drafts a paste-ready response for anything substantive, never posting without a yes. The first recap only looked at the user's own posts and a founder's reply sat unanswered for a day. (2) A reply is a conversation, not a post: the first draft opened with a benchmark number and a question; the user rewrote it as "yeah, fascinating area, we're trying X, want to hop on a call?". That register is now the rule (recap skill, `voice.md` template gets a *Reply voice* block, scout notes the difference from a first comment). (3) `stanley-stats` marks lifts with fewer than 3 posts as `n<3: not a signal` and recap must not call a shape the user's worst on one post; the first recap did exactly that ("lift 0.23, one prior post").
+
 ## 0.7.2 — 2026-09-13
 
 A weekly-drafts run (Opus, marketplace install) produced three good drafts with the plugin's own fact-checker agent and then told the user the plugin was not installed, because `ListPlugins` does not list marketplace plugins and a skill search returned nothing. The `stanley` skill now says so (step 1c): if this file loaded, the plugin is installed; load the other skills by exact `open-stanley:<name>` id, fall back to reading `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md`, and never report the plugin missing from inside it. Both preambles name the skill ids.

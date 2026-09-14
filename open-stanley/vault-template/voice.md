@@ -26,6 +26,9 @@ allowed: []                 # words on the global ban list this person actually 
 ## Comment exemplars (verbatim)
 <!-- Real comments they posted. Usually 1–3 sentences, no agreement opener. -->
 
+## Reply voice (when someone answers your comment or comments on your post)
+<!-- A conversation, not a post. Warm, first person, no receipts unless asked, no closing question by default; offer a call or DM when the person builds something adjacent. Paste 3–5 real replies here. -->
+
 ## Never
 - Restate what a post already said before adding to it
 - Claim a study, number, or quote without a receipt in stories/

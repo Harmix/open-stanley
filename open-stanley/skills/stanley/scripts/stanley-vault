@@ -180,7 +180,8 @@ def cmd_comment_add(a):
     v = resolve(a.vault)
     text = Path(a.text_file).read_text(encoding="utf-8")
     append(v, "ledger/comments.jsonl", {"platform": a.platform, "url": a.url, "date": now()[:10], "text": text,
-                                        "skipped": bool(a.skipped), "reason": a.reason or ""})
+                                        "skipped": bool(a.skipped), "reason": a.reason or "", "reply_to": a.reply_to or "",
+                                        "kind": "reply" if a.reply_to else "comment"})
     print("ok")
 
 def cmd_diff_add(a):
@@ -372,7 +373,7 @@ def main():
     p = sp.add_parser("metrics-add"); p.add_argument("--url", required=True); p.add_argument("--bucket", required=True, choices=["1h", "24h", "7d"]);
     for k in ("impressions", "reactions", "comments", "reposts", "saves"): p.add_argument("--" + k, type=int, default=0)
     p.set_defaults(f=cmd_metrics_add)
-    p = sp.add_parser("comment-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--skipped", action="store_true"); p.add_argument("--reason"); p.set_defaults(f=cmd_comment_add)
+    p = sp.add_parser("comment-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--skipped", action="store_true"); p.add_argument("--reason"); p.add_argument("--reply-to", help="URL of the comment/reply this answers (marks it kind=reply)"); p.set_defaults(f=cmd_comment_add)
     p = sp.add_parser("diff-add"); p.add_argument("--draft-file", required=True); p.add_argument("--final-file", required=True); p.add_argument("--platform", required=True); p.add_argument("--kind", default="post"); p.set_defaults(f=cmd_diff_add)
     p = sp.add_parser("stories-index"); p.set_defaults(f=cmd_stories_index)
     p = sp.add_parser("snapshot"); p.set_defaults(f=cmd_snapshot)
