@@ -329,6 +329,8 @@ def _last_due(kind, when, times, now_local):
                 break
     return best
 
+_PERIOD_H = {"daily": 24, "weekly": 168, "monthly": 720}
+
 def missed(v, grace_min=20, max_age_h=None):
     sched, catch = schedule(v)
     tz = _tz(v); now_local = dt.datetime.now(tz)
@@ -339,7 +341,8 @@ def missed(v, grace_min=20, max_age_h=None):
         if due is None: continue
         age_h = (now_local - due).total_seconds() / 3600
         if age_h * 60 < grace_min: continue                      # may still be starting
-        if max_age_h is not None and age_h > max_age_h: continue  # too old to be worth doing
+        cap = max_age_h if max_age_h is not None else _PERIOD_H[kind]
+        if age_h > cap: continue   # superseded: the next occurrence is due, so this is not a catch-up any more
         window = due - dt.timedelta(minutes=15)
         ran = any(r.get("job") == job and r.get("started") and dt.datetime.fromisoformat(r["started"].replace("Z", "+00:00")) >= window for r in runs)
         if not ran:

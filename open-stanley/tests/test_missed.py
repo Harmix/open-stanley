@@ -30,6 +30,15 @@ class MissedTests(unittest.TestCase):
         rows = {x["job"] for x in json.loads(self.run_missed("--json").stdout)}
         self.assertNotIn("soapbox", rows)
 
+    def test_superseded_miss_is_not_reported(self):
+        # a daily job whose miss is older than one period is dropped, not caught up
+        (self.v / "my-human.md").write_text(
+            "- Time zone and posting window: UTC\n"
+            "- schedule: soapbox=daily 23:59\n"
+            "- catch_up: soapbox\n", encoding="utf-8")
+        rows = json.loads(self.run_missed("--json").stdout)
+        self.assertTrue(all(r["hours_ago"] <= 24 for r in rows), rows)
+
     def test_brief_names_only_catch_up_jobs(self):
         r = self.run_missed("--brief")
         self.assertIn("mine", r.stdout); self.assertNotIn("soapbox", r.stdout)
