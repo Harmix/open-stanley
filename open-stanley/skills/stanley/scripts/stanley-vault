@@ -37,7 +37,9 @@ TEMPLATE = PLUGIN_ROOT / "vault-template"
 def now(): return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
 def resolve(explicit=None):
-    for c in [explicit, os.environ.get("STANLEY_VAULT"), "./stanley-vault", str(Path.home() / "stanley-vault")]:
+    here = Path.cwd()
+    for c in [explicit, os.environ.get("STANLEY_VAULT"), "./stanley-vault", str(Path.home() / "stanley-vault"),
+              str(here) if (here / "my-human.md").exists() else None]:   # a Desktop local task runs with the vault as its working folder
         if c and Path(c).expanduser().exists():
             return Path(c).expanduser().resolve()
     sys.exit("no vault found; run: stanley-vault init [DIR]")
