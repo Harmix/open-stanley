@@ -8,14 +8,13 @@ Every scheduled task runs **on the user's own computer** (Cowork: Scheduled → 
 
 Cost: runs fire only while the computer is awake. Cowork shows "Only runs while your computer is awake"; a task that fires with the lid closed is missed, not caught up. Fine for people whose laptop is open during the day (set the daily jobs inside that window); wrong for people who need runs with the laptop closed for days. Keep the Mac from sleeping on power if 08:00 matters.
 
-Missed runs: a device-bound task that comes due while the computer is asleep or offline is not queued for later. Observed in Cowork on 12 Sep 2026: the task was switched off with the reason `device_absent` and its next run moved to the following week, so the miss also silences every later firing until someone re-enables it. The plugin treats this like anacron:
+Missed runs. A device-bound task that comes due while the computer is asleep or offline is not skipped: Cowork switches it **off** (`suspension_reason: device_absent`) and moves its next run to the following occurrence, and nothing switches it back on. Seen twice in September 2026: once a Saturday job, once the morning Soapbox and Scout together, which then also missed the next day until the user noticed. Three layers, all needed:
 
-1. `my-human.md` carries the schedule (`- schedule: mine=weekly sat 18:00; ...`, local time) and `- catch_up:` (the jobs worth running late: recap, weekly drafts, mine, monthly; a late soapbox or scout is noise). `stanley-vault missed` compares it with `ledger/runs.jsonl` and lists what did not run; exit 1 when a catch-up job is missing.
-A miss older than one period of that job (daily 24h, weekly 7d, monthly 30d) is not reported: by then the next occurrence is due and a catch-up is just a late duplicate. One harmless consequence: the first time a job is added to `schedule:`, its most recent past occurrence looks missed and gets caught up once. That run is usually worth having anyway.
+1. **A cloud watchdog** (`templates/scheduled-tasks/watchdog-daily.md`): the one Open Stanley task with "Require this computer" *off*, so it always fires. Twice a day it lists the tasks, re-enables any suspended ones, and fires the ones worth running late. Without it, a day offline can leave every task switched off with no run left to notice. Suggested times: 07:30 (repairs anything suspended overnight before the morning jobs) and 12:00 (repairs the morning jobs before the evening ones). Sonnet; it finishes in under a minute.
+2. **Self-repair in every laptop run**: the laptop preamble lists the tasks after `run-start` and re-enables any suspended sibling, so the first run that does fire fixes the rest.
+3. **Catch-up inside a run**: `my-human.md` carries the schedule (`- schedule: mine=weekly sat 18:00; ...`, local time) and `- catch_up:` — which jobs are worth running late. A bare name means always (recap, weekly drafts, mine, monthly); `name<6h` means only if fewer than 6 hours late, which is right for soapbox and scout: a morning question at noon still works, at 23:00 it is noise. `stanley-vault missed` compares the schedule with `ledger/runs.jsonl`; every laptop run does one overdue catch-up job after its own. A miss older than one period of that job (daily 24h, weekly 7d, monthly 30d) is superseded, not caught up; the first time a job is added to `schedule:` its last occurrence looks missed once, harmlessly.
 
-2. Every laptop-mode run calls `missed` after its own `run-start` and does one overdue catch-up job after its own work, with its own run-start/run-end, so the 22:00 scout picks up a 18:00 mine the same evening without a human.
-3. The plugin's `SessionStart` hook prints the same one-liner at the top of any chat or Claude Code session, so the user sees "missed: mine" as soon as they open the laptop and can say "catch up".
-4. On "catch up" in a chat: run `missed`; if the `Claude Code Remote` MCP is connected (`list_triggers`, `update_trigger`, `fire_trigger`), find the tasks named `Open Stanley — …`, re-enable any that show `suspension_reason: device_absent` (`update_trigger enabled=true`; no prompt change, so no re-signing), and `fire_trigger` the ones `missed` marked catch-up, passing "Catch-up run: the scheduled firing was missed because the laptop was offline". Without that MCP, do the job in the current session from its template, then tell the user to re-enable the task in Scheduled.
+On "catch up" in a chat: run `missed`; with the Claude Code Remote MCP connected, do what the watchdog does. Without it, do the job in the current session from its template and tell the user to re-enable the task in Scheduled.
 
 Keep the computer awake when it matters (System Settings → Battery → prevent sleeping on power, or `caffeinate`), and put weekly jobs at hours the laptop is normally open.
 
@@ -42,7 +41,7 @@ Sidebar → Scheduled → New: name, prompt (from `templates/scheduled-tasks/<jo
 
 Every template starts with the mode's preamble: find the vault, probe capabilities, `run-start`, `stanley-audit selftest`, do the job, `run-end` with `--shown/--queued/--browser`, deliver the result in the session output (or via the user's `notify` capability). The delivered message says what it looked at and what it found even when the answer is "nothing".
 
-Times are the user's local time; Cowork takes local times, `create_trigger` takes UTC cron. Defaults (from `strategy.md`): soapbox 08:00, scout 10:00 and 22:00, recap 22:00, mine Saturday 18:00, weekly drafts Sunday 10:00, orbit + strategy check-in on the 1st.
+Times are the user's local time; Cowork takes local times, `create_trigger` takes UTC cron. Defaults (from `strategy.md`): soapbox 08:00, scout 10:00 and 22:00, recap 22:00, mine Saturday 18:00, weekly drafts Sunday 10:00, orbit + strategy check-in on the 1st, and the cloud watchdog at 07:30 and 12:00 (the only task without "Require this computer").
 
 ## The cadence ladder
 
@@ -63,7 +62,7 @@ The skills carry the judgment; the runs mostly execute them.
 
 | Job | Model | Why |
 |---|---|---|
-| soapbox, scout (both), recap, mine, monthly, drain | Sonnet | reading, linting, one short message; no writing in the user's voice |
+| soapbox, scout (both), recap, mine, monthly, drain, watchdog | Sonnet | reading, linting, one short message; no writing in the user's voice |
 | weekly drafts, longform | Opus | writes in the user's voice and runs the critic and fact-checker |
 
 Change it per task in Scheduled → task → model. Model ids accepted in September 2026: `claude-sonnet-5`, `claude-opus-5`.

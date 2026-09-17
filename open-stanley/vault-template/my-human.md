@@ -14,4 +14,4 @@
 - post_path: linkedin=browser; x=browser   # mcp | browser. Browser is fine at this volume; see skills/stanley/references/platform-access.md
 - vault_path:                 # laptop mode: the synced folder, e.g. ~/Library/CloudStorage/GoogleDrive-<account>/My Drive/Work/stanley-vault
 - schedule: soapbox=daily 08:00; scout=daily 10:00,22:00; recap=daily 22:00; mine=weekly sat 18:00; weekly-drafts=weekly sun 10:00; monthly=monthly 1 09:00   # local time; `stanley-vault missed` compares this with ledger/runs.jsonl
-- catch_up: recap, weekly-drafts, mine, monthly   # jobs worth running late; a late soapbox or scout is noise
+- catch_up: recap, weekly-drafts, mine, monthly, soapbox<6h, scout<6h   # worth running late; name<Nh = only if fewer than N hours late

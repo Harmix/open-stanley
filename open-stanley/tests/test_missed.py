@@ -39,6 +39,16 @@ class MissedTests(unittest.TestCase):
         rows = json.loads(self.run_missed("--json").stdout)
         self.assertTrue(all(r["hours_ago"] <= 24 for r in rows), rows)
 
+    def test_catch_up_window(self):
+        # soapbox<1h: a soapbox due at 00:00 today is only worth catching up within an hour
+        (self.v / "my-human.md").write_text(
+            "- Time zone and posting window: UTC\n"
+            "- schedule: soapbox=daily 00:00; mine=weekly sat 00:00\n"
+            "- catch_up: mine, soapbox<1h\n", encoding="utf-8")
+        rows = {r["job"]: r for r in json.loads(self.run_missed("--json").stdout)}
+        if "soapbox" in rows:
+            self.assertEqual(rows["soapbox"]["catch_up"], rows["soapbox"]["hours_ago"] < 1)
+
     def test_brief_names_only_catch_up_jobs(self):
         r = self.run_missed("--brief")
         self.assertIn("mine", r.stdout); self.assertNotIn("soapbox", r.stdout)
