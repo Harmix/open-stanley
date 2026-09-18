@@ -35,7 +35,7 @@ Git is not a cloud-mode option in Cowork today: scheduled tasks have no reposito
 
 Every template starts with the mode's preamble: find the vault, probe capabilities, `run-start`, `stanley-audit selftest`, do the job, `run-end` with `--shown/--queued/--browser`, deliver the result in the session output (or via the user's `notify` capability). The delivered message says what it looked at and what it found even when the answer is "nothing".
 
-Times are the user's local time; Cowork takes local times, `create_trigger` takes UTC cron. Defaults (from `strategy.md`): soapbox 08:00, scout 10:00 and 22:00, recap 22:00, mine Saturday 18:00, weekly drafts Sunday 10:00, orbit + strategy check-in on the 1st, and the cloud watchdog at 07:30 and 12:00 (the only task without "Require this computer").
+Times are the user's local time; Cowork takes local times, `create_trigger` takes UTC cron. Cowork adds a fixed stagger of a few minutes to every task (a 22:00 job fires at 22:04–22:07 every day), so a run that is "late" by under ten minutes is on time. Defaults (from `strategy.md`): soapbox 08:00, scout 10:00 and 22:00, recap 22:00, mine Saturday 18:00, weekly drafts Sunday 10:00, orbit + strategy check-in on the 1st, and the cloud watchdog at 07:30 and 12:30 (the only task without "Require this computer").
 
 ## The cadence ladder
 

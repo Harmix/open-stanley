@@ -1,4 +1,4 @@
-# Watchdog (cloud, twice daily, e.g. 07:30 and 12:00 local; "Require this computer" OFF, no folder)
+# Watchdog (cloud, twice daily, e.g. 07:30 and 12:30 local (one cron: `30 11,16 * * *` UTC for Toronto); "Require this computer" OFF, no folder)
 
 <!-- The only Open Stanley task that must NOT be bound to the computer. Cowork switches a device-bound task off when it comes due while the computer is offline (suspension_reason: device_absent) and never switches it back on; this task runs in the cloud, so it always fires, and its whole job is to turn the others back on. Needs the Claude Code Remote connector. -->
 
