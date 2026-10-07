@@ -54,3 +54,15 @@ class SelfTest(unittest.TestCase):
         import subprocess, sys
         r = subprocess.run([sys.executable, str(AUDIT), "selftest"], capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr); self.assertIn("selftest: ok", r.stdout)
+
+
+class LinkedIn2026Tests(unittest.TestCase):
+    def test_question_opener_warns_and_body_question_does_not(self):
+        import tempfile, subprocess, sys, json
+        d = tempfile.mkdtemp()
+        q = Path(d) / "q.md"; q.write_text("Why do agents forget?\n\nI ran a test last week and the answer surprised me.\n")
+        out = subprocess.run([sys.executable, str(ROOT / "skills/stanley/scripts/stanley-audit"), str(q), "--platform", "linkedin", "--json"], capture_output=True, text=True).stdout
+        self.assertIn("question-opener", out)
+        e = Path(d) / "e.md"; e.write_text("I ran a test last week and the answer surprised me.\n\nWhat would you have done?\n")
+        out = subprocess.run([sys.executable, str(ROOT / "skills/stanley/scripts/stanley-audit"), str(e), "--platform", "linkedin", "--json"], capture_output=True, text=True).stdout
+        self.assertNotIn("question-opener", out)

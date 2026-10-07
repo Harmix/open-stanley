@@ -140,6 +140,14 @@ def load_voice(vault):
             cfg[k] = v
     return cfg
 
+def followers(vault):
+    """`- followers: linkedin=3835; x=5` in my-human.md -> linkedin count, or None."""
+    if not vault: return None
+    p = Path(vault) / "my-human.md"
+    if not p.exists(): return None
+    m = re.search(r"followers:.*?linkedin\s*=\s*([\d,]+)", p.read_text(encoding="utf-8"), re.I)
+    return int(m.group(1).replace(",", "")) if m else None
+
 def load_ledger_posts(vault):
     out = []
     if not vault: return out
@@ -164,7 +172,7 @@ def load_story_receipts(vault):
         tokens.update(x.lower() for x in re.findall(r"\b[A-Z][a-zA-Z0-9]+(?:\s+[A-Z][a-zA-Z0-9]+)*\b", t))
     return tokens
 
-def audit(text, platform, vault=None, strict=False):
+def audit(text, platform, vault=None, strict=False, has_image=False):
     F = []  # (level, rule, msg, excerpt)
     def add(level, rule, msg, ex=""): F.append((level, rule, msg, ex))
     cfg = load_voice(vault)
@@ -271,8 +279,22 @@ def audit(text, platform, vault=None, strict=False):
         hook = body.split("\n")[0]
         if len(hook) > 210 and len(lines) > 1:
             add("WARN", "hook-length", f"First line is {len(hook)} chars; only ~140 show before 'see more'. Make the cut point land on a complete thought.")
-        if re.search(r"\b(please )?(like|share|repost|comment) (if|this|below)\b", body, re.I):
-            add("BLOCK", "engagement-bait", "Explicit like/share/comment ask is demoted.")
+        if re.search(r"\b(please )?(like|share|repost) (if|this|below)\b", body, re.I):
+            add("BLOCK", "engagement-bait", "Explicit like/share ask is demoted. (Asking for comments or ending on a question is fine: +4-6% comments in the 226K study.)")
+        if hook.strip().endswith("?"):
+            add("WARN", "question-opener", "Opens with a question: -5% engagement across 226K posts, worse at 3+ posts/week. Open on the event or the claim; put the question at the end.")
+        if re.match(r"\s*(you (should|need to|must|have to)|here'?s (how|why) you|stop doing|if you'?re not)\b", hook, re.I):
+            add("INFO", "advice-framing", "'You should' framing: -2% and audiences prefer first-person experience (+8-25% for posts opening with 'I').")
+        if re.search(r"\b(unpopular opinion|hot take|controversial (take|opinion))\b", body, re.I):
+            add("INFO", "hot-take", "Hot-take framing has the worst risk-reward of any pattern (0.5% viral, 1.3% flop). Say the thing without the label.")
+        if vault:
+            lp = load_ledger_posts(vault)
+            prev = [q for q in lp if q.get("platform") == "linkedin"]
+            if prev and not prev[-1].get("image") and not has_image:
+                add("WARN", "two-text-only", "The previous LinkedIn post had no image and this one is text-only: back-to-back text posts cost 8-11% in the 226K study. Add a preview, chart, or photo (`visuals`), and record it with `post-add --image`.")
+            fol = followers(vault)
+            if fol is not None and fol < 5000 and not has_image:
+                add("INFO", "image-small-account", f"{fol} followers: under 5K, images ran +12% in the 226K study. Consider one.")
     elif platform == "longform":
         n_words = len(body.split())
         if n_words < 1200: add("WARN", "length", f"{n_words} words; under ~1,200 this is a long post, not an article. Cut it down or find more evidence.")
@@ -352,6 +374,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("draft", nargs="?", help="path, '-' for stdin, or 'selftest'")
     ap.add_argument("--platform", default="linkedin", choices=["linkedin", "x", "comment", "longform"])
+    ap.add_argument("--has-image", action="store_true", help="the post will carry an image/carousel/video")
     ap.add_argument("--vault", default=os.environ.get("STANLEY_VAULT"))
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--strict", action="store_true", help="treat WARN as blocking")
@@ -360,7 +383,7 @@ def main():
         if a.draft is None: ap.error("the following arguments are required: draft (or 'selftest')")
         return selftest(a.vault)
     text = load_text(a.draft) if a.draft != "-" else sys.stdin.read()
-    findings, stats = audit(text, a.platform, a.vault, a.strict)
+    findings, stats = audit(text, a.platform, a.vault, a.strict, a.has_image)
     order = {"BLOCK": 0, "WARN": 1, "INFO": 2}
     findings.sort(key=lambda f: order[f[0]])
     blocking = [f for f in findings if f[0] == "BLOCK" or (a.strict and f[0] == "WARN")]

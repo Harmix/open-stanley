@@ -151,6 +151,12 @@ def main():
     for e in report["experiments"]:
         print(f"\nexperiment {e['name']} ({e['metric']}): {e['status']}" + (f"  [{e['classified']} arm(s) read from the text, not tagged]" if e.get("classified") else ""))
         for k, s in e["arms"].items(): print(f"  {k:12} n={s['n']} median={s['median']}")
+    rt = [p.get("metrics", {}).get("7d", {}).get("reaction_types") or p.get("metrics", {}).get("24h", {}).get("reaction_types") for p in with_metrics]
+    rt = [x for x in rt if x]
+    if rt:
+        tot = sum(sum(x.values()) for x in rt); ins = sum(x.get("insight", 0) for x in rt); like = sum(x.get("like", 0) for x in rt)
+        if tot:
+            print(f"\nreactions by type over {len(rt)} post(s): insight share {100*ins/tot:.1f}%  like share {100*like/tot:.1f}%  (226K-post study: insight is the best predictor of reposts; a like share above ~85% means people scrolled past)")
     if n and n < 8:
         print("\nnote: fewer than 8 posts with metrics; treat every lift above as a hint, not a finding.")
 

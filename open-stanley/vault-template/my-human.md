@@ -11,6 +11,7 @@
 - Connected sources the skill may mine (filled by the capability probe): meetings= · messages= · docs= · calendar= · memory= · post= · notify=
 - mode: laptop                # laptop (tasks run on my computer with this folder and my browser) | cloud (Drive/Notion mirror, queue + drain)
 - vault: local                # local | drive | notion | git
+- followers: linkedin=; x=   # update monthly; the audit uses it (images help under 5K LinkedIn followers, hurt slightly 5-50K)
 - post_path: linkedin=browser; x=browser   # mcp | browser. Browser is fine at this volume; see skills/stanley/references/platform-access.md
 - vault_path:                 # laptop mode: the synced folder, e.g. ~/Library/CloudStorage/GoogleDrive-<account>/My Drive/Work/stanley-vault
 - schedule: soapbox=daily 08:00; scout=daily 10:00,22:00; recap=daily 22:00; mine=weekly sat 18:00; weekly-drafts=weekly sun 10:00; monthly=monthly 1 09:00   # local time; `stanley-vault missed` compares this with ledger/runs.jsonl

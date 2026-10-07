@@ -27,6 +27,12 @@ For every substantive reply or comment (a question, a disagreement, someone desc
 
 People who engaged twice or more in the window, with what they do (from their headline) and which post they reacted to. This feeds the monthly Orbit ritual. Never suggest engaging with them unless there's an actual thread to reply to.
 
+## 3b. Cadence before shape
+
+Before any recommendation about shapes or lanes, compare posts published in the last 14 days with the cadence in `strategy.md`. If the ledger shows fewer than half the planned posts, the recommendation is about publishing — which draft in `drafts/` is closest to ready, what is blocking it — not about which shape works. Three weeks of runs that produced drafts and two published posts is a publishing problem, and no amount of shape analysis fixes it.
+
+When reading a post page, record the reaction breakdown (hover the reaction count: like, celebrate, support, love, insight, funny) with `metrics-add --insight N --like N ...`. Insight share is the best predictor of reposts in the 226K study and a like share above ~85% means people scrolled past; `stanley-stats` reports both once a few posts carry them.
+
 ## 4. The one recommendation
 
 Pick one, with evidence from `stanley-stats`, never from memory. A lift on fewer than 3 posts (the table marks them `n<3: not a signal`) is not evidence for or against a shape; say "one post, no read" rather than calling a shape the user's worst. Examples: reply to X's comment now; the number-in-hook posts are running 3x, do another; you haven't posted in 9 days and the streak matters less than the compounding; the X account has 5 followers, so comments on larger accounts matter more than original posts there this month. When two posts in the same lane are underperforming, say the lane may be wrong, not the timing.
