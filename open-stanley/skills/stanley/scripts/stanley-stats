@@ -101,7 +101,7 @@ def main():
     v = Path(a.vault).expanduser()
     posts = read_jsonl(v / "ledger/posts.jsonl")
     cutoff = (dt.date.today() - dt.timedelta(days=a.days)).isoformat()
-    posts = [p for p in posts if p.get("date", "9999") >= cutoff and (not a.platform or p.get("platform") == a.platform)]
+    posts = [p for p in posts if p.get("date", "9999") >= cutoff and (not a.platform or p.get("platform") == a.platform) and p.get("kind", "post") != "repost"]
     with_metrics = [p for p in posts if metric_of(p, a.metric) is not None]
     base, n = median([metric_of(p, a.metric) for p in with_metrics])
     report = {"posts": len(posts), "posts_with_metrics": n, "metric": a.metric, "median": base, "by_lane": [], "by_shape": [], "by_hook_feature": [], "experiments": []}

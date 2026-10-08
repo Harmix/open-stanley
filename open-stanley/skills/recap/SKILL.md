@@ -7,7 +7,11 @@ description: Report what the user's posts and comments did (impressions, reactio
 
 The paid product's recap was "Today, 131 saw my content and 2 reacted." Numbers without a decision are noise. A recap here has three parts: what changed, who showed up, one thing to do.
 
-## 1. Pull
+## 1. Reconcile the ledger with the platform, then pull
+
+The ledger only knows what went through `publish`. People post by hand, from their phone, from another tool; the first three weeks of real use had a post missing from the ledger the night after it went up, and the cadence check then undercounted. So the first browser action of every recap is the user's activity page (`/in/<handle>/recent-activity/all/`; X: `x.com/<handle>`): every own post newer than the ledger's newest that is not in `ledger/posts.jsonl` gets `post-add --via reconciled` with its text, date (from the activity id: `epoch_ms(id >> 22)`) and `--image` if it carries one; every repost gets `post-add --kind repost` so presence is counted without polluting the shape statistics (`stanley-stats` ignores reposts). Say in the report how many posts were reconciled; more than zero means the user is publishing around the plugin, which is fine, but the ledger has to know.
+
+## 1a. Pull
 
 Through the browser: LinkedIn post analytics for every post in `ledger/posts.jsonl` younger than 7 days (impressions, unique members, reactions, comments, reposts, saves if shown), profile follower count, and the notifications page for new comments/replies. X: post analytics (views, likes, replies, bookmarks, profile visits) and follower count. If analytics are unavailable in a remote run, report what the ledger has and say so.
 
@@ -29,7 +33,7 @@ People who engaged twice or more in the window, with what they do (from their he
 
 ## 3b. Cadence before shape
 
-Before any recommendation about shapes or lanes, compare posts published in the last 14 days with the cadence in `strategy.md`. If the ledger shows fewer than half the planned posts, the recommendation is about publishing — which draft in `drafts/` is closest to ready, what is blocking it — not about which shape works. Three weeks of runs that produced drafts and two published posts is a publishing problem, and no amount of shape analysis fixes it.
+Before any recommendation about shapes or lanes, compare own posts (kind `post`, after the reconcile step above) published in the last 14 days with the cadence in `strategy.md`; report reposts separately. If the ledger shows fewer than half the planned posts, the recommendation is about publishing — which draft in `drafts/` is closest to ready, what is blocking it — not about which shape works. Three weeks of runs that produced drafts and two published posts is a publishing problem, and no amount of shape analysis fixes it.
 
 When reading a post page, record the reaction breakdown (hover the reaction count: like, celebrate, support, love, insight, funny) with `metrics-add --insight N --like N ...`. Insight share is the best predictor of reposts in the 226K study and a like share above ~85% means people scrolled past; `stanley-stats` reports both once a few posts carry them.
 

@@ -165,7 +165,7 @@ def cmd_post_add(a):
     shape = dict(kv.split(":", 1) for kv in (a.shape or []) if ":" in kv)
     exp = dict(kv.split("=", 1) for kv in (a.experiment or []) if "=" in kv)
     append(v, "ledger/posts.jsonl", {"platform": a.platform, "url": a.url, "date": now()[:10], "hook": a.hook or text.split("\n")[0][:140],
-                                     "stories": a.story or [], "lane": a.lane or "", "shape": shape, "experiment": exp, "image": a.image or "", "text": text, "metrics": {}})
+                                     "stories": a.story or [], "lane": a.lane or "", "shape": shape, "experiment": exp, "image": a.image or "", "kind": a.kind, "via": a.via, "text": text, "metrics": {}})
     print("ok")
 
 def cmd_metrics_add(a):
@@ -386,7 +386,7 @@ def main():
     p.add_argument("--shown", type=int); p.add_argument("--queued", type=int); p.add_argument("--browser", choices=["yes", "no"]); p.set_defaults(f=cmd_run_end)
     p = sp.add_parser("surfaced-check"); p.add_argument("urls", nargs="+"); p.set_defaults(f=cmd_surfaced_check)
     p = sp.add_parser("surfaced-add"); p.add_argument("urls", nargs="+"); p.add_argument("--author"); p.add_argument("--platform", required=True); p.add_argument("--reason"); p.set_defaults(f=cmd_surfaced_add)
-    p = sp.add_parser("post-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--story", action="append"); p.add_argument("--hook"); p.add_argument("--lane"); p.add_argument("--shape", action="append", help="opener:event ending:flat"); p.add_argument("--experiment", action="append", help="name=variant"); p.add_argument("--image", default="", help="image|carousel|video|doc or a URL; empty = text-only"); p.set_defaults(f=cmd_post_add)
+    p = sp.add_parser("post-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--story", action="append"); p.add_argument("--hook"); p.add_argument("--lane"); p.add_argument("--shape", action="append", help="opener:event ending:flat"); p.add_argument("--experiment", action="append", help="name=variant"); p.add_argument("--image", default="", help="image|carousel|video|doc or a URL; empty = text-only"); p.add_argument("--kind", default="post", choices=["post", "repost"]); p.add_argument("--via", default="", help="publish|manual|reconciled"); p.set_defaults(f=cmd_post_add)
     p = sp.add_parser("metrics-add"); p.add_argument("--url", required=True); p.add_argument("--bucket", required=True, choices=["1h", "24h", "7d"]);
     for k in ("impressions", "reactions", "comments", "reposts", "saves"): p.add_argument("--" + k, type=int, default=0)
     for k in ("like", "celebrate", "support", "love", "insight", "funny"): p.add_argument("--" + k, type=int, default=0, help="reaction-type count from the post page")
