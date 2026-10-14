@@ -17,6 +17,12 @@ class StatsTests(unittest.TestCase):
             self.assertEqual(j["posts_with_metrics"], 2)
             lanes = {x["key"]: x for x in j["by_lane"]}; self.assertGreater(lanes["a"]["lift"], lanes["b"]["lift"])
             e = j["experiments"][0]; self.assertEqual(e["arms"]["with"]["median"], 50); self.assertIn("directional", e["status"])
+            r = subprocess.run([sys.executable, str(ROOT / "skills/stanley/scripts/stanley-stats"), "--vault", str(v), "--days", "100000", "--experiments"], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stderr); self.assertIn("experiment e", r.stdout); self.assertNotIn("by lane", r.stdout)
+            rows.append({"platform": "linkedin", "url": "u3", "date": "2099-01-03", "hook": "x", "text": "x", "kind": "repost"})
+            (v / "ledger/posts.jsonl").write_text("\n".join(json.dumps(r) for r in rows) + "\n")
+            r = subprocess.run([sys.executable, str(ROOT / "skills/stanley/scripts/stanley-stats"), "--vault", str(v), "--days", "100000", "--json"], capture_output=True, text=True)
+            self.assertEqual(json.loads(r.stdout)["posts"], 2, "reposts must not count as posts")
 
 class PreviewTests(unittest.TestCase):
     def test_html_is_written_and_fold_marked(self):

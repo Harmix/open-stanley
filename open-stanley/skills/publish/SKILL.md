@@ -17,7 +17,13 @@ Only ever with text the user approved verbatim (or a lane marked `autonomous: tr
 
 ## 2. LinkedIn via browser
 
-Open linkedin.com/feed → Start a post. Paste the text exactly (preserve blank lines; LinkedIn collapses double spaces). Attach an image/document if the draft names one in `drafts/<file>.assets`. For scheduling, use LinkedIn's clock icon and set the time from the user's request in their time zone. Post. Read back the post URL from the "View post" toast or the profile activity page. If a link belongs in the first comment, add it now.
+Open linkedin.com/feed → Start a post. The composer is a ProseMirror/tiptap editor (since autumn 2026): a plain-text paste drops the blank lines between paragraphs, so insert the text as HTML, one `<p>` per line and `<p><br></p>` for each blank line (`clipboardData` with `text/html`, or set the editor's content through the javascript tool), then read the composer back and compare paragraph by paragraph with the draft before anything else. LinkedIn collapses double spaces.
+
+Image first, text second: click "Photo", `file_upload` on `input[type=file]`, Next, then insert the text; the draft names its asset in `drafts/<file>.assets`. A scheduled post can be edited later to add a photo and tag people in it.
+
+For scheduling, use LinkedIn's clock icon and set the time from the user's request in their time zone. After "Post schedule updated", open the scheduled post once and confirm text, image and tags are all there. Do not save a scheduled post from an "Edit post" view that shows the text without its image: that view sometimes loads without the media and saving it drops the photo; close it and reopen.
+
+Post. Read back the post URL from the "View post" toast or the profile activity page. If a link belongs in the first comment, add it now.
 
 ## 3. X via browser
 

@@ -49,6 +49,14 @@ class AuditRules(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+class EngagementBaitTests(unittest.TestCase):
+    def test_imperative_ask_blocks(self):
+        for t in ("Like this post if you agree.", "Please share with your network.", "Smash the like button.", "Repost if you found this useful."):
+            self.assertIn("engagement-bait", rules(run("A plain opener about a real thing that happened.\n\n" + t)), t)
+    def test_ordinary_like_passes(self):
+        for t in ("People like this one are rare.", "Stories like this one are why I keep notes.", "I like this approach because it is cheap."):
+            self.assertNotIn("engagement-bait", rules(run("A plain opener about a real thing that happened.\n\n" + t)), t)
+
 class SelfTest(unittest.TestCase):
     def test_selftest_passes(self):
         import subprocess, sys

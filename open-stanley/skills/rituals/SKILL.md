@@ -23,7 +23,7 @@ Do not skip a meeting because most of it is inside the private line (investor ca
 
 ## Weekly drafts (Sunday, ~10:00)
 
-Three drafts, each from a different fresh story and a different lane, each run through `write` (so audited, with receipts and the one question attached). Deliver as three hooks with one line each and the drafts below; ask which to schedule and when. Nothing is scheduled without a yes. Record the three as `drafts/` files; anything not chosen in 14 days is archived, and the user is told once ("archived two stale drafts; reversible in drafts/archive/").
+Three drafts, each from a different fresh story and a different lane. Pick the stories by what the audience in `strategy.md` would stop for, not by which story is most ready: a small implementation detail with a perfect receipt still makes a post nobody reads, while a decision, a mistake, or a thing that happened to the user that every founder has touched travels outside the network. Rank candidates by interest first, then check receipts; if `instructions.md` holds a story-priority list, start from it. Each draft is run through `write` (so audited, with receipts and the one question attached). Deliver as three hooks with one line each and the drafts below; ask which to schedule and when. Nothing is scheduled without a yes. Record the three as `drafts/` files; anything not chosen in 14 days is archived, and the user is told once ("archived two stale drafts; reversible in drafts/archive/").
 
 ## Tune (inside the Sunday run, before drafting)
 

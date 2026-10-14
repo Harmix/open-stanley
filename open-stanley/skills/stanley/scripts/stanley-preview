@@ -32,7 +32,7 @@ CSS = """
 def esc(t): return html.escape(t)
 
 def linkedin_html(text, name, headline, avatar, chars):
-    fold_at = 210
+    fold_at = 210   # desktop shows ~210 chars / 3 lines before "...more"; phones cut at ~140 on long words. Both are estimates.
     first = text[:fold_at]; rest = text[fold_at:]
     body = esc(first) + ('<div class="fold">— fold: "…more" appears about here (%d chars shown) —</div>' % fold_at if rest else "") + esc(rest)
     return f"""<div class="card"><div class="hd"><img class="av" src="{avatar}"><div><div class="nm">{esc(name)}</div><div class="sub">{esc(headline)}</div><div class="sub">Now · 🌐</div></div></div>
@@ -72,7 +72,7 @@ def main():
             pg.set_content(page); pg.locator(".card").screenshot(path=str(out)); b.close()
         print(out)
     except Exception as e:
-        print(f"{html_path} (Playwright unavailable: {e}; open the HTML with a browser tool to screenshot)")
+        print(f"{html_path} (Playwright unavailable on this machine: {type(e).__name__}. The HTML is the preview; render it to PNG where Chromium exists: the cloud container in a Cowork session, or `pip install playwright && playwright install chromium` here.)")
 
 if __name__ == "__main__":
     main()

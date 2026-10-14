@@ -27,7 +27,7 @@ A screenshot of the source (the dashboard number, the email, the paper's abstrac
 
 ## 5. Generated imagery
 
-Only if the user has an image-generation MCP connected (probe: tool names with `image`, `generate`, `imagen`, `dall`). Use it for the rare illustrative post the user asks for, never as a default; the 2026 feeds treat generic AI imagery like generic AI text. Prefer a real photo the user has (`inbox/`) over a generated one.
+Not by default, and only when the user asks for it in this session. Image-model output reads as AI in the 2026 feeds the same way generic AI text does, and LinkedIn labels C2PA-signed generated images. The default image for a post is a real photo the user has (`inbox/`) or an HTML-rendered card from `stanley-preview` (a screenshot of a source, a chart from their numbers). Before attaching any image the user did not make themselves this session, check its metadata for a generation marker (C2PA/JUMBF manifest, IPTC `DigitalSourceType` of `trainedAlgorithmicMedia`: `exiftool -a -G1 <file> | grep -i -E 'c2pa|jumbf|DigitalSourceType'`) and say so if one is present.
 
 ## 6. Recap and orbit cards (optional)
 
@@ -35,6 +35,6 @@ For users who like the daily card: `stanley-preview` HTML templates can be exten
 
 ## Rules
 
-- No stock imagery, no text-heavy quote cards, no "AI-generated" look.
+- No stock imagery, no text-heavy quote cards, no image-model output unless the user asked for it this session.
 - Every visual maps to a receipt or to the draft itself.
 - Save assets next to the draft so `publish` attaches the right file.

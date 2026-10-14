@@ -97,6 +97,7 @@ def main():
     ap.add_argument("--vault", default=os.environ.get("STANLEY_VAULT", "./stanley-vault"))
     ap.add_argument("--platform"); ap.add_argument("--metric", default="engagement"); ap.add_argument("--days", type=int, default=90)
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--experiments", action="store_true", help="print only the experiment arms (what the Sunday tune reads)")
     a = ap.parse_args()
     v = Path(a.vault).expanduser()
     if not (v / "ledger").exists() and (Path.cwd() / "my-human.md").exists():
@@ -139,6 +140,14 @@ def main():
         report["experiments"].append({**e, "arms": arm_stats, "status": verdict, "classified": classified})
     if a.json:
         print(json.dumps(report, indent=1)); return
+    if a.experiments:
+        if not report["experiments"]: print("no experiments in strategy.md (## Experiments: `- name: a | b; metric: engagement; min_n: 4`)")
+        for e in report["experiments"]:
+            print(f"experiment {e['name']} ({e['metric']}): {e['status']}" + (f"  [{e['classified']} arm(s) read from the text, not tagged]" if e.get("classified") else ""))
+            for k, s in e["arms"].items():
+                starving = "  <- starving" if s["n"] < e["min_n"] and max(x["n"] for x in e["arms"].values()) >= e["min_n"] else ""
+                print(f"  {k:12} n={s['n']} median={s['median']}{starving}")
+        return
     print(f"{report['posts']} posts in {a.days}d, {n} with metrics. Median {a.metric}: {base}")
     for title, rows in (("by lane", report["by_lane"]), ("by shape", report["by_shape"]), ("by hook feature", report["by_hook_feature"])):
         if rows:

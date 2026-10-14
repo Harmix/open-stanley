@@ -32,6 +32,8 @@ Sensitivity: default `anonymize` for anything involving customers, employees, mo
 
 A summary is a lead, not a receipt. Meeting summaries flatten "by design" into "spontaneous", "the customer asked" into "the customer complained", and "we discussed" into "we decided". Before a story's lesson rests on a surprising claim from a summary (an agent acted unprompted, a customer reacted badly, a rule was broken), open the transcript, or mark the story `status: needs-confirmation` and ask the human in one line. The Soapbox ritual is the cheapest way to ask.
 
+Before a person is quoted, open the original: the chat, the email, the transcript, never a CRM note, a sales log or a summary. A log line once put the user's own words in a customer's mouth, and a summary turned a hobby-partner app into a "dating app". Any detail that will appear in a post (a product description, who said what, a number) comes from the primary record, and the story's `source:` points at that record.
+
 Provenance. When the idea in a story came from an AI assistant's recommendation that the human then followed (it happens often now), record `origin: ai-suggested` in the frontmatter and say so in the body. A post built on it must either credit that or angle on what the human did with the advice; presenting it as the human's own discovery is the kind of thing readers catch. `origin` is `own` (the human's action or observation), `team` (someone on the team), `third-party` (something they read or saw), or `ai-suggested`.
 
 ## 3. Write the story files

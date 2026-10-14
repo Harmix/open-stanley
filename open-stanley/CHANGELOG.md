@@ -2,6 +2,19 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.11.0 — 2026-10-14
+
+From the first Sunday run that went through tune, drafting, the user's rewrite and scheduling end to end.
+
+- `stanley-stats --experiments` exists now (the Sunday prompt and the rituals Tune already called it); prints the arms only and marks a starving arm.
+- `stanley-audit`: the engagement-bait BLOCK fires only on an imperative ask ("like this post", "please share", "smash that like"), no longer on "stories like this one".
+- `stanley-preview`: says where to render the PNG when Playwright is missing; the fold mark is documented as an estimate.
+- publish: LinkedIn's composer is a ProseMirror editor and drops blank lines on plain paste; insert HTML paragraphs and compare before scheduling. Photo-then-text order, and never save a scheduled post from an "Edit post" view that shows no image.
+- mine: before quoting anyone, open the original record, not a CRM or sales-log line or a summary.
+- rituals: weekly drafts pick stories by reader interest first, then receipts; a story-priority list in `instructions.md` is honoured.
+- write: pronoun and plain-product-description check; cliffhanger hooks without "..." and cut at the fold.
+- visuals: image-model output only on request; check uploads for C2PA/IPTC generation markers.
+
 ## 0.10.1 — 2026-10-08
 
 The recap reconciles the ledger with the platform before pulling numbers: own posts on the activity page that `publish` never saw are added with `--via reconciled`, reposts are recorded as `--kind repost` (ignored by `stanley-stats`), and the cadence check counts own posts only. Found when a post published by hand was still missing from the ledger the night after a recap ran, and the cadence number reported to the user was wrong because of it.

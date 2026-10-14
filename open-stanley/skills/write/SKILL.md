@@ -25,6 +25,8 @@ Read 10–15 exemplars from `voice.md` right before writing; match their sentenc
 5. **Length**: LinkedIn 1,300–1,900 characters for a story; 400–900 for a single claim; aphorisms are fine when the exemplars show them. Paragraphs of 1–3 sentences, not one line each. Zero hashtags, no links in the body (first comment if needed).
 6. **X**: the same post as a single long post if the user has Premium; otherwise a thread of 3–7 tweets separated by `---`, where tweet 1 stands alone as a post and the last tweet carries the claim, not "that's a wrap". Links go in the first reply. `references/platforms.md` has the rest.
 
+Two checks the audit cannot make for you. Pronouns: read every "it", "this", "they" and ask what it points at; if two nouns could claim it, use the noun. Describe products plainly ("an app that matches people by hobby", not "the platform") because a second-language voice is hurt most when a reader has to guess. Cliffhanger hooks: if the first line is meant to stop at the fold ("The main advice I gave them was"), never write "..." yourself, LinkedIn adds "…more"; count the characters so the cut lands on the cliffhanger (about 205 on desktop), and start the next paragraph with the answer, because a held-back point that is not delivered immediately is the bait pattern readers now skip.
+
 Things that mark a draft as generated and therefore get demoted and skipped: three short sentences in a row; "not X, it's Y"; a rule-of-three list; em dashes (unless the exemplars use them); bolded-term-colon lists; "delve/leverage/robust/pivotal/…"; an editorializing tail ("…, highlighting the need for…"); "experts say"; a closing question addressed to everyone. The audit catches most of these; write so it has nothing to catch.
 
 ## 3. Audit, critic, handover
@@ -33,7 +35,7 @@ Things that mark a draft as generated and therefore get demoted and skipped: thr
 1. Save the draft to `drafts/<date>-<slug>.md` (git keeps versions; the paid product lost a hook in a rewrite once, don't).
 2. `skills/stanley/scripts/stanley-audit drafts/<file> --platform linkedin --vault <vault>` (and `--platform x` for the thread). Fix every BLOCK yourself. Re-run until clean.
 3. If the draft is a full post (not a comment), ask the `critic` agent (`agents/critic.md`) for its three answers and include them in the handover only if they change something.
-4. Render the preview: `skills/stanley/scripts/stanley-preview drafts/<file> --platform linkedin --out drafts/<slug>.png --name … --headline …` (and `--platform x` for the thread). The fold line is what gets hooks fixed.
+4. Render the preview: `skills/stanley/scripts/stanley-preview drafts/<file> --platform linkedin --out drafts/<slug>.png --name … --headline …` (and `--platform x` for the thread). The fold line is what gets hooks fixed. The script writes the HTML always and the PNG only where Playwright has a Chromium; on a device without one, render the HTML in the cloud container or screenshot it with the browser tool rather than installing anything into the user's folders. The fold mark is an estimate (about 210 characters on desktop, fewer on a phone); the real test is opening the scheduled post on a phone once.
 5. Hand over: the draft and the preview image, then at most three lines: any WARN the human should decide on, the receipts used (story slug + source), and the one question ("this says 2.0 out of 5 — that's from your Sunday message, right?"). Then stop.
 
 ## 4. Revisions

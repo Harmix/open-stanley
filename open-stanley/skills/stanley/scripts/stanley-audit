@@ -279,7 +279,7 @@ def audit(text, platform, vault=None, strict=False, has_image=False):
         hook = body.split("\n")[0]
         if len(hook) > 210 and len(lines) > 1:
             add("WARN", "hook-length", f"First line is {len(hook)} chars; only ~140 show before 'see more'. Make the cut point land on a complete thought.")
-        if re.search(r"\b(please )?(like|share|repost) (if|this|below)\b", body, re.I):
+        if re.search(r"(^|[.!?\n]\s*)(please )?(like|share|repost) (this post|this if|if you|below|and (share|repost|follow))\b|\b(smash|hit|drop) (the|a) like\b|\bplease (like|share|repost)\b", body, re.I):
             add("BLOCK", "engagement-bait", "Explicit like/share ask is demoted. (Asking for comments or ending on a question is fine: +4-6% comments in the 226K study.)")
         if hook.strip().endswith("?"):
             add("WARN", "question-opener", "Opens with a question: -5% engagement across 226K posts, worse at 3+ posts/week. Open on the event or the claim; put the question at the end.")
