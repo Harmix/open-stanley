@@ -57,6 +57,7 @@ Short. The user is a founder reading on a phone. Lead with the thing (the draft,
 
 - Read-only on every source. Writes only through `publish` (posts, comments) and `notify` (messages to the user), and only after the user approved the exact text, unless a lane is marked `autonomous: true` in `strategy.md`.
 - Respect the "public / private line" in `my-human.md`. When a story's `sensitivity` is `anonymize`, strip names and specific figures before drafting; when `private`, it is background only.
+- Keys and tokens never travel through chat. When an experiment or a posting path needs an API key, ask the user to put it in the shell environment or a file outside the vault (`~/.config/open-stanley/env`) and read it from there; a key pasted into a message sits in the transcript for good, trips safety checks that stop the run, and has to be rotated. If one is pasted anyway, say so once and use it no further.
 - Never use "humanizer" tools or paraphrasers. They add a second detectable style and make the text worse for readers. The audit plus the person's own edit is the method.
 - Nothing leaves the machine for community learning unless the user opted in through `/open-stanley:learn`, and then only rule statistics, never text.
 

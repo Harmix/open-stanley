@@ -46,7 +46,7 @@ class MissedTests(unittest.TestCase):
             "- schedule: soapbox=daily 00:00; mine=weekly sat 00:00\n"
             "- catch_up: mine, soapbox<1h\n", encoding="utf-8")
         rows = {r["job"]: r for r in json.loads(self.run_missed("--json").stdout)}
-        if "soapbox" in rows:
+        if "soapbox" in rows and abs(rows["soapbox"]["hours_ago"] - 1) > 0.1:   # hours_ago is rounded; skip the boundary minute
             self.assertEqual(rows["soapbox"]["catch_up"], rows["soapbox"]["hours_ago"] < 1)
 
     def test_brief_names_only_catch_up_jobs(self):

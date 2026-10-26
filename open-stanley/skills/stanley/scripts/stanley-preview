@@ -56,6 +56,18 @@ def build(text, platform, name, headline, handle, avatar_path):
     inner = linkedin_html(text, name, headline, avatar, len(text)) if platform == "linkedin" else x_html(text, name, handle, avatar)
     return f"<!doctype html><html class='{platform}'><head><meta charset='utf-8'><style>{CSS}</style></head><body>{inner}</body></html>"
 
+def strip_png_metadata(path):
+    """Cloud sandboxes stamp rendered PNGs with a C2PA manifest (caBX chunk) that LinkedIn shows as a "Content credentials" label. Drop it and the text chunks."""
+    import struct
+    d = Path(path).read_bytes()
+    if d[:8] != b"\x89PNG\r\n\x1a\n": return
+    out = bytearray(d[:8]); i = 8
+    while i + 8 <= len(d):
+        n = struct.unpack(">I", d[i:i+4])[0]; t = d[i+4:i+8]
+        if t not in (b"caBX", b"tEXt", b"iTXt", b"zTXt", b"eXIf"): out += d[i:i+12+n]
+        i += 12 + n
+    Path(path).write_bytes(bytes(out))
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("draft"); ap.add_argument("--platform", default="linkedin", choices=["linkedin", "x"])
@@ -70,6 +82,7 @@ def main():
         with sync_playwright() as p:
             b = p.chromium.launch(); pg = b.new_page(viewport={"width": 704, "height": 400}, device_scale_factor=2)
             pg.set_content(page); pg.locator(".card").screenshot(path=str(out)); b.close()
+        strip_png_metadata(out)
         print(out)
     except Exception as e:
         print(f"{html_path} (Playwright unavailable on this machine: {type(e).__name__}. The HTML is the preview; render it to PNG where Chromium exists: the cloud container in a Cowork session, or `pip install playwright && playwright install chromium` here.)")

@@ -5,7 +5,7 @@ status: fresh                  # fresh | used | needs-material | needs-confirmat
 source: pam:meeting/12345      # RECEIPT. mcp:server/id, url, upload:filename, chat:date. Required.
 date: 2026-09-08               # date of the underlying event
 sensitivity: ok                # ok | anonymize | private
-kind: story            # story | milestone | people | lesson
+kind: story            # story | milestone | people | lesson | experiment (raw outputs in stories/assets/<slug>/)
 origin: own                    # own | team | third-party | ai-suggested (the idea came from an AI recommendation the human followed; credit it or angle on what they did with it)
 ---
 # Story title

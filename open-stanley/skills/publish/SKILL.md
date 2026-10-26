@@ -19,9 +19,9 @@ Only ever with text the user approved verbatim (or a lane marked `autonomous: tr
 
 Open linkedin.com/feed → Start a post. The composer is a ProseMirror/tiptap editor (since autumn 2026): a plain-text paste drops the blank lines between paragraphs, so insert the text as HTML, one `<p>` per line and `<p><br></p>` for each blank line (`clipboardData` with `text/html`, or set the editor's content through the javascript tool), then read the composer back and compare paragraph by paragraph with the draft before anything else. LinkedIn collapses double spaces.
 
-Image first, text second: click "Photo", `file_upload` on `input[type=file]`, Next, then insert the text; the draft names its asset in `drafts/<file>.assets`. A scheduled post can be edited later to add a photo and tag people in it.
+Image first, text second. Before any upload, `stanley-vault image-clean <file>`: a PNG rendered in a cloud sandbox carries a C2PA manifest ("made by Claude"), and LinkedIn turns that into a "Content credentials" label on the post; the command strips it (and EXIF/XMP) in place and says whether it found one. Then click "Photo", `file_upload` on `input[type=file]`, Next, then insert the text; the draft names its asset in `drafts/<file>.assets`. A scheduled post can be edited later to add a photo and tag people in it.
 
-For scheduling, use LinkedIn's clock icon and set the time from the user's request in their time zone. After "Post schedule updated", open the scheduled post once and confirm text, image and tags are all there. Do not save a scheduled post from an "Edit post" view that shows the text without its image: that view sometimes loads without the media and saving it drops the photo; close it and reopen.
+Picking the slot when the user says "schedule it" without a time: the cadence in `strategy.md` sets how many this week; `../stanley/references/research-linkedin-2026.md` sets the day (insight-type posts peak Tue–Wed, the morning window in `my-human.md`'s platform notes sets the hour); keep posts at least 18 hours apart and never two on one day. Say which rule put a post where. For scheduling, use LinkedIn's clock icon and set the time from the user's request in their time zone. After "Post schedule updated", open the scheduled post once and confirm text, image and tags are all there. Do not save a scheduled post from an "Edit post" view that shows the text without its image: that view sometimes loads without the media and saving it drops the photo; close it and reopen.
 
 Post. Read back the post URL from the "View post" toast or the profile activity page. If a link belongs in the first comment, add it now.
 
@@ -32,6 +32,7 @@ Compose. Without Premium, post the thread: tweet 1, then reply with tweet 2… (
 ## 4. Record and follow up
 
 - `skills/stanley/scripts/stanley-vault post-add --platform <p> --url <url> --text-file <final> --story <slug>… --lane <lane> --shape opener:<x> --shape ending:<y> [--experiment <name>=<variant>]` for each platform. The tags are what make `recap` and `stanley-stats` able to say which shapes and lanes work for this audience.
+- A scheduled post has no URL yet: set `status: scheduled` and `scheduled_for: <ISO local time>` in the draft's `.meta.json` and stop there; `recap` picks it up with `stanley-vault drafts-due` once the time has passed and adds the ledger row with `post-add --from-meta … --via reconciled` when it finds the live post.
 - If a draft→final diff exists, make sure it was stored (`diff-add`).
 - Tell the user both URLs in two lines and one thing to do in the next hour: reply to the first comments (largest ranking weight on both platforms). If `recap` is scheduled, note the post for the 1h/24h/7d metric pulls.
 - Mark the story `status: used` and rebuild the index.

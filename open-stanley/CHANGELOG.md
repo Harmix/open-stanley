@@ -2,6 +2,17 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.12.0 — 2026-10-26
+
+From the first run that scheduled three image posts end to end.
+
+- `stanley-vault image-clean`: strips C2PA/JUMBF content credentials, EXIF and XMP from PNG/JPEG. PNGs rendered in a cloud sandbox carry a "made by Claude" manifest that LinkedIn shows as a "Content credentials" label on the post; `stanley-preview` now strips its own output, `publish` and `visuals` clean everything else before upload.
+- Drafts carry their tags: `write` saves `drafts/<slug>.meta.json` (story, lane, shape, experiment, status, image); `publish` marks a scheduled post `status: scheduled` + `scheduled_for`; `stanley-vault drafts-due` lists scheduled drafts past their time with no ledger row; `post-add --from-meta` writes the ledger row with the draft's tags and marks the draft published. Reconciled posts no longer lose their experiment arm.
+- publish: picks the slot from strategy cadence + the 2026 research (Tue–Wed for insight posts, ≥18h apart) when the user gives no time, and says which rule chose it.
+- mine: story kind `experiment` requires raw outputs in `stories/assets/<slug>/` and the setup stated; fact-checker recomputes experiment figures from those files.
+- stanley: keys never through chat; read them from the environment or a file outside the vault.
+- visuals: charts fill the frame.
+
 ## 0.11.0 — 2026-10-14
 
 From the first Sunday run that went through tune, drafting, the user's rewrite and scheduling end to end.

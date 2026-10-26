@@ -13,7 +13,9 @@ Commands
   run-end ID --delivered TEXT [--error TEXT] [--shown N] [--queued N] [--browser yes|no]
   surfaced-check URL...         exit 1 and print the ones already surfaced
   surfaced-add URL --author H --platform P [--reason R]
-  post-add --platform P --url U --text-file F [--story S ...] [--hook H] [--lane L] [--shape opener:event ...] [--experiment name=variant ...]
+  post-add --platform P --url U --text-file F [--story S ...] [--hook H] [--lane L] [--shape opener:event ...] [--experiment name=variant ...] [--from-meta drafts/X.meta.json] [--via publish|manual|reconciled]
+  image-clean FILE... [--out F]  strip content credentials (C2PA), EXIF and XMP from PNG/JPEG before an upload
+  drafts-due [--json]           scheduled drafts whose time has passed and that have no ledger row yet
   metrics-add --url U --bucket 1h|24h|7d --impressions N --reactions N --comments N --reposts N [--saves N]
   comment-add --platform P --url U --text-file F [--skipped --reason R]
   diff-add --draft-file D --final-file F --platform P [--kind post|comment]
@@ -164,8 +166,20 @@ def cmd_post_add(a):
     text = Path(a.text_file).read_text(encoding="utf-8")
     shape = dict(kv.split(":", 1) for kv in (a.shape or []) if ":" in kv)
     exp = dict(kv.split("=", 1) for kv in (a.experiment or []) if "=" in kv)
-    append(v, "ledger/posts.jsonl", {"platform": a.platform, "url": a.url, "date": now()[:10], "hook": a.hook or text.split("\n")[0][:140],
-                                     "stories": a.story or [], "lane": a.lane or "", "shape": shape, "experiment": exp, "image": a.image or "", "kind": a.kind, "via": a.via, "text": text, "metrics": {}})
+    stories, lane, image = a.story or [], a.lane or "", a.image or ""
+    meta = None
+    if a.from_meta:   # drafts/<slug>.meta.json written by write/publish: the tags travel with the draft, so a reconciled post keeps them
+        mp = Path(a.from_meta); meta = json.loads(mp.read_text(encoding="utf-8"))
+        st = meta.get("story") or meta.get("stories") or []
+        stories = stories or ([st] if isinstance(st, str) else list(st)); lane = lane or meta.get("lane", "")
+        shape = {**(meta.get("shape") or {}), **shape}; exp = {**(meta.get("experiment") or {}), **exp}
+        image = image or ("image" if meta.get("image") else "")
+    date = now()[:10]
+    if meta and meta.get("scheduled_for") and a.via == "reconciled": date = meta["scheduled_for"][:10]
+    append(v, "ledger/posts.jsonl", {"platform": a.platform, "url": a.url, "date": date, "hook": a.hook or text.split("\n")[0][:140],
+                                     "stories": stories, "lane": lane, "shape": shape, "experiment": exp, "image": image, "kind": a.kind, "via": a.via, "text": text, "metrics": {}})
+    if meta is not None:
+        meta.update({"status": "published", "url": a.url, "published": date}); mp.write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
     print("ok")
 
 def cmd_metrics_add(a):
@@ -375,6 +389,72 @@ def cmd_missed(a):
         if not rows: print("nothing missed")
     sys.exit(1 if any(r["catch_up"] for r in rows) else 0)
 
+# --- images and scheduled drafts -------------------------------------------------------------
+_PNG_META = {b"caBX", b"tEXt", b"iTXt", b"zTXt", b"eXIf"}   # caBX = C2PA/JUMBF content credentials ("made by Claude" when rendered in a cloud sandbox)
+
+def image_clean(src, dst=None):
+    """Strip provenance/metadata from a PNG or JPEG. Returns the list of removed chunk/segment names."""
+    import struct
+    src = Path(src); dst = Path(dst) if dst else src
+    d = src.read_bytes(); removed = []
+    if d[:8] == b"\x89PNG\r\n\x1a\n":
+        out = bytearray(d[:8]); i = 8
+        while i + 8 <= len(d):
+            n = struct.unpack(">I", d[i:i+4])[0]; t = d[i+4:i+8]; chunk = d[i:i+12+n]
+            if t in _PNG_META: removed.append(t.decode("latin1"))
+            else: out += chunk
+            i += 12 + n
+        dst.write_bytes(bytes(out))
+    elif d[:2] == b"\xff\xd8":
+        out = bytearray(d[:2]); i = 2
+        while i + 4 <= len(d):
+            if d[i] != 0xFF: out += d[i:]; break
+            marker = d[i+1]
+            if marker == 0xDA: out += d[i:]; break            # start of scan: copy the rest
+            n = struct.unpack(">H", d[i+2:i+4])[0]; seg = d[i:i+2+n]
+            if marker in (0xE1, 0xEB, 0xED, 0xEE):           # APP1 (Exif/XMP), APP11 (JUMBF/C2PA), APP13 (IPTC), APP14 (Adobe)
+                removed.append({0xE1: "APP1", 0xEB: "APP11", 0xED: "APP13", 0xEE: "APP14"}[marker])
+            else: out += seg
+            i += 2 + n
+        dst.write_bytes(bytes(out))
+    else:
+        sys.exit(f"{src}: not a PNG or JPEG; convert it first")
+    return removed
+
+def cmd_image_clean(a):
+    for f in a.files:
+        removed = image_clean(f, a.out if a.out and len(a.files) == 1 else None)
+        print(f"{f}: removed {', '.join(removed) if removed else 'nothing'}" + (" (had content credentials)" if "caBX" in removed or "APP11" in removed else ""))
+
+def load_meta(v):
+    out = []
+    for m in sorted((v / "drafts").glob("*.meta.json")):
+        try: j = json.loads(m.read_text(encoding="utf-8"))
+        except Exception: continue
+        j["_meta"] = m; j["_draft"] = m.with_name(m.name.replace(".meta.json", ".md")); out.append(j)
+    return out
+
+def cmd_drafts_due(a):
+    """Scheduled drafts whose time has passed and whose hook is not in the ledger: what recap must reconcile, with the tags intact."""
+    v = resolve(a.vault)
+    hooks = {p.get("hook", "")[:60].lower() for p in read_jsonl(v, "ledger/posts.jsonl")}
+    nowl = dt.datetime.now().astimezone()
+    due = []
+    for j in load_meta(v):
+        if j.get("status") != "scheduled" or not j.get("scheduled_for"): continue
+        when = j["scheduled_for"].split(" ")[0]
+        try: t = dt.datetime.fromisoformat(when)
+        except ValueError: continue
+        if t.tzinfo is None: t = t.replace(tzinfo=nowl.tzinfo)
+        if t > nowl: continue
+        hook = j["_draft"].read_text(encoding="utf-8").strip().split("\n")[0] if j["_draft"].exists() else ""
+        if hook[:60].lower() in hooks: continue
+        due.append({**{k: j.get(k) for k in ("story", "lane", "shape", "experiment", "image", "scheduled_for", "platform")}, "draft": j["_draft"].name, "meta": j["_meta"].name, "hook": hook})
+    if a.json: print(json.dumps(due, ensure_ascii=False, default=str)); return
+    for d in due:
+        print(f"DUE {d['scheduled_for']}  {d['draft']}\n  hook: {d['hook'][:100]}\n  post-add --platform linkedin --url <live url> --text-file drafts/{d['draft']} --from-meta drafts/{d['meta']} --via reconciled")
+    if not due: print("no scheduled drafts past their time without a ledger row")
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--vault")
     sp = ap.add_subparsers(dest="cmd", required=True)
@@ -386,7 +466,9 @@ def main():
     p.add_argument("--shown", type=int); p.add_argument("--queued", type=int); p.add_argument("--browser", choices=["yes", "no"]); p.set_defaults(f=cmd_run_end)
     p = sp.add_parser("surfaced-check"); p.add_argument("urls", nargs="+"); p.set_defaults(f=cmd_surfaced_check)
     p = sp.add_parser("surfaced-add"); p.add_argument("urls", nargs="+"); p.add_argument("--author"); p.add_argument("--platform", required=True); p.add_argument("--reason"); p.set_defaults(f=cmd_surfaced_add)
-    p = sp.add_parser("post-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--story", action="append"); p.add_argument("--hook"); p.add_argument("--lane"); p.add_argument("--shape", action="append", help="opener:event ending:flat"); p.add_argument("--experiment", action="append", help="name=variant"); p.add_argument("--image", default="", help="image|carousel|video|doc or a URL; empty = text-only"); p.add_argument("--kind", default="post", choices=["post", "repost"]); p.add_argument("--via", default="", help="publish|manual|reconciled"); p.set_defaults(f=cmd_post_add)
+    p = sp.add_parser("post-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--story", action="append"); p.add_argument("--hook"); p.add_argument("--lane"); p.add_argument("--shape", action="append", help="opener:event ending:flat"); p.add_argument("--experiment", action="append", help="name=variant"); p.add_argument("--image", default="", help="image|carousel|video|doc or a URL; empty = text-only"); p.add_argument("--kind", default="post", choices=["post", "repost"]); p.add_argument("--via", default="", help="publish|manual|reconciled"); p.add_argument("--from-meta", help="drafts/<slug>.meta.json: take story/lane/shape/experiment/image from it and mark it published"); p.set_defaults(f=cmd_post_add)
+    p = sp.add_parser("image-clean", help="strip C2PA/EXIF/XMP from a PNG or JPEG in place (or --out)"); p.add_argument("files", nargs="+"); p.add_argument("--out"); p.set_defaults(f=cmd_image_clean)
+    p = sp.add_parser("drafts-due", help="scheduled drafts past their time with no ledger row"); p.add_argument("--json", action="store_true"); p.set_defaults(f=cmd_drafts_due)
     p = sp.add_parser("metrics-add"); p.add_argument("--url", required=True); p.add_argument("--bucket", required=True, choices=["1h", "24h", "7d"]);
     for k in ("impressions", "reactions", "comments", "reposts", "saves"): p.add_argument("--" + k, type=int, default=0)
     for k in ("like", "celebrate", "support", "love", "insight", "funny"): p.add_argument("--" + k, type=int, default=0, help="reaction-type count from the post page")

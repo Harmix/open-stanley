@@ -15,7 +15,7 @@ Renders the post as it will appear, with the LinkedIn "…more" fold marked at ~
 
 ## 2. Charts from the user's numbers
 
-Only from receipts in `stories/` or `ledger/`. For a chart the reader will see on a phone: one series, a title that states the claim ("Overlap in our top-5 picks: 2.0/5 in the status sync, 3.0/5 in the R&D review"), no legend if one series, axis labels with units, 1200×675 or 1080×1080. Use matplotlib via a `scripts/` call (the `dataviz` skill in Claude sets palette and marks; follow it when present). Never chart a number the post doesn't state.
+Only from receipts in `stories/` or `ledger/`. For a chart the reader will see on a phone: one series, a title that states the claim ("Overlap in our top-5 picks: 2.0/5 in the status sync, 3.0/5 in the R&D review"), no legend if one series, axis labels with units, 1200×675 or 1080×1080. Use matplotlib via a `scripts/` call (the `dataviz` skill in Claude sets palette and marks; follow it when present). Never chart a number the post doesn't state. Fill the frame: title, legend when there are two series, and the bars or lines use the whole 1200×675; a chart with a small plot in a field of white reads as a placeholder on a phone. The user rejected one for exactly that.
 
 ## 3. Documents (LinkedIn carousels)
 
@@ -27,7 +27,7 @@ A screenshot of the source (the dashboard number, the email, the paper's abstrac
 
 ## 5. Generated imagery
 
-Not by default, and only when the user asks for it in this session. Image-model output reads as AI in the 2026 feeds the same way generic AI text does, and LinkedIn labels C2PA-signed generated images. The default image for a post is a real photo the user has (`inbox/`) or an HTML-rendered card from `stanley-preview` (a screenshot of a source, a chart from their numbers). Before attaching any image the user did not make themselves this session, check its metadata for a generation marker (C2PA/JUMBF manifest, IPTC `DigitalSourceType` of `trainedAlgorithmicMedia`: `exiftool -a -G1 <file> | grep -i -E 'c2pa|jumbf|DigitalSourceType'`) and say so if one is present.
+Not by default, and only when the user asks for it in this session. Image-model output reads as AI in the 2026 feeds the same way generic AI text does, and LinkedIn labels C2PA-signed generated images. The default image for a post is a real photo the user has (`inbox/`) or an HTML-rendered card from `stanley-preview` (a screenshot of a source, a chart from their numbers). Before attaching any image the user did not make themselves this session, check its metadata for a generation marker (C2PA/JUMBF manifest, IPTC `DigitalSourceType` of `trainedAlgorithmicMedia`: `exiftool -a -G1 <file> | grep -i -E 'c2pa|jumbf|DigitalSourceType'`) and say so if one is present. Every image the plugin itself renders (preview cards, charts) must go through `stanley-vault image-clean` before upload when it was rendered anywhere but the user's own machine: cloud sandboxes stamp PNGs with a C2PA manifest and LinkedIn labels the post "Content credentials". `stanley-preview` strips its own output; charts made with matplotlib or a browser screenshot do not, so clean them.
 
 ## 6. Recap and orbit cards (optional)
 

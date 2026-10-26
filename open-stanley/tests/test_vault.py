@@ -64,3 +64,32 @@ class SyncMergeTests(unittest.TestCase):
             self.assertIn("merged ledger/runs.jsonl", r.stdout)
             lines = (t / "b/ledger/runs.jsonl").read_text().splitlines()
             self.assertEqual(sorted(lines), sorted(['{"id":"base"}', '{"id":"a1"}', '{"id":"b1"}']))
+
+
+class ImageAndDraftsTests(unittest.TestCase):
+    def test_image_clean_strips_c2pa_and_text_chunks(self):
+        import struct, zlib
+        def chunk(t, body): return struct.pack(">I", len(body)) + t + body + struct.pack(">I", zlib.crc32(t + body) & 0xffffffff)
+        png = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", b"\0" * 13) + chunk(b"caBX", b"jumbc2pa" * 4) + chunk(b"tEXt", b"Software\0x") + chunk(b"IDAT", b"\0") + chunk(b"IEND", b"")
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "a.png"; f.write_bytes(png)
+            out = vault("image-clean", str(f)).stdout
+            self.assertIn("caBX", out); self.assertIn("content credentials", out)
+            self.assertNotIn(b"caBX", f.read_bytes()); self.assertNotIn(b"tEXt", f.read_bytes()); self.assertIn(b"IDAT", f.read_bytes())
+            self.assertIn("removed nothing", vault("image-clean", str(f)).stdout)
+
+    def test_drafts_due_and_post_add_from_meta(self):
+        import datetime as dt
+        with tempfile.TemporaryDirectory() as d:
+            vault("init", d, "--no-git"); v = Path(d)
+            (v / "drafts").mkdir(exist_ok=True)
+            (v / "drafts/x.md").write_text("A hook line\n\nbody\n")
+            past = (dt.datetime.now() - dt.timedelta(hours=3)).strftime("%Y-%m-%dT%H:%M")
+            (v / "drafts/x.meta.json").write_text(json.dumps({"story": "s1", "lane": "L", "shape": {"ending": "open-question"}, "experiment": {"ending": "open-question"}, "status": "scheduled", "scheduled_for": past + " America/Toronto", "image": "x.png"}))
+            (v / "drafts/future.md").write_text("Later\n"); (v / "drafts/future.meta.json").write_text(json.dumps({"status": "scheduled", "scheduled_for": "2999-01-01T09:00"}))
+            out = vault("--vault", d, "drafts-due").stdout; self.assertIn("x.md", out); self.assertNotIn("future.md", out); self.assertIn("--from-meta", out)
+            vault("--vault", d, "post-add", "--platform", "linkedin", "--url", "https://l/1", "--text-file", str(v / "drafts/x.md"), "--from-meta", str(v / "drafts/x.meta.json"), "--via", "reconciled")
+            row = json.loads((v / "ledger/posts.jsonl").read_text().strip().splitlines()[-1])
+            self.assertEqual(row["lane"], "L"); self.assertEqual(row["experiment"], {"ending": "open-question"}); self.assertEqual(row["stories"], ["s1"]); self.assertEqual(row["image"], "image"); self.assertEqual(row["date"], past[:10])
+            self.assertEqual(json.loads((v / "drafts/x.meta.json").read_text())["status"], "published")
+            self.assertIn("no scheduled drafts", vault("--vault", d, "drafts-due").stdout)
