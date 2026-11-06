@@ -109,8 +109,10 @@ def embed_icon(src):
     import base64, mimetypes, urllib.request
     try:
         if src.startswith("http"):
+            if not src.startswith("https://"): return ""          # https only; no file:, no plain http
             with urllib.request.urlopen(src, timeout=6) as r:
-                data = r.read(); mime = r.headers.get("content-type", "image/png").split(";")[0]
+                data = r.read(1_000_000 + 1); mime = r.headers.get("content-type", "image/png").split(";")[0]
+                if len(data) > 1_000_000 or not mime.startswith("image/"): return ""
         else:
             data = Path(src).read_bytes(); mime = mimetypes.guess_type(src)[0] or "image/png"
         if not data or len(data) < 64: return ""

@@ -187,6 +187,7 @@ def cmd_post_add(a):
     if meta is not None:
         meta.update({"status": "published", "url": a.url, "published": date}); mp.write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
     for slug in stories:   # a published story is spent: flip it so the next weekly run does not pick it again
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", slug): continue   # a slug is a file name, never a path
         sf = v / "stories" / f"{slug}.md"
         if sf.exists():
             t = sf.read_text(encoding="utf-8")

@@ -2,7 +2,7 @@
 
 [![Open Stanley](docs/social-preview.png)](https://harmix.github.io/open-stanley/)
 
-[![version](https://img.shields.io/badge/version-0.16.1-blue)](open-stanley/CHANGELOG.md) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![tests](https://img.shields.io/badge/tests-passing-brightgreen)](open-stanley/tests) [![works in](https://img.shields.io/badge/works%20in-Claude%20Cowork%20%C2%B7%20Claude%20Code%20%C2%B7%20any%20SKILL.md%20agent-6f42c1)](#install)
+[![version](https://img.shields.io/badge/version-0.16.2-blue)](open-stanley/CHANGELOG.md) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![tests](https://img.shields.io/badge/tests-passing-brightgreen)](open-stanley/tests) [![works in](https://img.shields.io/badge/works%20in-Claude%20Cowork%20%C2%B7%20Claude%20Code%20%C2%B7%20any%20SKILL.md%20agent-6f42c1)](#install)
 
 An open head of content for the agent you already pay for. A free, open-source alternative to Stanley (getstanley.ai), Taplio, Supergrow and the other "AI head of content" subscriptions: a Claude plugin that writes LinkedIn and X posts from your own meetings, Slack, email and notes, in your voice, with a receipt for every claim.
 
@@ -58,7 +58,7 @@ The repo is a one-plugin marketplace: `.claude-plugin/marketplace.json` at the r
 
 ```
 open-stanley/.claude-plugin/   plugin manifest
-skills/           15 skills; stanley/scripts/ holds the 5 CLI scripts, stanley/references/ the shared rules
+skills/           16 skills; stanley/scripts/ holds the 6 CLI scripts, stanley/references/ the shared rules
 agents/           critic, fact-checker, scout subagents
 templates/        scheduled-task prompts (laptop and cloud preambles) and the launchd drain job
 vault-template/   the empty vault a new user starts from
@@ -131,5 +131,5 @@ Two modes. **Laptop mode (default):** the vault is a plain folder inside your de
 
 ## Contributing
 
-Rules are measurable. `tests/evals/run_audit_tests.py` runs the deterministic tests; `tests/evals/evals.json` holds the behavioral evals for skill-creator. A rule PR needs a fixture that proves it. See `docs/CONTRIBUTING.md`. If you opt in inside the plugin, it will prepare a monthly, text-free contribution of which rules fired and which edits you made (schema in `skills/learn/references/contribution-schema.md`). MIT.
+Rules are measurable. `tests/evals/run_audit_tests.py` runs the deterministic tests; `tests/evals/evals.json` holds the behavioral evals for skill-creator. A rule PR needs a fixture that proves it. See `open-stanley/docs/CONTRIBUTING.md`; coding agents read `AGENTS.md`. Every public number and promise is listed in `open-stanley/docs/claims.yml` and checked by CI, so the README, the website and the plugin cannot drift apart. Security: `SECURITY.md`, audit in `open-stanley/docs/SECURITY-AUDIT.md`. If you opt in inside the plugin, it will prepare a monthly, text-free contribution of which rules fired and which edits you made (schema in `skills/learn/references/contribution-schema.md`). MIT.
 

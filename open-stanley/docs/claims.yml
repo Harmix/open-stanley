@@ -1,0 +1,35 @@
+# Public claims and where they are made. tests/test_claims.py checks each against the repo.
+# Change a claim here first, then the places that state it; the test fails until they agree.
+version_sources:        # all must carry the same version string
+  - open-stanley/.claude-plugin/plugin.json
+  - .claude-plugin/marketplace.json
+  - README.md            # the version badge
+  - open-stanley/CHANGELOG.md   # the top entry
+counts:
+  skills: {expected_from: open-stanley/skills, stated_in: [README.md, docs/index.html, llms.txt]}
+  scripts: {expected_from: open-stanley/skills/stanley/scripts, stated_in: [README.md]}
+  agents: {expected_from: open-stanley/agents, stated_in: [docs/index.html]}
+install_commands:       # must appear verbatim everywhere install is shown
+  - "/plugin marketplace add Harmix/open-stanley"
+  - "/plugin install open-stanley@open-stanley"
+  - "npx skills add Harmix/open-stanley"
+install_shown_in: [README.md, docs/index.html, llms.txt]
+landing_strategies:     # each maps to a skill or a documented ritual
+  Your stories: skills/write
+  Atlas: skills/atlas
+  Observation: skills/mine
+  Experiment: skills/mine
+  Series: skills/publish
+  Repackage: skills/rituals
+  Study: skills/study
+  Longform: skills/longform
+  Yours: .github/ISSUE_TEMPLATE/strategy-tip.yml
+landing_promises:       # one line each, with the skill that keeps it; reviewed when the landing changes
+  - {promise: "reads meetings, Slack, mail, calendar, notes, with a link to the source", kept_by: skills/mine}
+  - {promise: "one question every morning, answered by voice note or two lines", kept_by: skills/rituals}
+  - {promise: "three drafts on Sunday checked against the research; audits a post you wrote yourself", kept_by: skills/write, skills/audit}
+  - {promise: "schedules from your own browser after you say yes to the text", kept_by: skills/publish}
+  - {promise: "numbers every night, written next to the story", kept_by: skills/recap}
+  - {promise: "every post carries an experiment arm; the same edit twice becomes a rule", kept_by: skills/rituals, skills/learn}
+  - {promise: "weekly creator teardowns", kept_by: templates/scheduled-tasks/creator-teardown-weekly.md}
+  - {promise: "monthly newsletter", kept_by: "docs/index.html says Discussions until the list exists; distribution.md owns the list"}

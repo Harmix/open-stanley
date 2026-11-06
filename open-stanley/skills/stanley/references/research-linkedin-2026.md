@@ -4,7 +4,7 @@ Priors for the experiment loop, not rules. The monthly strategy check-in reads t
 
 ## Virio, "What 226,000 LinkedIn Posts Revealed" (March 2026)
 
-25 research agents over 226K B2B posts, validated on 236 held-out posts, then compared with 20 ghostwriting clients (1,138 posts before, 527 after). Public engagement only; no pipeline metrics. Shared by Krishan Karia, October 2026.
+25 research agents over 226K B2B posts, validated on 236 held-out posts, then compared with 20 ghostwriting clients (1,138 posts before, 527 after). Public engagement only; no pipeline metrics. Shared by a customer, October 2026.
 
 Higher engagement, by effect size:
 - **Career milestone posts: +56–108%**, the strongest type in every industry. Milestone + gratitude ("Grateful to [Name] for…") adds ~30% on top.

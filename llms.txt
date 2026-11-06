@@ -2,7 +2,8 @@
 
 > A free, open-source Claude plugin that works as an AI head of content for LinkedIn and X: it mines your own meetings, Slack, email and notes, drafts posts in your voice with a receipt for every claim, audits them for the patterns LinkedIn demotes, schedules them through your own browser, and reports the numbers back. An alternative to Stanley (getstanley.ai), Taplio and Supergrow at $0 on top of a Claude plan. MIT.
 
-- Install: Cowork → Plugins → Add marketplace → `Harmix/open-stanley`; Claude Code → `/plugin marketplace add Harmix/open-stanley`; other agents → `npx skills add Harmix/open-stanley`
+- Install: Cowork → Plugins → Add marketplace → `Harmix/open-stanley`; Claude Code → `/plugin marketplace add Harmix/open-stanley` then `/plugin install open-stanley@open-stanley`; other agents → `npx skills add Harmix/open-stanley`
+- 16 skills, 3 agents, 6 CLI scripts, MIT
 - Works in: Claude Cowork, Claude Code, any Agent Skills (SKILL.md) agent
 - Data: stays in a folder on the user's machine (the vault)
 

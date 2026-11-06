@@ -1,0 +1,23 @@
+name: Bug
+description: Something the plugin did wrong in a run.
+labels: ["bug"]
+body:
+  - type: input
+    id: version
+    attributes: {label: Plugin version, description: "From open-stanley/.claude-plugin/plugin.json or the CHANGELOG"}
+    validations: {required: true}
+  - type: dropdown
+    id: where
+    attributes: {label: Where it ran, options: [Claude Cowork, Claude Code, Other agent]}
+    validations: {required: true}
+  - type: textarea
+    id: what
+    attributes: {label: What happened, description: "The skill or script, what you expected, what it did. Paste the script output if there is one."}
+    validations: {required: true}
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: This report contains no post text, comments, story files, meeting content, names or handles.
+          required: true

@@ -1,5 +1,7 @@
 name: ci
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -7,9 +9,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: cd open-stanley && python -m py_compile skills/stanley/scripts/stanley-audit skills/stanley/scripts/stanley-vault skills/stanley/scripts/stanley-stats skills/stanley/scripts/stanley-preview
+      - run: cd open-stanley && python -m py_compile skills/stanley/scripts/stanley-audit skills/stanley/scripts/stanley-vault skills/stanley/scripts/stanley-stats skills/stanley/scripts/stanley-preview skills/stanley/scripts/stanley-chart skills/stanley/scripts/stanley-brief
       - run: cd open-stanley && python tests/evals/run_audit_tests.py
       - run: cd open-stanley && python -m unittest discover -s tests -v
+      - name: secrets scan
+        run: |
+          ! git grep -n -E 'sk-ant-[A-Za-z0-9_-]{10,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{20,}|xox[bp]-[0-9A-Za-z-]{10,}|AIza[0-9A-Za-z_-]{30,}' -- . ':!.github/workflows/ci.yml'
+      - name: private files never committed
+        run: |
+          ! git ls-files | grep -E '^(stanley-vault/|ChatExport|transcript\.txt|open-stanley/tests/evals/private/)'
       - name: validate plugin manifest
         run: |
           npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 || true

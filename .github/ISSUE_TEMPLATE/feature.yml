@@ -1,0 +1,12 @@
+name: Feature
+description: Something the plugin should do, with the evidence it would help.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: what
+    attributes: {label: What it should do, description: "One paragraph."}
+    validations: {required: true}
+  - type: textarea
+    id: why
+    attributes: {label: Why, description: "A run where its absence cost you something, or numbers from your own analytics."}
+    validations: {required: true}
