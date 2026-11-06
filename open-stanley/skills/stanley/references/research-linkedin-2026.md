@@ -34,6 +34,8 @@ Founder's own account, not a study. Five claims: (1) write for the followers you
 
 Two posts reached roughly ten times the account's median. Both opened with a well-known institution's name in the first line (Google Scholar; Y Combinator), both told a first-hand conversation or observation ("I asked a YC partner…", "I noticed Scholar…"), both carried a real image (a screenshot; a photo), both were under 1,300 characters, and both ended on a question. The posts that did worst were feature explanations with perfect receipts and no name a stranger would know. The lesson the plugin took: rank stories by a famous name plus first-hand access plus a real image before ranking by receipt quality, and never let a small implementation detail take a weekly slot.
 
+The best post of the account's first ten weeks needed none of its mining: an observation about a public feed (Google Scholar) with a screenshot. A mining-data creator with 4.7K followers gets 200–1,300 reactions per post from public rankings of listed companies rendered as treemaps, four details from filings, and "let me know what data you would like displayed next". That is the `atlas` skill: a lane any account can post in from day one.
+
 Comments: four scout rounds in a row were rejected on voice until the shape became one plain sentence under 20 words that answers that post's specific claim. Two tidy sentences with a contrast read as generated every time.
 
 Images: rendered cards were called "AI slop" by the user after three weeks; real screenshots and the user's own photos replaced them. Every PNG rendered in a cloud sandbox also carried a C2PA manifest that LinkedIn labels "Content credentials" (`stanley-vault image-clean`).

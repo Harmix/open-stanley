@@ -15,7 +15,7 @@ Renders the post as it will appear, with the LinkedIn "…more" fold marked at ~
 
 ## 2. Charts from the user's numbers
 
-Only from receipts in `stories/` or `ledger/`. For a chart the reader will see on a phone: one series, a title that states the claim ("Overlap in our top-5 picks: 2.0/5 in the status sync, 3.0/5 in the R&D review"), no legend if one series, axis labels with units, 1200×675 or 1080×1080. Use matplotlib via a `scripts/` call (the `dataviz` skill in Claude sets palette and marks; follow it when present). Never chart a number the post doesn't state. Fill the frame: title, legend when there are two series, and the bars or lines use the whole 1200×675; a chart with a small plot in a field of white reads as a placeholder on a phone. The user rejected one for exactly that.
+Only from receipts in `stories/` or `ledger/`. For a chart the reader will see on a phone: one series, a title that states the claim ("Overlap in our top-5 picks: 2.0/5 in the status sync, 3.0/5 in the R&D review"), no legend if one series, axis labels with units, 1200×675 or 1080×1080. Use `skills/stanley/scripts/stanley-chart <csv> --kind treemap|bars --title … --unit … --source …` for a ranking or a part-to-whole (it renders HTML + PNG, strips metadata, no image model); matplotlib via a `scripts/` call for anything else (the `dataviz` skill in Claude sets palette and marks; follow it when present). Never chart a number the post doesn't state. Fill the frame: title, legend when there are two series, and the bars or lines use the whole 1200×675; a chart with a small plot in a field of white reads as a placeholder on a phone. The user rejected one for exactly that.
 
 ## 3. Documents (LinkedIn carousels)
 

@@ -42,7 +42,7 @@ This diagnosis is the most-liked thing the paid product did; keep the numbers ex
 
 ## 3. Three lanes
 
-Propose three lanes, each with: the thesis this person can own, who it's for, the existing post that proves it, and the first three angles. A lane is not a topic ("AI agents"); it is a position ("memory systems ask the wrong first question"). Write them into `strategy.md` with a follower/inbound goal the user states, cadence (default 2–3 LinkedIn posts/week, X mirrored, 2–4 comments/day), and the "what good looks like" numbers from step 2.
+Propose three lanes, each with: the thesis this person can own, who it's for, the existing post that proves it, and the first three angles. One of the three, or a fourth, is the **atlas** lane (`/open-stanley:atlas`): posts from public data in their vertical that need no meetings or voice notes, so the account can post from day one while mining builds up stories; name the first three questions it would answer, with the famous name each ranking would carry. A lane is not a topic ("AI agents"); it is a position ("memory systems ask the wrong first question"). Write them into `strategy.md` with a follower/inbound goal the user states, cadence (default 2–3 LinkedIn posts/week, X mirrored, 2–4 comments/day), and the "what good looks like" numbers from step 2.
 
 ## 4. Voice profile
 

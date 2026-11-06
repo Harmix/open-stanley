@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+"""stanley-chart: a feed-ready data graphic from a small CSV, no image model involved.
+
+  stanley-chart data.csv --kind treemap|bars --title "Top 30 copper miners by market cap" --unit "US$ bn" --source "Company filings, Nov 2026" --out chart.png
+
+CSV columns: name,value[,group]. Treemap tiles are sized by value (squarified), bars are ranked. Output: an HTML file always (1200x675,
+inline SVG, no external assets) and a PNG when Playwright has a Chromium on this machine; the PNG is stripped of metadata.
+Used by the atlas skill for "map your vertical" posts, and by visuals for a ranked chart from the user's own numbers.
+"""
+import argparse, csv, sys
+from pathlib import Path
+
+PALETTE = ["#1f4e79", "#2e75b6", "#5b9bd5", "#9dc3e6", "#c55a11", "#ed7d31", "#f4b183", "#548235", "#70ad47", "#a9d18e", "#7030a0", "#9966cc"]
+
+def esc(s): return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+def fmt(v, unit):
+    s = f"{v:,.0f}" if v >= 100 else (f"{v:,.1f}" if v >= 10 else f"{v:,.2f}")
+    return f"{s} {unit}".strip() if unit else s
+
+def squarify(items, x, y, w, h):
+    """items: list of (label, value, ...) sorted desc. Returns rects [(x,y,w,h,item)]. Bruls et al. squarified treemap."""
+    out = []; items = [i for i in items if i[1] > 0]
+    total = sum(i[1] for i in items)
+    if not items or total <= 0 or w <= 0 or h <= 0: return out
+    scale = w * h / total
+    areas = [(i, i[1] * scale) for i in items]
+    def worst(row, length):
+        s = sum(a for _, a in row); mx = max(a for _, a in row); mn = min(a for _, a in row)
+        return max(length * length * mx / (s * s), s * s / (length * length * mn))
+    row = []; rest = areas[:]
+    while rest:
+        length = min(w, h)
+        nxt = rest[0]
+        if not row or worst(row + [nxt], length) <= worst(row, length):
+            row.append(nxt); rest.pop(0); continue
+        # lay out row
+        s = sum(a for _, a in row)
+        if w >= h:   # vertical strip on the left
+            cw = s / h; cy = y
+            for it, a in row: ch = a / cw; out.append((x, cy, cw, ch, it)); cy += ch
+            x += cw; w -= cw
+        else:
+            ch = s / w; cx = x
+            for it, a in row: cw = a / ch; out.append((cx, y, cw, ch, it)); cx += cw
+            y += ch; h -= ch
+        row = []
+    if row:
+        s = sum(a for _, a in row)
+        if w >= h:
+            cw = s / h; cy = y
+            for it, a in row: ch = a / cw; out.append((x, cy, cw, ch, it)); cy += ch
+        else:
+            ch = s / w; cx = x
+            for it, a in row: cw = a / ch; out.append((cx, y, cw, ch, it)); cx += cw
+    return out
+
+def svg_treemap(rows, unit, W, H):
+    groups = []
+    for r in rows:
+        if r[2] not in groups: groups.append(r[2])
+    color = {g: PALETTE[i % len(PALETTE)] for i, g in enumerate(groups)}
+    parts = []
+    for (x, y, w, h, it) in squarify(rows, 0, 0, W, H):
+        name, val, grp = it
+        parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{max(0,w-2):.1f}" height="{max(0,h-2):.1f}" fill="{color[grp]}" rx="3"/>')
+        if w > 70 and h > 34:
+            fs = max(11, min(22, int(min(w / max(4, len(name)) * 1.7, h / 3))))
+            inner = f'<text x="8" y="{8+fs}" font-size="{fs}" fill="#fff" font-weight="600">{esc(name)}</text>'
+            if h > fs * 2 + 16:
+                vfs = max(10, min(fs - 3, int((w - 16) / max(4, len(fmt(val, unit))) * 1.8)))
+                inner += f'<text x="8" y="{12+fs+vfs}" font-size="{vfs}" fill="#fff" opacity="0.9">{esc(fmt(val, unit))}</text>'
+            parts.append(f'<svg x="{x:.1f}" y="{y:.1f}" width="{max(0,w-2):.1f}" height="{max(0,h-2):.1f}">{inner}</svg>')   # nested svg clips the labels to the tile
+    legend = ""
+    if len(groups) > 1:
+        legend = " ".join(f'<rect x="{i*170}" y="0" width="12" height="12" fill="{color[g]}"/><text x="{i*170+16}" y="11" font-size="12" fill="#333">{esc(g)}</text>' for i, g in enumerate(groups))
+    return "\n".join(parts), legend
+
+def svg_bars(rows, unit, W, H):
+    n = len(rows); mx = max(r[1] for r in rows) or 1
+    bh = max(14, min(34, (H - 10) / n - 6)); gap = (H - n * bh) / max(1, n)
+    label_w = 260; parts = []
+    for i, (name, val, grp) in enumerate(rows):
+        y = i * (bh + gap); bw = (W - label_w - 120) * val / mx
+        parts.append(f'<text x="{label_w-10}" y="{y+bh*0.72:.1f}" font-size="{min(16,bh*0.6):.0f}" text-anchor="end" fill="#222">{esc(name)}</text>')
+        parts.append(f'<rect x="{label_w}" y="{y:.1f}" width="{bw:.1f}" height="{bh:.1f}" fill="{PALETTE[0] if i else PALETTE[4]}" rx="3"/>')
+        parts.append(f'<text x="{label_w+bw+8:.1f}" y="{y+bh*0.72:.1f}" font-size="{min(15,bh*0.55):.0f}" fill="#222">{esc(fmt(val, unit))}</text>')
+    return "\n".join(parts), ""
+
+def build(rows, kind, title, subtitle, unit, source):
+    W, H = 1200, 675; top = 92 if subtitle else 70; bottom = 44
+    body, legend = (svg_treemap if kind == "treemap" else svg_bars)(rows, unit, W - 48, H - top - bottom)
+    return f"""<!doctype html><meta charset="utf-8"><title>{esc(title)}</title>
+<style>body{{margin:0;background:#fff;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif}}.card{{width:{W}px;height:{H}px;position:relative;background:#fff}}</style>
+<div class="card"><svg width="{W}" height="{H}" viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg">
+<text x="24" y="40" font-size="28" font-weight="700" fill="#111">{esc(title)}</text>
+{f'<text x="24" y="68" font-size="16" fill="#555">{esc(subtitle)}</text>' if subtitle else ''}
+<g transform="translate(24,{top})">{body}</g>
+<g transform="translate(24,{H-26})">{legend}</g>
+<text x="{W-24}" y="{H-14}" font-size="12" text-anchor="end" fill="#777">{esc(source)}</text>
+</svg></div>"""
+
+def strip_png_metadata(path):
+    """Drop C2PA (caBX) and text chunks: cloud sandboxes stamp rendered PNGs and LinkedIn shows a 'Content credentials' label."""
+    import struct
+    d = Path(path).read_bytes()
+    if d[:8] != b"\x89PNG\r\n\x1a\n": return
+    out = bytearray(d[:8]); i = 8
+    while i + 8 <= len(d):
+        n = struct.unpack(">I", d[i:i+4])[0]; t = d[i+4:i+8]
+        if t not in (b"caBX", b"tEXt", b"iTXt", b"zTXt", b"eXIf"): out += d[i:i+12+n]
+        i += 12 + n
+    Path(path).write_bytes(bytes(out))
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("csv"); ap.add_argument("--kind", default="treemap", choices=["treemap", "bars"])
+    ap.add_argument("--title", required=True); ap.add_argument("--subtitle", default=""); ap.add_argument("--unit", default="")
+    ap.add_argument("--source", default="", help="where the numbers come from, printed on the graphic"); ap.add_argument("--out", default="chart.png")
+    ap.add_argument("--top", type=int, default=0, help="keep the N largest")
+    a = ap.parse_args()
+    rows = []
+    with open(a.csv, newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            try: rows.append((r["name"].strip(), float(str(r["value"]).replace(",", "")), (r.get("group") or "").strip()))
+            except (KeyError, ValueError): sys.exit(f"bad row {r}: need name,value[,group]")
+    rows.sort(key=lambda r: -r[1])
+    if a.top: rows = rows[:a.top]
+    if not rows: sys.exit("no rows")
+    page = build(rows, a.kind, a.title, a.subtitle, a.unit, a.source)
+    out = Path(a.out); html_path = out.with_suffix(".html"); html_path.write_text(page, encoding="utf-8")
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            b = p.chromium.launch(); pg = b.new_page(viewport={"width": 1200, "height": 675}, device_scale_factor=2)
+            pg.set_content(page); pg.locator(".card").screenshot(path=str(out)); b.close()
+        strip_png_metadata(out)
+        print(out)
+    except Exception as e:
+        print(f"{html_path} (no PNG: {type(e).__name__}; screenshot the HTML with a browser tool or render it where Chromium exists, then `stanley-vault image-clean`)")
+
+if __name__ == "__main__":
+    main()

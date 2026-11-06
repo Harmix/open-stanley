@@ -41,3 +41,17 @@ class PreviewTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ChartTests(unittest.TestCase):
+    def test_chart_writes_html_with_tiles_and_bars(self):
+        with tempfile.TemporaryDirectory() as d:
+            csv = Path(d) / "d.csv"; csv.write_text("name,value,group\nA,100,x\nB,50,y\nC,25,x\nD,10,y\n")
+            for kind, n in (("treemap", 4), ("bars", 4)):
+                out = Path(d) / f"{kind}.png"
+                r = subprocess.run([sys.executable, str(ROOT / "skills/stanley/scripts/stanley-chart"), str(csv), "--kind", kind, "--title", "T", "--unit", "u", "--out", str(out)], capture_output=True, text=True)
+                self.assertEqual(r.returncode, 0, r.stderr)
+                html = out.with_suffix(".html").read_text()
+                self.assertGreaterEqual(html.count("<rect"), n); self.assertIn(">T<", html); self.assertNotIn("http", html.split("<svg")[1][:50])
+            r = subprocess.run([sys.executable, str(ROOT / "skills/stanley/scripts/stanley-chart"), str(csv), "--title", "T", "--top", "2", "--out", str(Path(d) / "t.png")], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0); self.assertEqual((Path(d) / "t.html").read_text().count("font-weight=\"600\""), 2)

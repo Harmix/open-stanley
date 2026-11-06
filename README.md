@@ -43,6 +43,7 @@ docs/             HOW-IT-WORKS, DESIGN, RESEARCH, CONTRIBUTING, research notes
 | "write it" | `write`: edits the story into a post in your voice, audits it, hands it over with one question |
 | "does this sound like AI?" | `audit`: the linter (`skills/stanley/scripts/stanley-audit`) plus an editor's read: claims, freshness, novelty |
 | "find posts to comment on" | `scout`: your feeds through your browser, hard filters (not yours, not shown before, not stale), 1–3 sentence comments |
+| "map the market", "rank the top N", a post with no story of my own this week | `atlas`: a post from public data in your vertical, rendered with `stanley-chart` (treemap or bars, no image model), four details from the sources, and "what should I map next"; the lane a new account can post in from day one |
 | "write an article / a teardown" | `longform`: one long piece a month from the vault's receipts, cut down into the posts that point at it |
 | "post it to both" | `publish`: LinkedIn + X through your browser (threads, first-comment links, scheduling), ledger updated |
 | "how did it do?" | `recap`: deltas, who showed up, one recommendation |
