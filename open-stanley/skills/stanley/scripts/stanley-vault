@@ -16,6 +16,8 @@ Commands
   post-add --platform P --url U --text-file F [--story S ...] [--hook H] [--lane L] [--shape opener:event ...] [--experiment name=variant ...] [--from-meta drafts/X.meta.json] [--via publish|manual|reconciled]
   image-clean FILE... [--out F]  strip content credentials (C2PA), EXIF and XMP from PNG/JPEG before an upload
   drafts-due [--json]           scheduled drafts whose time has passed and that have no ledger row yet
+  decision-add --job J --candidates JSON [--chosen S ...] [--rule R]   why a run picked what it picked (ledger/decisions.jsonl)
+  verdict-add --kind draft|comment|target|question --ref X --verdict good|bad|edited|held|skipped|posted [--reason R]   the user's reaction (ledger/verdicts.jsonl)
   metrics-add --url U --bucket 1h|24h|7d --impressions N --reactions N --comments N --reposts N [--saves N]
   comment-add --platform P --url U --text-file F [--skipped --reason R]
   diff-add --draft-file D --final-file F --platform P [--kind post|comment]
@@ -176,10 +178,20 @@ def cmd_post_add(a):
         image = image or ("image" if meta.get("image") else "")
     date = now()[:10]
     if meta and meta.get("scheduled_for") and a.via == "reconciled": date = meta["scheduled_for"][:10]
+    hook = a.hook or text.split("\n")[0][:140]
+    for p in read_jsonl(v, "ledger/posts.jsonl"):   # the same post reached the ledger twice once (publish, then reconcile): refuse the duplicate
+        if p.get("url") == a.url or (p.get("platform") == a.platform and p.get("hook", "")[:60].lower() == hook[:60].lower() and p.get("date", "") >= (dt.date.today() - dt.timedelta(days=30)).isoformat()):
+            sys.exit(f"already in the ledger: {p.get('url')} ({p.get('date')}). Use metrics-add for numbers; nothing written.")
     append(v, "ledger/posts.jsonl", {"platform": a.platform, "url": a.url, "date": date, "hook": a.hook or text.split("\n")[0][:140],
                                      "stories": stories, "lane": lane, "shape": shape, "experiment": exp, "image": image, "kind": a.kind, "via": a.via, "text": text, "metrics": {}})
     if meta is not None:
         meta.update({"status": "published", "url": a.url, "published": date}); mp.write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
+    for slug in stories:   # a published story is spent: flip it so the next weekly run does not pick it again
+        sf = v / "stories" / f"{slug}.md"
+        if sf.exists():
+            t = sf.read_text(encoding="utf-8")
+            t2 = re.sub(r"^status: *(fresh|drafted)\s*$", "status: used", t, count=1, flags=re.M)
+            if t2 != t: sf.write_text(t2, encoding="utf-8")
     print("ok")
 
 def cmd_metrics_add(a):
@@ -426,6 +438,20 @@ def cmd_image_clean(a):
         removed = image_clean(f, a.out if a.out and len(a.files) == 1 else None)
         print(f"{f}: removed {', '.join(removed) if removed else 'nothing'}" + (" (had content credentials)" if "caBX" in removed or "APP11" in removed else ""))
 
+def cmd_decision_add(a):
+    """Why a run chose what it chose. One row per decision; candidates is a JSON list of {slug, score, why} so later stats can ask 'did the picks the user kept score high?'."""
+    v = resolve(a.vault)
+    try: cands = json.loads(a.candidates)
+    except json.JSONDecodeError as e: sys.exit(f"--candidates must be JSON: {e}")
+    append(v, "ledger/decisions.jsonl", {"at": now(), "job": a.job, "run": a.run or "", "kind": a.kind, "candidates": cands, "chosen": a.chosen or [], "rule": a.rule or ""})
+    print("ok")
+
+def cmd_verdict_add(a):
+    """The user's reaction to a draft, comment or pick: good | bad | edited | held | skipped, with their words. The learn skill reads this instead of mining prose notes."""
+    v = resolve(a.vault)
+    append(v, "ledger/verdicts.jsonl", {"at": now(), "kind": a.kind, "ref": a.ref, "verdict": a.verdict, "reason": a.reason or "", "run": a.run or ""})
+    print("ok")
+
 def load_meta(v):
     out = []
     for m in sorted((v / "drafts").glob("*.meta.json")):
@@ -469,6 +495,8 @@ def main():
     p = sp.add_parser("post-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--story", action="append"); p.add_argument("--hook"); p.add_argument("--lane"); p.add_argument("--shape", action="append", help="opener:event ending:flat"); p.add_argument("--experiment", action="append", help="name=variant"); p.add_argument("--image", default="", help="image|carousel|video|doc or a URL; empty = text-only"); p.add_argument("--kind", default="post", choices=["post", "repost"]); p.add_argument("--via", default="", help="publish|manual|reconciled"); p.add_argument("--from-meta", help="drafts/<slug>.meta.json: take story/lane/shape/experiment/image from it and mark it published"); p.set_defaults(f=cmd_post_add)
     p = sp.add_parser("image-clean", help="strip C2PA/EXIF/XMP from a PNG or JPEG in place (or --out)"); p.add_argument("files", nargs="+"); p.add_argument("--out"); p.set_defaults(f=cmd_image_clean)
     p = sp.add_parser("drafts-due", help="scheduled drafts past their time with no ledger row"); p.add_argument("--json", action="store_true"); p.set_defaults(f=cmd_drafts_due)
+    p = sp.add_parser("decision-add", help="log a run's ranked candidates and what it chose"); p.add_argument("--job", required=True); p.add_argument("--kind", default="story-pick", help="story-pick|comment-target|slot"); p.add_argument("--candidates", required=True, help='JSON list of {"slug","score","why"}'); p.add_argument("--chosen", action="append"); p.add_argument("--rule", help="the one line that decided it"); p.add_argument("--run"); p.set_defaults(f=cmd_decision_add)
+    p = sp.add_parser("verdict-add", help="log the user's verdict on a draft/comment/pick"); p.add_argument("--kind", required=True, choices=["draft", "comment", "target", "question"]); p.add_argument("--ref", required=True, help="drafts/<file>, a URL, or a story slug"); p.add_argument("--verdict", required=True, choices=["good", "bad", "edited", "held", "skipped", "posted"]); p.add_argument("--reason", help="the user's words"); p.add_argument("--run"); p.set_defaults(f=cmd_verdict_add)
     p = sp.add_parser("metrics-add"); p.add_argument("--url", required=True); p.add_argument("--bucket", required=True, choices=["1h", "24h", "7d"]);
     for k in ("impressions", "reactions", "comments", "reposts", "saves"): p.add_argument("--" + k, type=int, default=0)
     for k in ("like", "celebrate", "support", "love", "insight", "funny"): p.add_argument("--" + k, type=int, default=0, help="reaction-type count from the post page")

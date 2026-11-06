@@ -74,3 +74,13 @@ class LinkedIn2026Tests(unittest.TestCase):
         e = Path(d) / "e.md"; e.write_text("I ran a test last week and the answer surprised me.\n\nWhat would you have done?\n")
         out = subprocess.run([sys.executable, str(ROOT / "skills/stanley/scripts/stanley-audit"), str(e), "--platform", "linkedin", "--json"], capture_output=True, text=True).stdout
         self.assertNotIn("question-opener", out)
+
+
+class LandingLineTests(unittest.TestCase):
+    def test_landing_items(self):
+        j = run("I asked a YC partner where the moat is when the competitor could be OpenAI. He said they look at the founder.\n\nHis example was the 30% App Store cut.\n\nWhat would you do next?")
+        land = dict(kv.split("=") for kv in j["stats"]["landing"].split())
+        self.assertEqual(land["opens-first-person"], "yes"); self.assertEqual(land["named-entity-early"], "yes"); self.assertEqual(land["ends-on-question"], "yes"); self.assertEqual(land["has-image"], "no")
+        j = run("Something happened at a company last week and it was fine.\n\nThat is all there is to say about it, and it is enough for one post today.")
+        land = dict(kv.split("=") for kv in j["stats"]["landing"].split())
+        self.assertEqual(land["opens-first-person"], "no"); self.assertEqual(land["ends-on-question"], "no")

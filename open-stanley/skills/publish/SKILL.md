@@ -35,7 +35,9 @@ Compose. Without Premium, post the thread: tweet 1, then reply with tweet 2… (
 - A scheduled post has no URL yet: set `status: scheduled` and `scheduled_for: <ISO local time>` in the draft's `.meta.json` and stop there; `recap` picks it up with `stanley-vault drafts-due` once the time has passed and adds the ledger row with `post-add --from-meta … --via reconciled` when it finds the live post.
 - If a draft→final diff exists, make sure it was stored (`diff-add`).
 - Tell the user both URLs in two lines and one thing to do in the next hour: reply to the first comments (largest ranking weight on both platforms). If `recap` is scheduled, note the post for the 1h/24h/7d metric pulls.
-- Mark the story `status: used` and rebuild the index.
+- Mark the story `status: used` and rebuild the index (`post-add` flips it when it knows the slug).
+- Series: a post that continues an earlier one gets a first comment "How this started: <first post>" when it goes live, and the previous post gets a comment "Next update: <new post>" (LinkedIn refuses an edit that adds a URL to a published post, and a URL in the body kills reach). A scheduled post has no URL until it is live, so when the user cannot be there at posting time, create a one-time scheduled task for ~20 minutes after the slot that finds the live URL, checks the comment is not already there, posts both comments, records the post (`post-add --from-meta`), and reports in one line; the user's browser must be open and logged in for it.
+- Images: a real photo from the user or a screenshot of the real thing (the confirmation email, the dashboard, the message), private names blacked out, beats a rendered card; the first real user called the cards "AI slop" after three weeks. Render a card only when nothing real exists, and say so. Never name or tag the other party of a private conversation.
 
 ## 5. Failure modes to handle explicitly
 

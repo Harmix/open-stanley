@@ -9,11 +9,11 @@ The best post of the month, in the export this plugin was built from, came from 
 
 ## 1. Sources, in priority order
 
-Probe capabilities (see `skills/stanley/references/capabilities.md`). Then pull, for the window asked (default: last 7 days; onboarding: 30 days):
+Probe capabilities (see `skills/stanley/references/capabilities.md`). Then pull, for the window asked (default: since the last `mine` run in `ledger/runs.jsonl`, with a 7-day floor and a 21-day re-sweep of `messages` and `inbox/` for anything a previous run missed; onboarding: 30 days):
 
 1. `inbox/` — anything the user dropped: voice-note transcripts, pasted transcripts, PDFs, screenshots. This is the human explicitly handing you material; read it first and fully.
 2. `meetings` — list meetings in the window; read summaries first, transcripts only for meetings whose summary has a candidate. Prefer the user's own lines in the transcript. With a memory MCP like Pam, `retrieve_memory("what surprised us / went wrong / changed a decision in the last two weeks?")` is a fast first pass, but its answer is a synthesis and may come back with no source references; treat it as a lead, then open the specific meeting summary or transcript (`list_meetings` → `get_meeting_summary`) so the story file's `source:` points at a real record. A number that only exists in a memory answer is not yet a receipt.
-3. `messages` — the user's own messages over ~60 words in channels they post in (search by their handle). Founders write their sharpest takes in Slack at 11pm.
+3. `messages` — the user's own messages in channels they post in (search by their handle, `from:` filter, in every language they write in), including thread replies, pasted summaries and files they attached. A 20-word reply that says "I have voice notes from the YC chat" plus an attached file is the richest lead of the week, and a long-form filter misses it: the first run with real use skipped exactly that, and the user posted the story himself two weeks later and it became his second-best post. Treat a summary the user pasted as a lead to the original (their voice notes, the transcript), and when the original is an audio file you cannot read, say so and ask for the notes through the Soapbox question. Founders write their sharpest takes in Slack at 11pm.
 4. `mail` — sent mail only, unless told otherwise. Replies over ~80 words to customers, investors, candidates.
 5. `memory` — ask it the questions a good editor would ask: "what did I decide this week", "what surprised me", "what went wrong", "what number changed".
 6. `calendar` — what happened (talks, conferences, customer calls) as prompts for the Soapbox question, not as posts ("heading to X" is the pattern the diagnosis flagged as the bottom performer).
@@ -35,6 +35,10 @@ A summary is a lead, not a receipt. Meeting summaries flatten "by design" into "
 Before a person is quoted, open the original: the chat, the email, the transcript, never a CRM note, a sales log or a summary. A log line once put the user's own words in a customer's mouth, and a summary turned a hobby-partner app into a "dating app". Any detail that will appear in a post (a product description, who said what, a number) comes from the primary record, and the story's `source:` points at that record.
 
 Provenance. When the idea in a story came from an AI assistant's recommendation that the human then followed (it happens often now), record `origin: ai-suggested` in the frontmatter and say so in the body. A post built on it must either credit that or angle on what the human did with the advice; presenting it as the human's own discovery is the kind of thing readers catch. `origin` is `own` (the human's action or observation), `team` (someone on the team), `third-party` (something they read or saw), or `ai-suggested`.
+
+## 2b. Rank before writing
+
+Every candidate gets a line in the report and a score, and the run logs the ranking (`stanley-vault decision-add --job mine --kind story-pick --candidates '[...]'`) so a wrong pick can be traced later. Score on what the user's own ledger says travels, then on the 226K study: a first-hand conversation with a known institution or person (a YC partner, a professor the audience has heard of, a well-known company) and a famous name in the first line; a surprising or absurd real example; a decision or mistake every founder in the audience has touched; a milestone with the people named. The two posts that reached furthest for the first real user were a Google Scholar observation and a YC conversation, both with the institution's name in the first line, both told as "I asked / I saw", both with an image. A small implementation detail with a perfect receipt scores low whatever its receipt. Then check `stanley-stats` for the lane and shape lifts in this vault and move a candidate up when its lane is the one that has been winning.
 
 ## 3. Write the story files
 

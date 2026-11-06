@@ -93,3 +93,27 @@ class ImageAndDraftsTests(unittest.TestCase):
             self.assertEqual(row["lane"], "L"); self.assertEqual(row["experiment"], {"ending": "open-question"}); self.assertEqual(row["stories"], ["s1"]); self.assertEqual(row["image"], "image"); self.assertEqual(row["date"], past[:10])
             self.assertEqual(json.loads((v / "drafts/x.meta.json").read_text())["status"], "published")
             self.assertIn("no scheduled drafts", vault("--vault", d, "drafts-due").stdout)
+
+
+class DecisionsAndDedupeTests(unittest.TestCase):
+    def test_post_add_refuses_duplicate_and_flips_story(self):
+        with tempfile.TemporaryDirectory() as d:
+            vault("init", d, "--no-git"); v = Path(d)
+            (v / "stories").mkdir(exist_ok=True); (v / "stories/s1.md").write_text("---\ntopic: a\nstatus: fresh\n---\nbody\n")
+            (v / "drafts").mkdir(exist_ok=True); (v / "drafts/p.md").write_text("A hook\n\nbody\n")
+            r = vault("--vault", d, "post-add", "--platform", "linkedin", "--url", "https://l/1", "--text-file", str(v / "drafts/p.md"), "--story", "s1", "--via", "publish")
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertIn("status: used", (v / "stories/s1.md").read_text())
+            r = vault("--vault", d, "post-add", "--platform", "linkedin", "--url", "https://l/1", "--text-file", str(v / "drafts/p.md"), "--via", "reconciled")
+            self.assertNotEqual(r.returncode, 0); self.assertIn("already in the ledger", r.stderr + r.stdout)
+            self.assertEqual(len((v / "ledger/posts.jsonl").read_text().strip().splitlines()), 1)
+
+    def test_decision_and_verdict_logs(self):
+        with tempfile.TemporaryDirectory() as d:
+            vault("init", d, "--no-git"); v = Path(d)
+            r = vault("--vault", d, "decision-add", "--job", "weekly-drafts", "--candidates", '[{"slug":"a","score":9,"why":"famous name"},{"slug":"b","score":3,"why":"feature detail"}]', "--chosen", "a", "--rule", "famous name first")
+            self.assertEqual(r.returncode, 0, r.stderr)
+            row = json.loads((v / "ledger/decisions.jsonl").read_text().strip()); self.assertEqual(row["chosen"], ["a"]); self.assertEqual(row["candidates"][1]["slug"], "b")
+            self.assertNotEqual(vault("--vault", d, "decision-add", "--job", "x", "--candidates", "not json").returncode, 0)
+            r = vault("--vault", d, "verdict-add", "--kind", "draft", "--ref", "drafts/a.md", "--verdict", "bad", "--reason", "not interesting")
+            self.assertEqual(r.returncode, 0, r.stderr); self.assertIn('"verdict": "bad"', (v / "ledger/verdicts.jsonl").read_text())

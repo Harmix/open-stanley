@@ -2,6 +2,20 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.13.0 — 2026-11-06
+
+From the first post that reached ~10x the account's median, and from how the weekly run missed it.
+
+- mine: reads the user's thread replies, pasted summaries and attached files in every language, not only long-form top-level messages (the YC story sat in a 20-word Slack reply with voice notes for two weeks); the window is "since the last mine run" with a 21-day re-sweep; candidates are scored (famous name early, first-hand access, surprise, the vault's own lane lifts) and the ranking is logged.
+- `stanley-vault decision-add` / `verdict-add`: `ledger/decisions.jsonl` records why a run picked what it picked; `ledger/verdicts.jsonl` records the user's reaction in their words. The Tune reads verdicts instead of prose notes.
+- `stanley-audit` prints a `landing:` line for LinkedIn drafts: eight yes/no items from the 2026 research (first person, complete thought before the fold, named entity early, a number, question ending, image, length band, no links). `write` fixes or explains every `no`; nobody re-reads the research file per run.
+- `post-add` refuses a duplicate (same URL, or same hook within 30 days) and flips the story to `used`.
+- scout: one plain sentence under ~20 words that answers that post's claim; the rejected shapes named.
+- publish: series comments ("How this started" / "Next update") and the one-time task that posts them after a scheduled slot; real screenshots and photos before rendered cards; never name the other party of a private conversation.
+- write: the user's point of view when agents did the work; lead with the diagnosis; theme-level overlap check over six weeks.
+- learn: `instructions.md` is for standing rules only; platform quirks go to `learn/journal.md` (one line per quirk, current state), reactions to `verdicts.jsonl`. Scheduled-task preambles read `voice.md` only for drafting jobs and never the research references. Fewer tokens per run.
+- research reference: field notes from the first real account.
+
 ## 0.12.0 — 2026-10-26
 
 From the first run that scheduled three image posts end to end.

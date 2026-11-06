@@ -348,8 +348,29 @@ def audit(text, platform, vault=None, strict=False, has_image=False):
         elif best[0] > 0.15:
             add("WARN", "self-overlap", f"{best[0]:.0%} overlap with your post from {best[1].get('date','?')}; make sure this says something new.")
 
-    return F, {"words": n_words, "chars": n_chars, "sentences": len(sents),
-               "mean_sentence_len": round(sum(len(s.split()) for s in sents) / max(1, len(sents)), 1)}
+    stats = {"words": n_words, "chars": n_chars, "sentences": len(sents),
+             "mean_sentence_len": round(sum(len(s.split()) for s in sents) / max(1, len(sents)), 1)}
+    if platform == "linkedin":
+        stats["landing"] = landing(body, prose_lines, sents, has_image)
+    return F, stats
+
+def landing(body, prose_lines, sents, has_image):
+    """One line that answers 'will this land?' against the 2026 research, so the writer does not re-read the research file every run.
+    Each item: name=yes|no. The write skill treats a `no` as something to fix or to explain in the handover."""
+    first = (prose_lines[0] if prose_lines else "").strip()
+    fold = body[:210]
+    named = bool(re.search(r"(?<![.!?]\s)(?<!^)\b[A-Z][a-zA-Z]+(?: [A-Z][a-zA-Z]+)*\b", fold)) or bool(re.search(r"\b(YC|Y Combinator|OpenAI|Anthropic|Google|Microsoft|Apple|Meta|Amazon|Nvidia|Stripe)\b", fold))
+    items = [
+        ("opens-first-person", bool(re.match(r"^(i|i'm|i've|i'd|we|we're|we've|my|our)\b", first, re.I))),
+        ("fold-complete-thought", bool(re.search(r"[.!?]", fold)) and len(first) <= 210),
+        ("named-entity-early", named),
+        ("number-or-receipt", bool(re.search(r"\d", body))),
+        ("ends-on-question", sents[-1].strip().endswith("?") if sents else False),
+        ("has-image", bool(has_image)),
+        ("length-band", 400 <= len(body) <= 1900),
+        ("no-links-hashtags", not re.search(r"https?://|(^|\s)#\w+", body)),
+    ]
+    return " ".join(f"{k}={'yes' if v else 'no'}" for k, v in items)
 
 SELFTEST = {
     # (platform, text, expect_pass)
@@ -391,7 +412,9 @@ def main():
         print(json.dumps({"stats": stats, "pass": not blocking,
                           "findings": [dict(level=l, rule=r, msg=m, excerpt=e) for l, r, m, e in findings]}, indent=1))
     else:
+        land = stats.pop("landing", None)
         print(f"stats: {stats}")
+        if land: print(f"landing: {land}")
         for l, r, m, e in findings:
             print(f"{l:5} {r:18} {m}" + (f"  [{e}]" if e else ""))
         print("RESULT:", "PASS" if not blocking else f"BLOCKED ({len(blocking)} blocking finding(s))")

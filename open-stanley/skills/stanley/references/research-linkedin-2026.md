@@ -30,6 +30,14 @@ Their clients after ghostwriting: median post length 522 → 1,670 chars; commen
 
 Founder's own account, not a study. Five claims: (1) write for the followers you already have — LinkedIn's first test batch is largely them, so check Settings → Audience for the top country and write for it; (2) use less AI, a few minutes of your own thinking per post is now the bar; (3) be positive and shout people out after events and meetings, "everything you do is content"; (4) be yourself, the only advantage left; (5) posting time does not matter. The comments push back on (5) and note the trade-off between impressions and reaching the actual ICP. Shared by the user, October 2026.
 
+## Field notes from the first real account (Sept–Nov 2026, under 5K followers)
+
+Two posts reached roughly ten times the account's median. Both opened with a well-known institution's name in the first line (Google Scholar; Y Combinator), both told a first-hand conversation or observation ("I asked a YC partner…", "I noticed Scholar…"), both carried a real image (a screenshot; a photo), both were under 1,300 characters, and both ended on a question. The posts that did worst were feature explanations with perfect receipts and no name a stranger would know. The lesson the plugin took: rank stories by a famous name plus first-hand access plus a real image before ranking by receipt quality, and never let a small implementation detail take a weekly slot.
+
+Comments: four scout rounds in a row were rejected on voice until the shape became one plain sentence under 20 words that answers that post's specific claim. Two tidy sentences with a contrast read as generated every time.
+
+Images: rendered cards were called "AI slop" by the user after three weeks; real screenshots and the user's own photos replaced them. Every PNG rendered in a cloud sandbox also carried a C2PA manifest that LinkedIn labels "Content credentials" (`stanley-vault image-clean`).
+
 ## What this plugin does with it
 
 | Finding | Where it lives |

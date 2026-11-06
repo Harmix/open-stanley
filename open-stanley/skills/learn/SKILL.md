@@ -22,6 +22,10 @@ When the user pastes what they actually posted, or edits a draft, store the pair
 
 Write the category and evidence into the diff record. When a category has recurred three times, propose exactly one line for `voice.md` ("Never opens with a setup sentence" / add `innate` to `banned_extra`) or `learn/rules.md`, quote the three examples, and ask for a yes. On yes, write it. On no, record the no so you don't propose it again.
 
+## 1b. Where a note goes
+
+`instructions.md` holds standing rules the user gave and nothing else; a run reads it in full every time, so every line there costs tokens on every run. Operational observations (a platform's search is broken today, how to grab a permalink in a new UI, a composer quirk) go to `learn/journal.md` with the date, and only the current state of each quirk is kept there (one line per quirk, updated, not appended). The user's reactions to drafts, comments and targets go to `ledger/verdicts.jsonl` through `stanley-vault verdict-add` with their words, not into prose. When `instructions.md` passes ~8K characters, propose the split to the user and do it on a yes.
+
 ## 2. From skips
 
 Every scout skip reason (`ledger/comments.jsonl` with `skipped: true`) is a filter adjustment. Cluster the reasons monthly ("too abstract" ×6, "not my lane" ×4, "hallucination is common knowledge" ×1) and add the top cluster as a line to `instructions.md` with the date. Tell the user in one line what changed in the scoring.
