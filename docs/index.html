@@ -26,16 +26,13 @@ a{color:#9db7ff}
 .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:9999px;text-decoration:none;font-family:var(--sans);font-weight:500;font-size:16px;line-height:20px;border:1px solid rgba(255,255,255,.06);backdrop-filter:blur(8px)}
 .pill svg{width:16px;height:16px}
 .p-doc{background:rgba(255,140,60,.16);color:#ffd9bd}.p-exp{background:rgba(255,80,110,.16);color:#ffd0d8}.p-git{background:rgba(120,170,255,.16);color:#d6e3ff}.p-up{background:rgba(60,200,140,.16);color:#d2f5e4}
-.hero{position:relative;height:100vh;min-height:560px;background:var(--navy);overflow:hidden}
-.wall{position:absolute;inset:0;perspective:1200px;overflow:hidden}
-.wall .t{position:absolute;left:-10%;width:120%;top:-20%;height:160%;transform:rotateX(18deg);transform-origin:50% 50%;font-family:var(--mono);font-size:13px;line-height:22px;color:rgba(170,190,255,.34);white-space:nowrap;animation:up 90s linear infinite}
-.wall .t .k{color:rgba(255,190,130,.45)}.wall .t .n{color:rgba(150,230,190,.5)}
-@keyframes up{from{transform:rotateX(18deg) translateY(0)}to{transform:rotateX(18deg) translateY(-50%)}}
-.hero:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(10,19,51,0) 30%,rgba(10,19,51,.6) 75%,rgba(13,14,18,1) 100%);pointer-events:none}
-.mark{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;text-align:center;padding:0 16px}.mark>*{position:relative}.mark:before{content:"";position:absolute;width:min(90vw,900px);height:360px;border-radius:50%;background:radial-gradient(closest-side,rgba(10,19,51,.95),rgba(10,19,51,.6) 60%,transparent)}
-.mark h1{font-family:var(--mono);font-weight:800;font-size:clamp(46px,9vw,108px);letter-spacing:-.04em;line-height:1;margin:0;color:#fff;text-shadow:0 0 24px rgba(160,190,255,.45),0 0 2px #fff}
-.mark p{margin:18px 0 0;font-size:15px;line-height:24px;color:#b9c4dc;max-width:560px}
-.mark .row{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap;justify-content:center}
+.hero{position:relative;height:100vh;min-height:560px;background:#060b22;overflow:hidden}
+#field{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(6,11,34,0) 55%,rgba(6,11,34,.55) 85%,rgba(13,14,18,1) 100%);pointer-events:none}
+.mark{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;text-align:center;padding:0 16px}
+.mark h1{font-family:var(--mono);font-weight:800;font-size:clamp(46px,9vw,108px);letter-spacing:-.03em;line-height:1;margin:0;color:rgba(255,255,255,.06);-webkit-text-stroke:1.5px #fff;paint-order:stroke fill;text-shadow:0 0 30px rgba(120,160,255,.35)}
+.mark p{margin:16px 0 0;font-size:15px;line-height:24px;color:#dfe6ff;max-width:560px;text-shadow:0 1px 12px #060b22,0 0 2px #060b22}
+.mark .row{display:flex;gap:8px;margin-top:120px;padding:8px;border-radius:9999px;background:rgba(6,11,34,.7);border:1px solid rgba(255,255,255,.06);backdrop-filter:blur(10px)}
 .wrap{max-width:780px;margin:0 auto;padding:64px 20px 96px}
 section{margin:0 0 56px}
 h2{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-weight:600;font-size:30px;line-height:36px;margin:0 0 16px;color:#fff}
@@ -52,8 +49,7 @@ table{border-collapse:collapse;width:100%;font-size:14px;line-height:20px;color:
 .dim{color:#8fa0cc;font-size:14px}
 footer{color:#8fa0cc;font-size:13px;line-height:20px;border-top:1px solid var(--line);padding-top:20px}
 @media (max-width:720px){.tiles{grid-template-columns:1fr 1fr}.top .g.l{display:none}h2{font-size:24px}.hero{height:86vh}}
-@media (prefers-reduced-motion:reduce){.wall .t{animation:none}}
-</style>
+@media (prefers-reduced-motion:reduce){</style>
 </head>
 <body>
 <div class="top">
@@ -62,7 +58,7 @@ footer{color:#8fa0cc;font-size:13px;line-height:20px;border-top:1px solid var(--
 </div>
 
 <header class="hero">
-<div class="wall" aria-hidden="true"><div class="t" id="wall"></div></div>
+<canvas id="field" aria-hidden="true"></canvas>
 <div class="mark">
 <h1>Open Stanley</h1>
 <p>An open head of content for the agent you already pay for.</p>
@@ -73,19 +69,19 @@ footer{color:#8fa0cc;font-size:13px;line-height:20px;border-top:1px solid var(--
 <div class="wrap">
 <section id="about">
 <h2><svg viewBox="0 0 24 24" fill="none" stroke="#7fa1ff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>About</h2>
-<p>Open Stanley is a free, open-source Claude plugin that works as a head of content for busy founders. It digs the stories out of your week (meetings, Slack, email, notes), drafts LinkedIn and X posts in your voice with a receipt for every claim, checks each draft against what the feeds reward, schedules it through your own browser, and reports the numbers back.</p>
-<p>It is the loop that "AI head of content" products sell for $45–149 a month, rebuilt as a plugin, with the three things they can't do: read your own sources, remember your corrections, and show where every claim came from. Your material stays in a folder you own. MIT.</p>
+<p>A free, open-source Claude plugin that works as a head of content for busy founders. It digs the stories out of your week, drafts LinkedIn and X posts in your voice with a receipt for every claim, checks each draft against what the feeds reward, schedules it through your browser, and reports the numbers back.</p>
+<p>The loop that "AI head of content" products sell for $45–149 a month, rebuilt as a plugin, plus the three things they can't do: read your own sources, remember your corrections, show where every claim came from. Your material stays in a folder you own.</p>
 </section>
 
 <section id="how">
 <h2><svg viewBox="0 0 24 24" fill="none" stroke="#7fa1ff" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>How it works</h2>
 <ol>
-<li>Saturday: it reads your meetings, Slack, sent mail, calendar and notes for things that happened, each with a source.</li>
-<li>Every morning: one question only you can answer. You reply with a voice note or two lines.</li>
-<li>Sunday: three drafts in your voice, each with a preview card and a one-line check against the 2026 research. Writing it yourself? It brings the ideas and audits your draft.</li>
-<li>You say yes to the exact text. It schedules at the right slot through your logged-in browser.</li>
+<li>Saturday: it reads your meetings, Slack, mail, calendar and notes for things that happened.</li>
+<li>Every morning: one question only you can answer. You reply with a voice note.</li>
+<li>Sunday: three drafts in your voice, each checked against the 2026 research. Writing it yourself? It brings the ideas and audits your draft.</li>
+<li>You say yes to the exact text. It schedules through your logged-in browser.</li>
 <li>Every night: the numbers, attached to the story and shape that produced them.</li>
-<li>Every post carries an experiment arm. Your edits become rules; rules you override are retired.</li>
+<li>Every post carries an experiment arm. Your edits become rules.</li>
 </ol>
 <pre>$ stanley-audit drafts/2026-11-05-yc-partner.md --platform linkedin --has-image
 landing: opens-first-person=yes fold-complete-thought=yes named-entity-early=yes
@@ -95,13 +91,13 @@ RESULT: PASS</pre>
 
 <section id="results">
 <h2><svg viewBox="0 0 24 24" fill="none" stroke="#7fa1ff" stroke-width="1.6"><path d="M3 20h18M5 16l4-5 4 3 6-8"/></svg>Results</h2>
-<p>One founder, under 5K followers, running it every day since September 2026. This is his LinkedIn analytics page on 6 November: 44,845 impressions in 90 days, up 20% on the 90 before. The two biggest posts reached about ten times the account's median; both opened with a name the audience knew, told a first-hand conversation, and carried a real photo.</p>
+<p>One founder, under 5K followers, running it every day since September 2026. His LinkedIn analytics on 6 November: 44,845 impressions in 90 days, up 20%. The two biggest posts reached about ten times the account's median.</p>
 <img class="shot" src="results-90d.png" alt="LinkedIn content analytics: 44,845 impressions in 90 days, up 20%, the curve steepening in October and November">
 </section>
 
 <section id="strategies">
 <h2><svg viewBox="0 0 24 24" fill="none" stroke="#7fa1ff" stroke-width="1.6"><path d="M12 3v6M12 9l-6 4M12 9l6 4M6 13v5M18 13v5"/></svg>Strategies</h2>
-<p>Your own stories are the root. The rest are for thin weeks and new accounts. Each is a skill, and each is measured against the others on your own ledger.</p>
+<p>Your own stories are the root. The rest are for thin weeks and new accounts, and each is measured against the others on your ledger.</p>
 <ul class="strat">
 <li><b>Your own stories</b> — what happened to you this week, with a receipt. The root.</li>
 <li><b>Atlas</b> — your vertical, mapped from public data. Posts on day one.</li>
@@ -117,7 +113,7 @@ RESULT: PASS</pre>
 
 <section id="community">
 <h2><svg viewBox="0 0 24 24" fill="none" stroke="#7fa1ff" stroke-width="1.6"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg>Newsletter</h2>
-<p>One email a month: what the plugin posted, what the numbers said, and the strategies users sent in that we checked. The point of an open head of content is to share what works with people who take content seriously. Until the list is live, the same update goes to <a href="https://github.com/Harmix/open-stanley/discussions">Discussions</a>. Have a tactic that worked? <a href="https://github.com/Harmix/open-stanley/issues/new?template=strategy-tip.yml">Send it with your numbers</a>; verified tips go into the plugin, credited.</p>
+<p>One email a month: what the plugin posted, what the numbers said, and the strategies users sent in that we checked. Until the list is live it goes to <a href="https://github.com/Harmix/open-stanley/discussions">Discussions</a>. Something worked for you? <a href="https://github.com/Harmix/open-stanley/issues/new?template=strategy-tip.yml">Send it with your numbers</a>.</p>
 </section>
 
 <section id="compare">
@@ -145,18 +141,54 @@ Plugins → Add → Add marketplace → Harmix/open-stanley → install Open Sta
 
 # Codex, or any agent that reads SKILL.md
 npx skills add Harmix/open-stanley</pre>
-<p>Then say "set up Stanley". It reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, proposes lanes, and builds a voice profile from your own words.</p>
+<p>Then say "set up Stanley". It reads your last 40–60 posts, tells you why your top three worked, proposes lanes, and builds a voice profile from your own words.</p>
 </section>
 
 <footer>Open Stanley copies the loop of Stanley by Stan and credits it: the strategy inside that product is its founders' real work. This plugin changes the parts that did not work for a founder whose material is spread across tools, and it costs nothing. <a href="https://github.com/Harmix/open-stanley">Source</a> · <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/CHANGELOG.md">Changelog</a> · <a href="creators/">Teardowns</a></footer>
 </div>
 <script>
 (function(){
-  var src=["slack #founders","slack #sales","meeting · customer call","meeting · monthly reflection","gmail · sent","calendar","voice note","notion · spec","drive · deck","pam · memory","story · fresh","ledger","audit","scout","recap","soapbox"];
-  var txt=["the deal went to the vendor who replied first","we don't need memory, we need to stop asking Nick","hour 2 of 4: the agent sent a real email to a lead named test","coffee chat with a YC partner, 30 min","3 co-founders picked the top 5 facts from the same meeting: 2.0/5 overlap","he had never heard of racing separate ideas to $10K MRR","the summary said 'dating app'; the transcript says hobby partners","1:52 · the thing I'd tell founders who are just starting","receipt: pam:meeting/3a1f…","lane: founder-operating-lessons · shape: event → claim → question","landing: first-person=yes named-entity=yes question=yes image=yes","impressions 10,312 · reactions 41 · comments 6 · reposts 2","two of the commenters are founders you met at SaaS North","experiment ending: open-question n=9 · flat n=31","raise money when you don't need it","the knowledge was already in Pam; Nick still had to ask a person","step 9: grep -rn -i test config/","who kept showing up this month: 7 people, 3 new","post scheduled tue 09:00 · series link in first comment","what did you do by hand before you built it?"];
-  function item(i){var s=src[(i*7)%src.length],t=txt[(i*11)%txt.length];var h=String(8+(i*5)%14).padStart(2,"0")+":"+String((i*17)%60).padStart(2,"0");return '<span class="k">'+s+'</span>  '+h+'  '+t.replace(/(\d[\d,.%\/]*)/g,'<span class="n">$1</span>');}
-  var lines=[];for(var i=0;i<80;i++){lines.push('<div style="padding-left:'+((i*37)%30)+'ch">'+item(i)+'      '+item(i+41)+'      '+item(i+83)+'      '+item(i+127)+'</div>');}
-  document.getElementById("wall").innerHTML=lines.join("")+lines.join("");
+  var c=document.getElementById("field"),g=c.getContext("2d");
+  var src=["slack #founders","meeting · customer call","gmail · sent","calendar","voice note","notion · spec","pam · memory","story · fresh","ledger","audit","scout","recap","soapbox","drive · deck"];
+  var txt=["the deal went to the vendor who replied first","we don't need memory, we need to stop asking Nick","hour 2 of 4: the agent sent a real email to a lead named test","coffee chat with a YC partner, 30 min","3 co-founders picked the top 5 facts from the same meeting: 2.0/5 overlap","he had never heard of racing separate ideas to $10K MRR","the summary said dating app; the transcript says hobby partners","the thing I'd tell founders who are just starting","receipt: pam:meeting/3a1f","lane: founder-operating-lessons · shape: event → claim → question","landing: first-person=yes named-entity=yes question=yes image=yes","impressions 10,312 · reactions 41 · comments 6 · reposts 2","two of the commenters are founders you met at SaaS North","experiment ending: open-question n=9 · flat n=31","raise money when you don't need it","the knowledge was already in Pam; Nick still had to ask a person","who kept showing up this month: 7 people, 3 new","post scheduled tue 09:00 · series link in first comment","what did you do by hand before you built it?","rules promoted 2 · retired 1 · diffs stored 14"];
+  var stream="";for(var i=0;i<400;i++){stream+=src[(i*5+3)%src.length]+"  "+String(8+(i*5)%14).padStart(2,"0")+":"+String((i*17)%60).padStart(2,"0")+"  "+txt[(i*11)%txt.length]+"      ";}
+  var W,H,dpr,cols,rows,cw=9,ch=18,t0=performance.now(),reduce=matchMedia("(prefers-reduced-motion: reduce)").matches,curF=-1;
+  var fonts=["12px JetBrains Mono, ui-monospace, Menlo, monospace","13.5px JetBrains Mono, ui-monospace, Menlo, monospace","15.5px JetBrains Mono, ui-monospace, Menlo, monospace","18px JetBrains Mono, ui-monospace, Menlo, monospace"];
+  function size(){dpr=Math.min(2,devicePixelRatio||1);W=c.clientWidth;H=c.clientHeight;c.width=W*dpr;c.height=H*dpr;g.setTransform(dpr,0,0,dpr,0,0);cols=Math.ceil(W/cw)+8;rows=Math.ceil(H/ch)+8;g.textBaseline="top";curF=-1;}
+  size();addEventListener("resize",size);
+  function frame(now){
+    var t=(now-t0)/1000;
+    g.fillStyle="#060b22";g.fillRect(0,0,W,H);curF=-1;
+    var cx=W/2,cy=H/2,R=Math.min(W,H)*0.62;
+    var scroll=reduce?0:t*0.9;            // rows per second
+    var rowOff=Math.floor(scroll),frac=scroll-rowOff;
+    for(var j=-4;j<rows;j++){
+      var y0=(j-frac)*ch;
+      for(var i=-4;i<cols;i++){
+        var x0=i*cw;
+        // lens: pull characters outward from the centre, more near the middle
+        var dx=x0-cx,dy=y0-cy,d=Math.sqrt(dx*dx+dy*dy)/R;
+        var k=Math.exp(-d*d*2.2);                 // 1 at centre → 0 at edge
+        var sc=1+0.6*k;                           // magnification
+        var wob=Math.sin(t*0.6+ (x0+y0)*0.004)*6*k;
+        var x=cx+dx*sc, y=cy+dy*sc+wob;
+        if(x<-20||x>W+20||y<-20||y>H+20) continue;
+        var idx=((j+rowOff)*cols+i+((j+rowOff)*37))%stream.length; if(idx<0) idx+=stream.length;
+        var chr=stream.charAt(idx); if(chr===" ") continue;
+        var a=0.18+0.55*k+0.08*Math.sin(t*2+i*0.7+j*1.3);
+        var hole=d<0.3;                            // keep the wordmark readable
+        if(hole) a*=0.28;
+        var num=chr>="0"&&chr<="9";
+        var fz=k>0.66?3:(k>0.33?2:(k>0.12?1:0)); if(fz!==curF){curF=fz;g.font=fonts[fz];}
+        g.fillStyle=num?"rgba(170,230,200,"+a+")":"rgba(150,180,255,"+a+")";
+        g.fillText(chr,x,y);
+      }
+    }
+    // scanlines
+    g.fillStyle="rgba(0,0,0,0.18)";for(var sy=0;sy<H;sy+=3){g.fillRect(0,sy,W,1);}
+    if(!reduce) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 })();
 </script>
 </body></html>
