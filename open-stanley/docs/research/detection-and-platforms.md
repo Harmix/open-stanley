@@ -618,7 +618,4 @@ Third-party OpenClaw posting integrations: **Upload-Post**, **AdaptlyPost**. **N
 - [VoltAgent/awesome-openclaw-skills — marketing and sales category](https://github.com/VoltAgent/awesome-openclaw-skills/blob/main/categories/marketing-and-sales.md) · [Best OpenClaw skills for social media marketing](https://postfa.st/blog/best-openclaw-skills-for-social-media-marketing) · [ClawHub guide for marketers](https://contentstudio.io/blog/clawhub-guide)
 - [sergebulaev/linkedin-skills — 11 Claude/Codex LinkedIn skills (MIT)](https://github.com/sergebulaev/linkedin-skills) · [LinkedIn Claude Skills guide](https://blog.mystrika.com/linkedin-claude-skills/)
 - [TechRadar — Claude Code plugin quietly triggers consent prompts and collects data](https://www.techradar.com/pro/that-felt-wrong-dev-uses-claude-to-expose-why-a-popular-no-code-platform-wants-to-read-all-your-prompts) · [The Vercel plugin on Claude Code wants to read all your prompts](https://akshaychugh.xyz/writings/png/vercel-plugin-telemetry)
-- [Claude Code telemetry with OpenTelemetry](https://docs.kuberocketci.io/blog/claude-code-telemetry-opentelemetry-token-cost-tracking) · [Feature request: skill invocation tracking and usage analytics](https://github.com/anthropics/claude-code/issues/35319)agentId: a32f77d79844544e0 (use SendMessage with to: 'a32f77d79844544e0', summary: '<5-10 word recap>' to continue this agent)
-<usage>subagent_tokens: 181860
-tool_uses: 107
-duration_ms: 814063</usage>
+- [Claude Code telemetry with OpenTelemetry](https://docs.kuberocketci.io/blog/claude-code-telemetry-opentelemetry-token-cost-tracking) · [Feature request: skill invocation tracking and usage analytics](https://github.com/anthropics/claude-code/issues/35319)
