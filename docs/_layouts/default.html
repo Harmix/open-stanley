@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page.title }} · Open Stanley</title>
+<meta name="description" content="{{ page.description | default: 'Open Stanley creator teardowns: what works for creators who win on LinkedIn and X, shapes only.' }}">
+<link rel="icon" href="{{ '/icon.png' | relative_url }}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
+</head>
+<body>
+<div class="top">
+<div class="g l"><a class="pill p-doc" href="{{ '/' | relative_url }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Open Stanley</a><a class="pill p-tear" href="{{ '/creators/' | relative_url }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 15l3-4 3 3 4-6"/></svg>Teardowns</a></div>
+<div class="g"><a class="pill p-disc" href="https://github.com/Harmix/open-stanley/discussions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Discussions</a><a class="pill p-git" href="https://github.com/Harmix/open-stanley"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 0 0-2.2 13.6c.35.07.48-.15.48-.34v-1.2c-1.95.42-2.36-.94-2.36-.94-.32-.8-.78-1.02-.78-1.02-.64-.44.05-.43.05-.43.7.05 1.07.72 1.07.72.63 1.07 1.65.76 2.05.58.06-.46.25-.76.45-.94-1.56-.18-3.2-.78-3.2-3.46 0-.76.27-1.39.72-1.88-.07-.18-.31-.89.07-1.85 0 0 .59-.19 1.93.72a6.7 6.7 0 0 1 3.5 0c1.34-.91 1.93-.72 1.93-.72.38.96.14 1.67.07 1.85.45.49.72 1.12.72 1.88 0 2.69-1.64 3.28-3.2 3.45.25.22.48.65.48 1.3v1.93c0 .19.13.41.48.34A7 7 0 0 0 8 1z"/></svg>GitHub</a></div>
+</div>
+<main class="wrap" style="padding-top:96px">
+<article>
+{{ content }}
+</article>
+<footer style="margin-top:48px"><span>Shapes only, never a creator's sentences. Written by the plugin, read by a person before it goes up.</span><span><a href="{{ '/' | relative_url }}">Open Stanley</a> · <a href="https://github.com/Harmix/open-stanley">Source</a></span></footer>
+</main>
+</body></html>

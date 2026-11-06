@@ -1,13 +1,15 @@
 ---
+layout: default
 title: Creator teardowns
+description: Every week Open Stanley studies one creator who is winning on LinkedIn or X and writes up what works, shapes only.
 ---
 
 # Creator teardowns
 
-Every week Open Stanley studies one creator who is winning on LinkedIn or X in a vertical, reads their last 30–50 public posts, and writes up the *shapes* that work: openers, structures, endings, specificity moves, cadence, images. Never their sentences. Each teardown ends with what a founder in the same vertical could borrow this week.
+Every week the plugin reads the last 30 to 50 public posts of one creator who is winning on LinkedIn or X, and writes up what works: how they open, how they end, how long they go, what they put in the picture. Never their sentences. Each one ends with what a founder in the same field could try this week.
 
-The same study runs inside the plugin for your own vertical (`/open-stanley:study`).
+The same study runs inside the plugin for your own field (`/open-stanley:study`).
 
 <!-- teardowns:start -->
-_First teardown lands the Sunday after this page went live._
+_The first one lands the Saturday after this page went live._
 <!-- teardowns:end -->

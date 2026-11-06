@@ -1,0 +1,39 @@
+:root{--bg:#0d0e12;--navy:#0a1335;--ink:#fff;--body:#cfd5dd;--dim:#8b95a7;--line:#1f232c;--mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;--sans:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--body);font-family:var(--mono);font-size:16px;line-height:26px}
+a{color:#8fb0ff;text-decoration:underline;text-underline-offset:3px}
+.top{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;padding:16px}
+.top .g{display:flex;gap:16px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:9999px;text-decoration:none;font-family:var(--sans);font-weight:700;font-size:14px;line-height:25px;white-space:nowrap;backdrop-filter:blur(10px)}
+.pill svg{width:20px;height:20px;flex:none}
+.p-doc{background:rgba(255,120,40,.2);color:#fdebd9}.p-tear{background:rgba(255,70,110,.2);color:#ffd8e0}.p-git{background:rgba(90,150,255,.2);color:#dbe6ff}.p-in{background:rgba(40,190,130,.2);color:#d6f7e8}.p-how{background:rgba(230,190,50,.2);color:#fbf1c6}.p-disc{background:rgba(170,110,255,.2);color:#ead9ff}
+.hero{position:relative;height:72vh;min-height:520px;background:var(--navy);overflow:hidden}
+#field{position:absolute;inset:0;width:100%;height:100%;display:block}
+.mark{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;text-align:center;padding:0 16px}
+.mark h1{font-family:var(--mono);font-weight:800;font-size:clamp(40px,8.5vw,96px);letter-spacing:-.03em;line-height:1;margin:0;color:rgba(255,255,255,.04);-webkit-text-stroke:1.5px #fff;paint-order:stroke fill}
+.mark p{margin:14px 0 0;font-size:15px;line-height:24px;color:#e4e9f5}
+.mark .row{position:absolute;bottom:28px;display:flex;gap:10px;padding:8px;border-radius:9999px;background:rgba(6,11,34,.78);border:1px solid rgba(255,255,255,.06);backdrop-filter:blur(10px);flex-wrap:wrap;justify-content:center}
+.wrap{max-width:768px;margin:0 auto;padding:40px 20px 80px}
+section{position:relative;margin:0 0 48px}
+h2{position:relative;display:flex;align-items:center;font-family:var(--mono);font-weight:400;font-size:30px;line-height:48px;margin:0 0 8px;color:var(--ink)}
+h2 svg{width:32px;height:32px;flex:none;margin-right:8px}
+@media (min-width:900px){h2 svg{position:absolute;right:100%;margin-right:8px}}
+.violet{color:#7c3aed}.blue{color:#2563eb}.green{color:#059669}.yellow{color:#eab308}.rose{color:#e11d48}.orange{color:#ea580c}.sky{color:#0284c7}
+p{margin:0 0 16px}
+ol{margin:0 0 16px;padding-left:24px}li{margin:0 0 8px}
+.rows{margin:8px 0 16px;padding:0;list-style:none}
+.rows li{display:grid;grid-template-columns:160px 1fr;gap:12px;border-top:1px solid var(--line);padding:8px 0;margin:0}
+.rows li:last-child{border-bottom:1px solid var(--line)}
+.rows b{color:var(--ink);font-weight:600}
+img.shot{width:100%;height:auto;display:block;border-radius:6px;border:1px solid var(--line);margin:8px 0 16px}
+pre{background:#13151b;border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow:auto;font-size:14px;line-height:22px;margin:0 0 16px;color:var(--body)}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:22px;margin:0 0 12px}
+td,th{border-top:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}th{color:var(--dim);font-weight:400}tr:last-child td{border-bottom:1px solid var(--line)}
+.dim{color:var(--dim);font-size:14px}
+footer{display:flex;flex-wrap:wrap;gap:12px 20px;justify-content:space-between;color:var(--dim);font-size:13px;line-height:20px;border-top:1px solid var(--line);padding-top:20px}
+footer a{color:var(--dim)}
+article h1{font-family:var(--mono);font-weight:400;font-size:30px;line-height:40px;color:var(--ink);margin:0 0 8px}
+article h2{font-size:22px;line-height:32px;margin:28px 0 8px}
+article .meta{color:var(--dim);font-size:14px;margin:0 0 20px}
+@media (max-width:720px){.top{justify-content:flex-end}.top .g.l{display:none}.hero{height:66vh}h2{font-size:24px;line-height:36px}.mark p{font-size:14px;line-height:22px}.pill{padding:7px 14px;font-size:13px}.mark .row{gap:6px}.mark .row .p-tear{display:none}.rows li{grid-template-columns:1fr}.rows b{display:block}}
+@media (prefers-reduced-motion:reduce){#field{opacity:.6}}
