@@ -2,6 +2,11 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.15.0 — 2026-11-06
+
+- README: comparison with the paid tools, the questions people (and AI search) ask, badges; `docs/compare.md`; `llms.txt` at the repo root.
+- recap: opt-in weekly share card (`share_card: yes` in strategy.md): the week's posts ranked by impressions, rendered with `stanley-chart`, "made with Open Stanley" on the source line.
+
 ## 0.14.0 — 2026-11-06
 
 - New skill `atlas`: a post from public data in the user's vertical (a ranking, a share, a concentration, a change), with receipts per number in `stories/assets/atlas-<slug>/`, rendered by the new `stanley-chart` (squarified treemap or ranked bars, HTML + PNG, metadata stripped, no image model), written in the four-part shape that gets reposted (finding with a famous name first, one method line, three or four details from the sources, "what should I map next"). Needs no meetings or voice notes, so onboarding proposes it as a day-one lane and the Sunday drafts include one when the lane exists. Modelled on a mining-data creator (1,300 reactions on 4.7K followers) and on the first account's best post, which needed none of its own stories.

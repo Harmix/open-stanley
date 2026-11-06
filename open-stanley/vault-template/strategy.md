@@ -11,6 +11,9 @@
 3. …
 4. **atlas** — public data in the vertical, rendered with stanley-chart; the first three questions: …
 
+## Sharing
+- share_card: no   # yes = the Sunday recap offers a weekly numbers card that names Open Stanley
+
 ## Cadence
 - LinkedIn: N original posts/week, days/times
 - X: same post as a single long post (Premium) or a 5–7 tweet thread; N replies/day

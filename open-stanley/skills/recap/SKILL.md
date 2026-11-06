@@ -41,6 +41,10 @@ When reading a post page, record the reaction breakdown (hover the reaction coun
 
 Pick one, with evidence from `stanley-stats`, never from memory. A lift on fewer than 3 posts (the table marks them `n<3: not a signal`) is not evidence for or against a shape; say "one post, no read" rather than calling a shape the user's worst. Examples: reply to X's comment now; the number-in-hook posts are running 3x, do another; you haven't posted in 9 days and the streak matters less than the compounding; the X account has 5 followers, so comments on larger accounts matter more than original posts there this month. When two posts in the same lane are underperforming, say the lane may be wrong, not the timing.
 
+## 4b. The share card (opt-in, weekly)
+
+If `strategy.md` has `share_card: yes`, the Sunday recap renders one card from the ledger with `stanley-chart --kind bars`: the week's posts ranked by impressions, the title stating the week's number ("11,204 people saw my posts this week, 3 posts"), and the source line "made with Open Stanley · github.com/Harmix/open-stanley". Hand it to the user with a two-line draft in their voice; they post it or not. Never without the opt-in, never with a number not read from the platform this week, and the card is cleaned (`image-clean`) before upload. This is the loop the paid tools do not have: a user's own numbers, shareable, with the tool named once.
+
 ## 5. Weekly and monthly
 
 Weekly (Sunday): same shape over 7 days, plus the `stanley-stats` experiment table. When an experiment reaches `min_n` per arm, state the result in one line and move it to "Resolved bets" in `strategy.md` with the numbers and date; propose the next experiment (one at a time, alternating variants post by post). This is the whole experimentation method: declare, alternate, wait for n, resolve, write it down. Monthly: rewrite the "what good looks like" section of `strategy.md` with the new median and top three, and hand the orbit list to `rituals`.

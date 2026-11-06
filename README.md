@@ -1,6 +1,8 @@
 # Open Stanley
 
-An open head of content for the agent you already pay for.
+[![version](https://img.shields.io/badge/version-0.15.0-blue)](open-stanley/CHANGELOG.md) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![tests](https://img.shields.io/badge/tests-passing-brightgreen)](open-stanley/tests) [![works in](https://img.shields.io/badge/works%20in-Claude%20Cowork%20%C2%B7%20Claude%20Code%20%C2%B7%20any%20SKILL.md%20agent-6f42c1)](#install)
+
+An open head of content for the agent you already pay for. A free, open-source alternative to Stanley (getstanley.ai), Taplio, Supergrow and the other "AI head of content" subscriptions: a Claude plugin that writes LinkedIn and X posts from your own meetings, Slack, email and notes, in your voice, with a receipt for every claim.
 
 It mines your own meetings, Slack, email, docs, and notes through whatever MCPs you have connected, drafts LinkedIn and X posts by editing your material into your voice (never by generating a claim from a topic), audits every draft against the 2026 AI-slop and platform rules, publishes and comments through your own browser, runs the daily rituals as scheduled tasks with a run log, and learns from every edit you make.
 
@@ -19,6 +21,30 @@ npx skills add Harmix/open-stanley
 ```
 
 Then say: **"set up Stanley"**. Onboarding reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, proposes three lanes, builds a voice profile from your own words, and asks where the vault should live (a plain folder in your synced Google Drive, so scheduled runs on your laptop can read it).
+
+## Open Stanley vs the paid tools
+
+| | Stanley (getstanley.ai) | Taplio / Supergrow / AuthoredUp | Open Stanley |
+|---|---|---|---|
+| Price | $44.99–149/month | $29–199/month | $0 on top of the Claude plan you have |
+| Sources it reads | your past posts, voice notes | your past posts, trending posts | anything you have connected: meetings, Slack, email, calendar, docs, memory, plus voice notes |
+| Where your material lives | their servers | their servers | a folder on your machine (`stanley-vault`) |
+| Receipts for claims | no | no | every number and name maps to a story file with its source; a fact-checker agent recomputes |
+| Learns from your edits | "learns your voice" | templates | stores every draft→final diff, promotes a rule after two repeats, retires rules you override |
+| Experiments | no | no | tags each post with an arm (ending, hook) and reports lifts from your own ledger |
+| Audit for AI tells | no | "AI detector" | a linter for the 2026 demotion signals, plus a `landing:` scorecard |
+| Posting | their integration | their integration | your own logged-in browser (or any posting MCP you have) |
+| Runs | their cloud | their cloud | scheduled tasks on your laptop, or Claude's cloud, your choice |
+
+The full comparison, with what the paid tools do better, is in [docs/compare.md](open-stanley/docs/compare.md).
+
+## Questions people ask
+
+**Is there a free alternative to Stanley AI?** This. Same loop (ideas → drafts in your voice → schedule → numbers back), no subscription, your data stays on your machine.
+**Does it work with Claude Cowork?** Yes, that is where it was built and where the first account runs it; also Claude Code and any agent that reads `SKILL.md`.
+**Does it post for me?** It schedules and posts through your own logged-in browser after you say yes to the exact text; nothing goes out unapproved.
+**Will the posts sound like AI?** Every draft starts from your words and goes through an audit for the patterns LinkedIn demotes; the first account's posts reached ten times its median within six weeks.
+**Does it need a LinkedIn API key?** No. It reads and posts through the browser you are logged into.
 
 ## Repo layout
 
