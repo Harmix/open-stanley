@@ -1,0 +1,7 @@
+# Creator teardown (Saturday 11:00 local) — optional, for users who publish teardowns
+
+{{PREAMBLE: _preamble-laptop.md}}
+
+Job: creator-teardown. Promise: "one public teardown of a creator winning in my vertical, shapes only, plus a two-line note to send them."
+
+Pick one creator from `strategy.md` → "Reference creators" or from the last month's `ledger/surfaced.jsonl` authors with the highest engagement whom I have not torn down yet (check `docs/creators/` in the repo named in `my-human.md` → `teardown_repo:`). Run `/open-stanley:study` on their last 30–50 public posts and write the teardown with the study skill's "Public teardown" section: shapes, numbers read this run, never their sentences, and a last section "what a founder in <vertical> could borrow this week". Save it as `docs/creators/<slug>.md` in that repo, add a line to `docs/creators/index.md` between the teardown markers, and commit (do not push; say so). Then draft, in my comment voice, the two-line message to the creator ("I read your last 40 posts and wrote up what works: <link>. One thing surprised me: …") and leave it for my yes; never send it. Record the creator in `ledger/surfaced.jsonl` with reason "teardown".

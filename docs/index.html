@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Stanley — an open head of content for the agent you already pay for</title>
+<meta name="description" content="A free, open-source Claude plugin that writes LinkedIn and X posts from your own meetings, Slack, email and notes, in your voice, with a receipt for every claim. An alternative to Stanley, Taplio and Supergrow at $0 on top of your Claude plan.">
+<meta property="og:title" content="Open Stanley — an open head of content">
+<meta property="og:description" content="Free, open-source Claude plugin. Posts from your own material, in your voice, with receipts. Your data stays in a folder you own.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://harmix.github.io/open-stanley/">
+<link rel="canonical" href="https://harmix.github.io/open-stanley/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Open Stanley","applicationCategory":"BusinessApplication","operatingSystem":"Claude Cowork, Claude Code","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Harmix/open-stanley","description":"An open-source AI head of content for LinkedIn and X, as a Claude plugin."}</script>
+<style>
+:root{--ink:#111;--muted:#555;--line:#e6e6e6;--accent:#1f4e79;--bg:#fff;--soft:#f6f7f9}
+@media (prefers-color-scheme:dark){:root{--ink:#eee;--muted:#aaa;--line:#2a2a2a;--accent:#9dc3e6;--bg:#111;--soft:#1a1a1a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 -apple-system,Segoe UI,Helvetica,Arial,sans-serif}
+main{max-width:760px;margin:0 auto;padding:48px 16px 80px}
+h1{font-size:2.1rem;line-height:1.15;margin:0 0 12px}h2{font-size:1.35rem;margin:48px 0 10px}p{margin:0 0 14px}
+.lead{font-size:1.15rem;color:var(--muted)}
+pre{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:14px;overflow:auto;font-size:14px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+table{border-collapse:collapse;width:100%;font-size:15px}td,th{border-top:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}th{color:var(--muted);font-weight:600}
+.btn{display:inline-block;background:var(--accent);color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600;margin:6px 8px 6px 0}
+a{color:var(--accent)}.small{font-size:14px;color:var(--muted)}
+ul{padding-left:20px}li{margin:4px 0}
+</style>
+</head>
+<body><main>
+<h1>Open Stanley</h1>
+<p class="lead">An open head of content for the agent you already pay for. It writes LinkedIn and X posts from your own meetings, Slack, email and notes, in your voice, with a receipt for every claim. Free, MIT, your data stays in a folder you own.</p>
+<p><a class="btn" href="https://github.com/Harmix/open-stanley">GitHub</a> <a class="btn" href="#install">Install</a> <a href="creators/" class="btn" style="background:var(--soft);color:var(--ink);border:1px solid var(--line)">Creator teardowns</a></p>
+
+<h2 id="install">Install</h2>
+<pre><code># Claude Cowork: Plugins → Add → Add marketplace → Harmix/open-stanley → install Open Stanley
+
+# Claude Code
+/plugin marketplace add Harmix/open-stanley
+/plugin install open-stanley@open-stanley
+
+# Codex, or any agent that reads SKILL.md
+npx skills add Harmix/open-stanley</code></pre>
+<p>Then say <strong>"set up Stanley"</strong>. It reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, proposes lanes, and builds a voice profile from your own words.</p>
+
+<h2>What it does every week</h2>
+<ul>
+<li><strong>Mines</strong> your meetings, Slack, sent email, calendar, docs and voice notes for things that happened, with a source for each.</li>
+<li><strong>Asks</strong> you one question each morning that only you can answer (the Soapbox), and files the answer.</li>
+<li><strong>Drafts</strong> three posts on Sunday from your own material, audited against the patterns LinkedIn demotes, with a preview card and one question each.</li>
+<li><strong>Schedules</strong> through your own logged-in browser after you say yes to the exact text. Nothing goes out unapproved.</li>
+<li><strong>Reports</strong> the numbers every night and attaches them to the story and shape that produced them, so next week's drafts are built on what worked for you.</li>
+<li><strong>Learns</strong> from your edits: every draft→final change is stored; a correction that repeats becomes a rule; a rule you keep overriding is retired.</li>
+</ul>
+
+<h2>Compared with the paid tools</h2>
+<table>
+<tr><th></th><th>Stanley, Taplio, Supergrow</th><th>Open Stanley</th></tr>
+<tr><td>Price</td><td>$29–149 / month</td><td>$0 on top of your Claude plan</td></tr>
+<tr><td>Reads</td><td>your past posts</td><td>anything you have connected</td></tr>
+<tr><td>Your material</td><td>their servers</td><td>a folder on your machine</td></tr>
+<tr><td>Receipts</td><td>no</td><td>every number and name maps to a source; a fact-checker recomputes</td></tr>
+<tr><td>Learns from edits</td><td>"learns your voice"</td><td>stores each diff, promotes rules after two repeats</td></tr>
+<tr><td>Experiments</td><td>no</td><td>each post tagged with an arm; lifts from your own ledger</td></tr>
+</table>
+<p class="small">The paid tools win on zero setup and mobile apps. <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/compare.md">The honest comparison.</a></p>
+
+<h2>Numbers from the first account</h2>
+<p>Built in a four-hour hackathon in October 2026 as a reply to a $45/month tool. On the first account (under 5K followers) the plugin's posts reached about ten times the account's median within six weeks; the two biggest opened with a well-known name, told a first-hand conversation, and carried a real image. What it learned is in the <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/CHANGELOG.md">changelog</a>, version by version.</p>
+
+<h2>Newsletter and tips</h2>
+<p>One email a month: what the plugin posted, what the numbers said, and the strategy tips users sent in that we verified. Until the list exists, <a href="https://github.com/Harmix/open-stanley/discussions">watch the Discussions</a>. Have a tactic that worked for you? <a href="https://github.com/Harmix/open-stanley/issues/new?template=strategy-tip.yml">Submit a strategy tip</a>; verified tips go into the plugin and the newsletter, credited.</p>
+
+<p class="small">Open Stanley copies the loop of Stanley by Stan and credits it: the growth strategy inside that product is its founders' real work. This plugin changes the parts that did not work for a founder whose material is spread across tools, and it costs nothing. MIT. <a href="https://github.com/Harmix/open-stanley">Source</a>.</p>
+</main></body></html>

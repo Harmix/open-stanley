@@ -2,6 +2,13 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.16.0 — 2026-11-06
+
+- Landing page (`docs/`, GitHub Pages) with a creator-teardowns section; strategy-tip issue template.
+- study: "Public teardown" section and a weekly `creator-teardown` scheduled-task template: a public shapes-only teardown of one creator in the vertical, saved to the repo's `docs/creators/`, with a two-line note to the creator drafted for the user's yes (the personalized-analysis loop, as pages).
+- recap: `milestones:` in strategy.md; the night the 90-day impressions cross one, recap drafts the milestone post with the analytics screenshot.
+- my-human.md: `teardown_repo:`.
+
 ## 0.15.0 — 2026-11-06
 
 - README: comparison with the paid tools, the questions people (and AI search) ask, badges; `docs/compare.md`; `llms.txt` at the repo root.

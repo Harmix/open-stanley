@@ -31,6 +31,12 @@ Write `shapes/<handle>.md` in the vault: 5–10 shapes with a one-line descripti
 
 `write` reads `shapes/` when the user asks for a shape ("PG-style comment", "a Dharmesh-style episode post") or when a lane in `strategy.md` names a reference creator. The shape supplies the moves; the user's story supplies every word of content; `voice.md` supplies the sentence-level voice. If a draft could be mistaken for the studied creator's post, it has failed: the reader should recognize the user.
 
+## 3b. Public teardown (the creator-spotlight loop)
+
+A teardown written for the user's own vault is a shapes catalog. A teardown written for the public is also distribution: the creator shares it ("someone studied my posts"), their audience reads it, and the page is a third-party-looking citation for AI search. The paid product's founders did this by hand as cold email with a personalized analysis; the plugin does it weekly as a page (`templates/scheduled-tasks/creator-teardown-weekly.md`).
+
+A public teardown: 500–900 words, Markdown with front matter (`title`, `creator`, `platform`, `followers` read this run, `posts_read`, `date`), sections: what the numbers say (median and top three, read this run, nothing from memory), the five shapes with one described example each (described, never quoted beyond six words), cadence and images, and "what a founder in <vertical> could borrow this week". Say what did not work for them too; a teardown that is all praise is an ad. Never a sentence of theirs reproduced, never a private detail, never a guess about their business. Saved to `docs/creators/<slug>.md` in the repo named in `my-human.md` (`teardown_repo:`), linked from `docs/creators/index.md`, committed, not pushed. The two-line note to the creator is drafted and left for the user's yes.
+
 ## 4. Ships with
 
 `references/creators-2026-09.md`: shapes for Paul Graham (X), Dharmesh Shah, Yamini Rangan, Yuriy Zaremba, and Vitalii Dodonov, derived from live reads of their feeds on 8 Sep 2026. Re-study every quarter; shapes drift with platforms.

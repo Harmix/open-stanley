@@ -13,6 +13,7 @@
 
 ## Sharing
 - share_card: no   # yes = the Sunday recap offers a weekly numbers card that names Open Stanley
+- milestones:      # e.g. 50000, 100000 (90-day impressions); recap drafts a milestone post the night one is crossed
 
 ## Cadence
 - LinkedIn: N original posts/week, days/times

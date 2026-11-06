@@ -45,6 +45,10 @@ Pick one, with evidence from `stanley-stats`, never from memory. A lift on fewer
 
 If `strategy.md` has `share_card: yes`, the Sunday recap renders one card from the ledger with `stanley-chart --kind bars`: the week's posts ranked by impressions, the title stating the week's number ("11,204 people saw my posts this week, 3 posts"), and the source line "made with Open Stanley · github.com/Harmix/open-stanley". Hand it to the user with a two-line draft in their voice; they post it or not. Never without the opt-in, never with a number not read from the platform this week, and the card is cleaned (`image-clean`) before upload. This is the loop the paid tools do not have: a user's own numbers, shareable, with the tool named once.
 
+## 4c. Milestones
+
+`strategy.md` may list `milestones: 50000, 100000, 250000` (90-day impressions, from the analytics page the recap already reads) and `milestone_lane: <lane>`. The night the 90-day number crosses one, say so first, screenshot the analytics page (the receipt), and draft the milestone post through `write`: what the number is, what the plugin did and did not do, the one lesson, the link in the first comment, and the screenshot cleaned (`image-clean`) as the image. Mark the milestone done in `strategy.md` so it fires once.
+
 ## 5. Weekly and monthly
 
 Weekly (Sunday): same shape over 7 days, plus the `stanley-stats` experiment table. When an experiment reaches `min_n` per arm, state the result in one line and move it to "Resolved bets" in `strategy.md` with the numbers and date; propose the next experiment (one at a time, alternating variants post by post). This is the whole experimentation method: declare, alternate, wait for n, resolve, write it down. Monthly: rewrite the "what good looks like" section of `strategy.md` with the new median and top three, and hand the orbit list to `rituals`.

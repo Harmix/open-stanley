@@ -1,0 +1,30 @@
+name: Strategy tip
+description: A tactic that worked for you on LinkedIn or X. Verified tips go into the plugin and the newsletter, credited.
+title: "Tip: "
+labels: ["strategy-tip"]
+body:
+  - type: textarea
+    id: tip
+    attributes:
+      label: The tactic, in one paragraph
+      description: What you did, in plain words.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: The evidence
+      description: Numbers from your own analytics (before/after, n posts), or a link to the post. No evidence, no inclusion.
+    validations:
+      required: true
+  - type: input
+    id: credit
+    attributes:
+      label: How to credit you (name and link), or "anonymous"
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Consent
+      options:
+        - label: You may quote this tip in the newsletter and the plugin docs with the credit above.
+          required: true

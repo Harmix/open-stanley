@@ -1,6 +1,6 @@
 # Open Stanley
 
-[![version](https://img.shields.io/badge/version-0.15.0-blue)](open-stanley/CHANGELOG.md) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![tests](https://img.shields.io/badge/tests-passing-brightgreen)](open-stanley/tests) [![works in](https://img.shields.io/badge/works%20in-Claude%20Cowork%20%C2%B7%20Claude%20Code%20%C2%B7%20any%20SKILL.md%20agent-6f42c1)](#install)
+[![version](https://img.shields.io/badge/version-0.16.0-blue)](open-stanley/CHANGELOG.md) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![tests](https://img.shields.io/badge/tests-passing-brightgreen)](open-stanley/tests) [![works in](https://img.shields.io/badge/works%20in-Claude%20Cowork%20%C2%B7%20Claude%20Code%20%C2%B7%20any%20SKILL.md%20agent-6f42c1)](#install)
 
 An open head of content for the agent you already pay for. A free, open-source alternative to Stanley (getstanley.ai), Taplio, Supergrow and the other "AI head of content" subscriptions: a Claude plugin that writes LinkedIn and X posts from your own meetings, Slack, email and notes, in your voice, with a receipt for every claim.
 
@@ -45,6 +45,10 @@ The full comparison, with what the paid tools do better, is in [docs/compare.md]
 **Does it post for me?** It schedules and posts through your own logged-in browser after you say yes to the exact text; nothing goes out unapproved.
 **Will the posts sound like AI?** Every draft starts from your words and goes through an audit for the patterns LinkedIn demotes; the first account's posts reached ten times its median within six weeks.
 **Does it need a LinkedIn API key?** No. It reads and posts through the browser you are logged into.
+
+## Newsletter, tips, teardowns
+
+One email a month with what the plugin posted, what the numbers said, and the tactics users sent in that we verified; until the list exists, watch [Discussions](https://github.com/Harmix/open-stanley/discussions). Have a tactic that worked for you? [Submit a strategy tip](https://github.com/Harmix/open-stanley/issues/new?template=strategy-tip.yml) with your numbers; verified tips go into the plugin and the newsletter, credited. Weekly [creator teardowns](https://harmix.github.io/open-stanley/creators/) study who is winning in a vertical, shapes only.
 
 ## Repo layout
 
