@@ -50,7 +50,7 @@ The full comparison, with what the paid tools do better, is in [docs/compare.md]
 
 ## Newsletter, tips, teardowns
 
-One email a month with what the plugin posted, what the numbers said, and the tactics users sent in that we verified; [subscribe on Substack](https://nazarponochevnyi.substack.com/subscribe). Have a tactic that worked for you? [Submit a strategy tip](https://github.com/Harmix/open-stanley/issues/new?template=strategy-tip.yml) with your numbers; verified tips go into the plugin and the newsletter, credited. Weekly [creator teardowns](https://harmix.github.io/open-stanley/creators/) study who is winning in a vertical, shapes only.
+One email a month with what the plugin posted, what the numbers said, and the tactics users sent in that we verified; [subscribe on Substack](https://openstanley.substack.com/subscribe). Have a tactic that worked for you? [Submit a strategy tip](https://github.com/Harmix/open-stanley/issues/new?template=strategy-tip.yml) with your numbers; verified tips go into the plugin and the newsletter, credited. Weekly [creator teardowns](https://harmix.github.io/open-stanley/creators/) study who is winning in a vertical, shapes only.
 
 ## Repo layout
 

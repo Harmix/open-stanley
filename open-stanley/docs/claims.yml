@@ -32,4 +32,4 @@ landing_promises:       # one line each, with the skill that keeps it; reviewed 
   - {promise: "numbers every night, written next to the story", kept_by: skills/recap}
   - {promise: "every post carries an experiment arm; the same edit twice becomes a rule", kept_by: skills/rituals, skills/learn}
   - {promise: "weekly creator teardowns", kept_by: templates/scheduled-tasks/creator-teardown-weekly.md}
-  - {promise: "monthly newsletter", kept_by: "Substack publication https://nazarponochevnyi.substack.com; README and docs/index.html link the subscribe page"}
+  - {promise: "monthly newsletter", kept_by: "Substack publication https://openstanley.substack.com; README and docs/index.html link the subscribe page"}
