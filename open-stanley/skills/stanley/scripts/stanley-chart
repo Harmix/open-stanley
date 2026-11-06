@@ -3,14 +3,15 @@
 
   stanley-chart data.csv --kind treemap|bars --title "Top 30 copper miners by market cap" --unit "US$ bn" --source "Company filings, Nov 2026" --out chart.png
 
-CSV columns: name,value[,group]. Treemap tiles are sized by value (squarified), bars are ranked. Output: an HTML file always (1200x675,
+CSV columns: name,value[,group][,domain|logo]. Treemap tiles are sized by value (squarified), bars are ranked. `domain` (e.g. bhp.com)
+puts the company favicon on the tile (fetched from the public icon service at render time); `logo` is a local image path. Output: an HTML file always (1200x675,
 inline SVG, no external assets) and a PNG when Playwright has a Chromium on this machine; the PNG is stripped of metadata.
 Used by the atlas skill for "map your vertical" posts, and by visuals for a ranked chart from the user's own numbers.
 """
 import argparse, csv, sys
 from pathlib import Path
 
-PALETTE = ["#1f4e79", "#2e75b6", "#5b9bd5", "#9dc3e6", "#c55a11", "#ed7d31", "#f4b183", "#548235", "#70ad47", "#a9d18e", "#7030a0", "#9966cc"]
+PALETTE = ["#1f4e79", "#c55a11", "#548235", "#7030a0", "#2e75b6", "#ed7d31", "#70ad47", "#9966cc", "#5b9bd5", "#f4b183", "#a9d18e", "#9dc3e6"]
 
 def esc(s): return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
@@ -62,11 +63,13 @@ def svg_treemap(rows, unit, W, H):
     color = {g: PALETTE[i % len(PALETTE)] for i, g in enumerate(groups)}
     parts = []
     for (x, y, w, h, it) in squarify(rows, 0, 0, W, H):
-        name, val, grp = it
+        name, val, grp, icon = it
         parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{max(0,w-2):.1f}" height="{max(0,h-2):.1f}" fill="{color[grp]}" rx="3"/>')
         if w > 70 and h > 34:
             fs = max(11, min(22, int(min(w / max(4, len(name)) * 1.7, h / 3))))
-            inner = f'<text x="8" y="{8+fs}" font-size="{fs}" fill="#fff" font-weight="600">{esc(name)}</text>'
+            ic = int(min(40, max(16, min(w, h) * 0.22)))
+            icon_svg = f'<image href="{esc(icon)}" x="8" y="{14+fs+ (fs if h > fs*2+16 else 0)}" width="{ic}" height="{ic}" style="opacity:.95"/>' if icon and h > fs*2 + ic + 24 else ""
+            inner = icon_svg + f'<text x="8" y="{8+fs}" font-size="{fs}" fill="#fff" font-weight="600">{esc(name)}</text>'
             if h > fs * 2 + 16:
                 vfs = max(10, min(fs - 3, int((w - 16) / max(4, len(fmt(val, unit))) * 1.8)))
                 inner += f'<text x="8" y="{12+fs+vfs}" font-size="{vfs}" fill="#fff" opacity="0.9">{esc(fmt(val, unit))}</text>'
@@ -80,7 +83,7 @@ def svg_bars(rows, unit, W, H):
     n = len(rows); mx = max(r[1] for r in rows) or 1
     bh = max(14, min(34, (H - 10) / n - 6)); gap = (H - n * bh) / max(1, n)
     label_w = 260; parts = []
-    for i, (name, val, grp) in enumerate(rows):
+    for i, (name, val, grp, icon) in enumerate(rows):
         y = i * (bh + gap); bw = (W - label_w - 120) * val / mx
         parts.append(f'<text x="{label_w-10}" y="{y+bh*0.72:.1f}" font-size="{min(16,bh*0.6):.0f}" text-anchor="end" fill="#222">{esc(name)}</text>')
         parts.append(f'<rect x="{label_w}" y="{y:.1f}" width="{bw:.1f}" height="{bh:.1f}" fill="{PALETTE[0] if i else PALETTE[4]}" rx="3"/>')
@@ -99,6 +102,21 @@ def build(rows, kind, title, subtitle, unit, source):
 <g transform="translate(24,{H-26})">{legend}</g>
 <text x="{W-24}" y="{H-14}" font-size="12" text-anchor="end" fill="#777">{esc(source)}</text>
 </svg></div>"""
+
+def embed_icon(src):
+    """Return a data: URI for a local file or a fetched favicon, or "" when it cannot be had (offline machine, blocked egress)."""
+    if not src: return ""
+    import base64, mimetypes, urllib.request
+    try:
+        if src.startswith("http"):
+            with urllib.request.urlopen(src, timeout=6) as r:
+                data = r.read(); mime = r.headers.get("content-type", "image/png").split(";")[0]
+        else:
+            data = Path(src).read_bytes(); mime = mimetypes.guess_type(src)[0] or "image/png"
+        if not data or len(data) < 64: return ""
+        return f"data:{mime};base64," + base64.b64encode(data).decode()
+    except Exception:
+        return ""
 
 def strip_png_metadata(path):
     """Drop C2PA (caBX) and text chunks: cloud sandboxes stamp rendered PNGs and LinkedIn shows a 'Content credentials' label."""
@@ -122,10 +140,14 @@ def main():
     rows = []
     with open(a.csv, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            try: rows.append((r["name"].strip(), float(str(r["value"]).replace(",", "")), (r.get("group") or "").strip()))
+            icon = ""
+            if (r.get("logo") or "").strip(): icon = r["logo"].strip()
+            elif (r.get("domain") or "").strip(): icon = "https://icons.duckduckgo.com/ip3/%s.ico" % r["domain"].strip().lower()
+            try: rows.append((r["name"].strip(), float(str(r["value"]).replace(",", "")), (r.get("group") or "").strip(), icon))
             except (KeyError, ValueError): sys.exit(f"bad row {r}: need name,value[,group]")
     rows.sort(key=lambda r: -r[1])
     if a.top: rows = rows[:a.top]
+    rows = [(n, v, g, embed_icon(i)) for n, v, g, i in rows]   # icons become data URIs or are dropped; never a broken image on the graphic
     if not rows: sys.exit("no rows")
     page = build(rows, a.kind, a.title, a.subtitle, a.unit, a.source)
     out = Path(a.out); html_path = out.with_suffix(".html"); html_path.write_text(page, encoding="utf-8")
