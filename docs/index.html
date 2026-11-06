@@ -12,65 +12,166 @@
 <meta property="og:image" content="https://harmix.github.io/open-stanley/social-preview.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://harmix.github.io/open-stanley/">
+<link rel="icon" href="icon.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Open Stanley","applicationCategory":"BusinessApplication","operatingSystem":"Claude Cowork, Claude Code","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Harmix/open-stanley","description":"An open-source AI head of content for LinkedIn and X, as a Claude plugin."}</script>
 <style>
-:root{--ink:#111;--muted:#555;--line:#e6e6e6;--accent:#1f4e79;--bg:#fff;--soft:#f6f7f9}
-@media (prefers-color-scheme:dark){:root{--ink:#eee;--muted:#aaa;--line:#2a2a2a;--accent:#9dc3e6;--bg:#111;--soft:#1a1a1a}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 -apple-system,Segoe UI,Helvetica,Arial,sans-serif}
-main{max-width:760px;margin:0 auto;padding:48px 16px 80px}
-h1{font-size:2.1rem;line-height:1.15;margin:0 0 12px}h2{font-size:1.35rem;margin:48px 0 10px}p{margin:0 0 14px}
-.lead{font-size:1.15rem;color:var(--muted)}
-pre{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:14px;overflow:auto;font-size:14px}
-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-table{border-collapse:collapse;width:100%;font-size:15px}td,th{border-top:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}th{color:var(--muted);font-weight:600}
-.btn{display:inline-block;background:var(--accent);color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600;margin:6px 8px 6px 0}
-a{color:var(--accent)}.small{font-size:14px;color:var(--muted)}
-ul{padding-left:20px}li{margin:4px 0}
+:root{--bg:#0b0d10;--bg2:#12151a;--ink:#f2f3f5;--muted:#9aa3ad;--line:#232830;--accent:#7cc0ff;--accent2:#ffb86b;--good:#6fdb9a;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 70%);pointer-events:none;z-index:0}
+.glow{position:fixed;top:-280px;left:50%;width:900px;height:600px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(124,192,255,.18),transparent);filter:blur(20px);pointer-events:none;z-index:0}
+main{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:0 20px 96px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0;font-size:15px}
+nav .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.2px}
+nav .brand img{width:26px;height:26px;border-radius:6px}
+nav .links a{color:var(--muted);text-decoration:none;margin-left:22px}nav .links a:hover{color:var(--ink)}
+.hero{padding:72px 0 40px;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+h1{font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.05;letter-spacing:-1.5px;margin:0 0 18px;font-weight:800}
+h1 em{font-style:normal;color:var(--accent)}
+.lead{font-size:1.15rem;color:var(--muted);max-width:520px;margin:0 0 26px}
+.cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{display:inline-block;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;border:1px solid var(--line);color:var(--ink);background:var(--bg2)}
+.btn.primary{background:var(--accent);color:#07111c;border-color:var(--accent)}
+.btn:hover{filter:brightness(1.08)}
+.meta{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:14px}
+/* chat demo */
+.chat{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.45);font-size:14.5px}
+.chat .bar{display:flex;gap:6px;margin-bottom:14px}.chat .bar i{width:10px;height:10px;border-radius:50%;background:#2b313b;display:block}
+.msg{max-width:88%;padding:10px 13px;border-radius:12px;margin:8px 0;opacity:0;transform:translateY(6px);animation:in .45s ease forwards}
+.msg.s{background:#1a2230;border:1px solid #243041}.msg.u{background:#1f2328;margin-left:auto;border:1px solid var(--line)}
+.msg .who{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px}
+.msg:nth-child(2){animation-delay:.3s}.msg:nth-child(3){animation-delay:1.6s}.msg:nth-child(4){animation-delay:3s}.msg:nth-child(5){animation-delay:4.6s}.msg:nth-child(6){animation-delay:6s}
+@keyframes in{to{opacity:1;transform:none}}
+.chat code{font-family:var(--mono);font-size:12.5px;color:var(--good)}
+/* sections */
+section{padding:56px 0 8px}
+h2{font-size:1.7rem;letter-spacing:-.5px;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 26px;max-width:640px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card b{display:block;margin-bottom:6px;font-size:15.5px}.card p{margin:0;color:var(--muted);font-size:14.5px}
+.card .k{font-family:var(--mono);font-size:11.5px;color:var(--accent2);display:block;margin-bottom:8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+.shot{border-radius:14px;border:1px solid var(--line);width:100%;height:auto;display:block;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+pre{background:#0d1117;border:1px solid var(--line);border-radius:12px;padding:16px;overflow:auto;font-family:var(--mono);font-size:13px;line-height:1.55;margin:0}
+pre .g{color:var(--good)}pre .y{color:var(--accent2)}pre .m{color:var(--muted)}pre .b{color:var(--accent)}
+table{border-collapse:collapse;width:100%;font-size:15px}td,th{border-top:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}th{color:var(--muted);font-weight:600}td:last-child{color:var(--ink)}td:nth-child(2){color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
+.stat{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:18px}
+.stat .n{font-size:2rem;font-weight:800;letter-spacing:-1px;line-height:1}.stat .l{color:var(--muted);font-size:13.5px;margin-top:6px}
+.small{font-size:13.5px;color:var(--muted)}
+a{color:var(--accent)}
+footer{border-top:1px solid var(--line);margin-top:64px;padding-top:24px;color:var(--muted);font-size:14px}
+@media (max-width:860px){.hero,.two{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}nav .links a{margin-left:14px}nav .links a:not(:last-child):not([href="#install"]){display:none}nav .brand{white-space:nowrap}}
+@media (prefers-reduced-motion:reduce){.msg{animation:none;opacity:1;transform:none}}
 </style>
 </head>
-<body><main>
-<h1>Open Stanley</h1>
-<p class="lead">An open head of content for the agent you already pay for. It writes LinkedIn and X posts from your own meetings, Slack, email and notes, in your voice, with a receipt for every claim. Free, MIT, your data stays in a folder you own.</p>
-<p><a class="btn" href="https://github.com/Harmix/open-stanley">GitHub</a> <a class="btn" href="#install">Install</a> <a href="creators/" class="btn" style="background:var(--soft);color:var(--ink);border:1px solid var(--line)">Creator teardowns</a></p>
+<body><div class="glow"></div><main>
+<nav><div class="brand"><img src="icon.png" alt="">Open Stanley</div><div class="links"><a href="#install">Install</a><a href="#loop">How it works</a><a href="#compare">Compare</a><a href="creators/">Teardowns</a><a href="https://github.com/Harmix/open-stanley">GitHub</a></div></nav>
 
-<h2 id="install">Install</h2>
-<pre><code># Claude Cowork: Plugins → Add → Add marketplace → Harmix/open-stanley → install Open Stanley
+<div class="hero">
+<div>
+<h1>A head of content that reads <em>your</em> week, not the internet.</h1>
+<p class="lead">Open Stanley is a free, open-source Claude plugin. It mines your meetings, Slack, email and notes, drafts LinkedIn and X posts in your voice with a receipt for every claim, schedules through your own browser, and reports the numbers back. Your material stays in a folder you own.</p>
+<div class="cta"><a class="btn primary" href="#install">Install in two minutes</a><a class="btn" href="https://github.com/Harmix/open-stanley">Read the source</a></div>
+<div class="meta">MIT · Claude Cowork + Claude Code · 16 skills · 3 agents · no API keys · $0 on top of your Claude plan</div>
+</div>
+<div class="chat" aria-label="Example exchange">
+<div class="bar"><i></i><i></i><i></i></div>
+<div class="msg s"><span class="who">stanley · 08:00</span>Yesterday you had a coffee chat with a YC partner. What did he say about co-founders working on different ideas?</div>
+<div class="msg u"><span class="who">you · voice note</span>He had never heard of it. He liked it, but said to watch two things: picking when more than one works, and every co-founder feeling the winner is theirs.</div>
+<div class="msg s"><span class="who">stanley · sunday</span>Draft ready. Opens on the YC conversation, ends on a question, image is your photo. <code>landing: first-person=yes named-entity=yes question=yes image=yes</code>. One question before it is yours: can I name YC?</div>
+<div class="msg u"><span class="who">you</span>Yes. Tue 09:00.</div>
+<div class="msg s"><span class="who">stanley · tue 22:00</span>Scheduled, went live at 09:00. 24h: 10,312 impressions, 5.6x your median. Six commenters, two are founders you met at SaaS North. Reply to them tonight.</div>
+</div>
+</div>
 
-# Claude Code
-/plugin marketplace add Harmix/open-stanley
-/plugin install open-stanley@open-stanley
-
-# Codex, or any agent that reads SKILL.md
-npx skills add Harmix/open-stanley</code></pre>
-<p>Then say <strong>"set up Stanley"</strong>. It reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, proposes lanes, and builds a voice profile from your own words.</p>
-
+<section id="loop">
 <h2>What it does every week</h2>
-<ul>
-<li><strong>Mines</strong> your meetings, Slack, sent email, calendar, docs and voice notes for things that happened, with a source for each.</li>
-<li><strong>Asks</strong> you one question each morning that only you can answer (the Soapbox), and files the answer.</li>
-<li><strong>Drafts</strong> three posts on Sunday from your own material, audited against the patterns LinkedIn demotes, with a preview card and one question each.</li>
-<li><strong>Schedules</strong> through your own logged-in browser after you say yes to the exact text. Nothing goes out unapproved.</li>
-<li><strong>Reports</strong> the numbers every night and attaches them to the story and shape that produced them, so next week's drafts are built on what worked for you.</li>
-<li><strong>Learns</strong> from your edits: every draft→final change is stored; a correction that repeats becomes a rule; a rule you keep overriding is retired.</li>
-</ul>
+<p class="sub">The loop the paid tools sell, with the three things they cannot do: read your own sources, remember your corrections, and show where every claim came from.</p>
+<div class="grid">
+<div class="card"><span class="k">sat 18:00 · mine</span><b>Finds the story</b><p>Reads your meetings, Slack threads, sent mail, calendar, docs and voice notes for things that happened, with a source for each. Ranks them by what your audience stops for.</p></div>
+<div class="card"><span class="k">daily 08:00 · soapbox</span><b>Asks one question</b><p>One question each morning that only you can answer. Your reply, in your words, is the material. Nothing is generated from a topic.</p></div>
+<div class="card"><span class="k">sun 10:00 · write</span><b>Drafts three posts</b><p>From your material, in your voice, audited against the patterns LinkedIn demotes, with a preview card and one question that makes each post yours.</p></div>
+<div class="card"><span class="k">publish</span><b>Posts through your browser</b><p>Schedules on LinkedIn or X after you say yes to the exact text. No API keys, no third-party posting service, nothing goes out unapproved.</p></div>
+<div class="card"><span class="k">daily 22:00 · recap</span><b>Reports the numbers</b><p>Attaches impressions, reactions and commenters to the story and shape that produced them, so next week's drafts build on what worked for you.</p></div>
+<div class="card"><span class="k">learn</span><b>Learns from your edits</b><p>Every draft→final change is stored. A correction that repeats becomes a rule. A rule you keep overriding is retired.</p></div>
+</div>
+</section>
 
+<section>
+<div class="two">
+<div>
+<h2>Receipts, not vibes</h2>
+<p class="sub">Every number and name in a draft maps to a story file with its source. A fact-checker agent recomputes the figures. The audit prints one line that says whether the post will land, so the research never has to be re-read.</p>
+<pre><span class="m">$ stanley-audit drafts/2026-11-05-yc-partner.md --platform linkedin --has-image</span>
+stats: {'words': 221, 'chars': 1295, 'sentences': 12}
+<span class="b">landing:</span> opens-first-person=<span class="g">yes</span> fold-complete-thought=<span class="g">yes</span> named-entity-early=<span class="g">yes</span>
+         number-or-receipt=<span class="g">yes</span> ends-on-question=<span class="g">yes</span> has-image=<span class="g">yes</span>
+         length-band=<span class="g">yes</span> no-links-hashtags=<span class="g">yes</span>
+<span class="y">INFO </span> dated-claim        Year 2026 mentioned; check the freshness window.
+RESULT: <span class="g">PASS</span></pre>
+</div>
+<img class="shot" src="preview-yc.png" alt="A LinkedIn post preview card with the fold marked, as the plugin hands it over for review">
+</div>
+</section>
+
+<section>
+<div class="two">
+<img class="shot" src="atlas-example.png" alt="Example treemap rendered by stanley-chart: a ranking of companies by market value">
+<div>
+<h2>Posts on day one, before it knows you</h2>
+<p class="sub">The <b>atlas</b> lane maps your vertical with public data: a ranking, a share, a change, rendered as a treemap or bars by a bundled script, no image model, every number with its source. It is the lane a new account can post in while the mining warms up. The first account's best post needed none of its own stories.</p>
+<p class="small">Example rendering with illustrative figures. Your atlas posts use the numbers you gather, with the sources printed on the graphic.</p>
+</div>
+</div>
+</section>
+
+<section>
+<h2>Numbers from the first account</h2>
+<p class="sub">Built in a four-hour hackathon in October 2026 as a reply to a $45/month tool, then run every day on one founder's LinkedIn.</p>
+<div class="stats">
+<div class="stat"><div class="n">4h</div><div class="l">from idea to a working plugin</div></div>
+<div class="stat"><div class="n">~10×</div><div class="l">the account's median reach on its two biggest posts, within six weeks</div></div>
+<div class="stat"><div class="n">16</div><div class="l">versions shipped from what the runs taught</div></div>
+<div class="stat"><div class="n">$0</div><div class="l">on top of the Claude plan you already have</div></div>
+</div>
+<p class="small">What it learned, version by version, is in the <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/CHANGELOG.md">changelog</a>.</p>
+</section>
+
+<section id="compare">
 <h2>Compared with the paid tools</h2>
 <table>
 <tr><th></th><th>Stanley, Taplio, Supergrow</th><th>Open Stanley</th></tr>
 <tr><td>Price</td><td>$29–149 / month</td><td>$0 on top of your Claude plan</td></tr>
-<tr><td>Reads</td><td>your past posts</td><td>anything you have connected</td></tr>
+<tr><td>Reads</td><td>your past posts</td><td>anything you have connected: meetings, Slack, email, docs, memory</td></tr>
 <tr><td>Your material</td><td>their servers</td><td>a folder on your machine</td></tr>
 <tr><td>Receipts</td><td>no</td><td>every number and name maps to a source; a fact-checker recomputes</td></tr>
-<tr><td>Learns from edits</td><td>"learns your voice"</td><td>stores each diff, promotes rules after two repeats</td></tr>
+<tr><td>Learns from edits</td><td>"learns your voice"</td><td>stores each diff, promotes rules after two repeats, retires the ones you override</td></tr>
 <tr><td>Experiments</td><td>no</td><td>each post tagged with an arm; lifts from your own ledger</td></tr>
+<tr><td>Setup</td><td>text a number</td><td>install a plugin, say "set up Stanley"</td></tr>
 </table>
 <p class="small">The paid tools win on zero setup and mobile apps. <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/compare.md">The honest comparison.</a></p>
+</section>
 
-<h2>Numbers from the first account</h2>
-<p>Built in a four-hour hackathon in October 2026 as a reply to a $45/month tool. On the first account (under 5K followers) the plugin's posts reached about ten times the account's median within six weeks; the two biggest opened with a well-known name, told a first-hand conversation, and carried a real image. What it learned is in the <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/CHANGELOG.md">changelog</a>, version by version.</p>
+<section id="install">
+<h2>Install</h2>
+<pre><span class="m"># Claude Cowork</span>
+Plugins → Add → Add marketplace → <span class="b">Harmix/open-stanley</span> → install Open Stanley
 
-<h2>Newsletter and tips</h2>
-<p>One email a month: what the plugin posted, what the numbers said, and the strategy tips users sent in that we verified. Until the list exists, <a href="https://github.com/Harmix/open-stanley/discussions">watch the Discussions</a>. Have a tactic that worked for you? <a href="https://github.com/Harmix/open-stanley/issues/new?template=strategy-tip.yml">Submit a strategy tip</a>; verified tips go into the plugin and the newsletter, credited.</p>
+<span class="m"># Claude Code</span>
+/plugin marketplace add Harmix/open-stanley
+/plugin install open-stanley@open-stanley
 
-<p class="small">Open Stanley copies the loop of Stanley by Stan and credits it: the growth strategy inside that product is its founders' real work. This plugin changes the parts that did not work for a founder whose material is spread across tools, and it costs nothing. MIT. <a href="https://github.com/Harmix/open-stanley">Source</a>.</p>
+<span class="m"># Codex, or any agent that reads SKILL.md</span>
+npx skills add Harmix/open-stanley</pre>
+<p>Then say <b>"set up Stanley"</b>. It reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, proposes lanes, and builds a voice profile from your own words. The scheduled rituals come as templates you turn on one by one.</p>
+</section>
+
+<section>
+<h2>Newsletter, tips, teardowns</h2>
+<p class="sub">One email a month: what the plugin posted, what the numbers said, and the tactics users sent in that we verified. Until the list exists, <a href="https://github.com/Harmix/open-stanley/discussions">watch the Discussions</a>. Have a tactic that worked for you? <a href="https://github.com/Harmix/open-stanley/issues/new?template=strategy-tip.yml">Submit a strategy tip</a> with your numbers; verified tips go into the plugin and the newsletter, credited. Every week the plugin also publishes a <a href="creators/">teardown of one creator</a> who is winning in a vertical, shapes only.</p>
+</section>
+
+<footer>Open Stanley copies the loop of Stanley by Stan and credits it: the growth strategy inside that product is its founders' real work. This plugin changes the parts that did not work for a founder whose material is spread across tools, and it costs nothing. MIT · <a href="https://github.com/Harmix/open-stanley">Source</a> · <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/HOW-IT-WORKS.md">How it works</a></footer>
 </main></body></html>
