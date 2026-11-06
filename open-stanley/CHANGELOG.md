@@ -2,6 +2,10 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.16.3 — 2026-11-06
+
+Plugin directory: the automatic check refuses command hooks from unverified organizations. The SessionStart hook is gone; the stanley skill runs `stanley-vault missed --brief` and `queue-check --brief` as its first step instead, which is the same two read-only lines at the top of a session. No behaviour change for users.
+
 ## 0.16.2 — 2026-11-06
 
 Security audit and repository hygiene. Findings and fixes are in `docs/SECURITY-AUDIT.md`.

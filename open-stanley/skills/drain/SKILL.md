@@ -5,7 +5,7 @@ description: Work through the local queue that cloud scheduled runs left for thi
 
 # Drain the local queue
 
-**Cloud mode only.** In laptop mode (the default) every job runs with the browser and nothing is queued, so this skill has nothing to do; `queue-check` prints nothing and that is the normal outcome. In cloud mode, scheduled runs can reach your MCPs but not your browser, so anything that needs LinkedIn's UI or an X reply box is parked in `ledger/local-queue.jsonl` with an expiry. This skill is the worker. It runs whenever the laptop is online: from the `SessionStart` hook (it tells you at the top of any session that items are waiting), from the launchd job in `templates/launchd/` inside your window, or when you ask.
+**Cloud mode only.** In laptop mode (the default) every job runs with the browser and nothing is queued, so this skill has nothing to do; `queue-check` prints nothing and that is the normal outcome. In cloud mode, scheduled runs can reach your MCPs but not your browser, so anything that needs LinkedIn's UI or an X reply box is parked in `ledger/local-queue.jsonl` with an expiry. This skill is the worker. It runs whenever the laptop is online: from the `queue-check --brief` line the stanley skill runs at the start of every session (it tells you at the top that items are waiting), from the launchd job in `templates/launchd/` inside your window, or when you ask.
 
 ## 1. Read the queue
 

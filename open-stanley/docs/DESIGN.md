@@ -39,7 +39,6 @@ open-stanley/
 │   ├── critic.md                  # adversarial reader: "would a founder in this niche scroll past this?"
 │   ├── fact-checker.md            # every claim gets a receipt or gets cut
 │   └── scout.md                   # read feeds via browser, score candidates
-├── hooks/hooks.json               # PostToolUse on publish → append to ledger; SessionStart → load vault index
 ├── monitors/monitors.json         # optional: watch the vault inbox folder for new voice notes / transcripts
 ├── .mcp.json                      # optional bundled servers (e.g. an X posting MCP); everything else is discovered
 ├── bin/                           # stanley-vault, stanley-audit (python), stanley-ledger
