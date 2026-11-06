@@ -1,6 +1,6 @@
 # Security audit, 6 November 2026
 
-Scope: the plugin (skills, agents, scripts, hook, templates), the repository and its CI, and the website. Done by reading every script, grepping the full git history, and walking the paths an attacker would use. No external pentest tooling; the attack surface is small enough to read.
+Scope: the plugin (skills, agents, scripts, templates), the repository and its CI, and the website. Done by reading every script, grepping the full git history, and walking the paths an attacker would use. No external pentest tooling; the attack surface is small enough to read.
 
 ## Threat model
 
@@ -20,7 +20,7 @@ Private material (threat 2). Full git history scanned for API keys, tokens, priv
 
 Script inputs (threat 3). `stanley-vault post-add` flips a story's status by slug; a slug with a slash or `..` could have pointed outside `stories/`. Fixed: slugs are validated as file names. `stanley-chart` fetches favicons when a CSV has a `domain` column; it now accepts https only, caps the download at 1 MB and requires an image content type, so a CSV cannot make it read `file://` or an internal address. `stanley-vault init --git <url>` runs `git clone` on a user-supplied URL with the argument list form (no shell), which is the intended use. `image-clean` parses PNG and JPEG chunk by chunk and never executes anything. No script uses `shell=True`, `eval`, `exec` or `os.system`. The plugin ships no hooks; the missed-run and queue checks are read-only skill steps.
 
-Supply chain (threat 4). CI now declares `permissions: contents: read`. Actions are pinned to major tags; pin to commit SHAs when the repo has more than one maintainer. The Claude review workflow runs only when a secret is present and checks that in a step, not a job-level `if` (which cannot read secrets). Plugin updates reach users only through a version bump; the directory listing scans each version. Dependencies: none beyond the Python standard library; Playwright is optional.
+Supply chain (threat 4). CI now declares `permissions: contents: read`. Actions are pinned to commit SHAs with the version in a comment; Dependabot (`.github/dependabot.yml`) opens a PR when one moves. The Claude review workflow runs only when a secret is present and checks that in a step, not a job-level `if` (which cannot read secrets). Plugin updates reach users only through a version bump; the directory listing scans each version. Dependencies: none beyond the Python standard library; Playwright is optional.
 
 Unattended runs (threat 5). The computer-bound scheduled tasks run with automatic approval so they can work while the user is away. Their prompts forbid posting or messaging without a yes given in that session, and the one task that posts comments (the series links) posts fixed text to the user's own posts. Recommendation kept in the scheduling reference: review the task list monthly, and never give a scheduled task a prompt that reads the inbox and acts on it.
 
