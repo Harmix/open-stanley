@@ -18,6 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Open Stanley","applicationCategory":"BusinessApplication","operatingSystem":"Claude Cowork, Claude Code","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://opensource.org/licenses/MIT","codeRepository":"https://github.com/Harmix/open-stanley","description":"An open-source AI head of content for LinkedIn and X, as a Claude plugin."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is there a free alternative to Stanley AI?", "acceptedAnswer": {"@type": "Answer", "text": "Open Stanley is a free, open-source Claude plugin that runs the same loop as Stanley (ideas before you ask, drafts in your voice, scheduling, numbers back) with your material kept in a folder on your own computer. MIT licensed, no subscription beyond the Claude plan you already have."}}, {"@type": "Question", "name": "Does Open Stanley work with Claude Cowork and Claude Code?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It was built in Cowork, also installs in Claude Code with /plugin marketplace add Harmix/open-stanley, and in any agent that reads SKILL.md with npx skills add Harmix/open-stanley."}}, {"@type": "Question", "name": "Does it post to LinkedIn for me?", "acceptedAnswer": {"@type": "Answer", "text": "It schedules and posts through your own logged-in browser after you say yes to the exact text. Nothing goes out unapproved, and it never sends connection requests or DMs."}}, {"@type": "Question", "name": "Will the posts sound like AI?", "acceptedAnswer": {"@type": "Answer", "text": "Every draft starts from your own words and sources and goes through an audit for the patterns LinkedIn demotes and readers flag as AI. The same audit runs free in the browser at harmix.github.io/open-stanley/audit.html."}}, {"@type": "Question", "name": "Does it need a LinkedIn API key?", "acceptedAnswer": {"@type": "Answer", "text": "No. It reads and posts through the browser you are logged into, so there is no developer app to register."}}, {"@type": "Question", "name": "How does Open Stanley compare with Taplio and Supergrow?", "acceptedAnswer": {"@type": "Answer", "text": "Taplio and Supergrow are hosted web apps from $29 to $199 a month with calendars, trend feeds, teams and free generators. Open Stanley is free, writes only from things that happened to you with a source attached, keeps your edits as rules, and runs experiments on your own ledger. The comparison pages state where each paid tool is the better pick."}}]}</script>
 </head>
 <body>
 <div class="top">
@@ -90,13 +91,13 @@ RESULT: PASS</pre>
 <table>
 <tr><th></th><th>Stanley, Taplio, Supergrow</th><th>Open Stanley</th></tr>
 <tr><td>Price</td><td>$29 to $149 a month</td><td>$0 on top of your Claude plan</td></tr>
-<tr><td>Where a post comes from</td><td>your old posts and a topic</td><td>what happened to you this week</td></tr>
+<tr><td>Where a post comes from</td><td>your old posts, a topic, a trend feed</td><td>what happened to you this week</td></tr>
 <tr><td>Your material</td><td>their servers</td><td>a folder on your computer</td></tr>
 <tr><td>Sources</td><td>no</td><td>every number and name links to one</td></tr>
 <tr><td>Your edits</td><td>"learns your voice"</td><td>saved, turned into rules, dropped when you override them</td></tr>
 <tr><td>Setup</td><td>text a number</td><td>install a plugin</td></tr>
 </table>
-<p class="dim">The paid tools are easier to start with and have mobile apps. <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/compare.md">Full comparison.</a></p>
+<p class="dim">The paid tools are easier to start with, have mobile apps, and since autumn 2026 ship MCPs too. One page each, with the cases where they win: <a href="compare/stanley-alternative.html">vs Stanley</a>, <a href="compare/taplio-alternative.html">vs Taplio</a>, <a href="compare/supergrow-alternative.html">vs Supergrow</a>. <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/compare.md">Full comparison.</a></p>
 </section>
 
 <section id="install">

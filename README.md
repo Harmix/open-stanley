@@ -38,7 +38,7 @@ Then say: **"set up Stanley"**. Onboarding reads your last 40–60 posts through
 | Posting | their integration | their integration | your own logged-in browser (or any posting MCP you have) |
 | Runs | their cloud | their cloud | scheduled tasks on your laptop, or Claude's cloud, your choice |
 
-The full comparison, with what the paid tools do better, is in [docs/compare.md](open-stanley/docs/compare.md).
+The full comparison, with what the paid tools do better, is in [docs/compare.md](open-stanley/docs/compare.md); one page per tool on the site: [vs Stanley](https://harmix.github.io/open-stanley/compare/stanley-alternative.html), [vs Taplio](https://harmix.github.io/open-stanley/compare/taplio-alternative.html), [vs Supergrow](https://harmix.github.io/open-stanley/compare/supergrow-alternative.html).
 
 ## Questions people ask
 

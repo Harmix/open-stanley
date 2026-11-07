@@ -52,7 +52,8 @@ class ClaimsTests(unittest.TestCase):
             path = rel.split("#")[0].rstrip("/")
             if not path: continue
             p = REPO / "docs" / path
-            self.assertTrue(p.exists() or (p / "index.md").exists() or (p / "index.html").exists(), f"landing links to missing {rel}")
+            md = p.with_suffix(".md") if p.suffix == ".html" else None
+            self.assertTrue(p.exists() or (md is not None and md.exists()) or (p / "index.md").exists() or (p / "index.html").exists(), f"landing links to missing {rel}")
         for rel in re.findall(r'https://github.com/Harmix/open-stanley/blob/main/([^"#)]+)', site + read("README.md") + read("llms.txt")):
             self.assertTrue((REPO / rel).exists(), f"link to missing repo file {rel}")
 
