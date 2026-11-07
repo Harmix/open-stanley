@@ -4,7 +4,7 @@ All notable changes to this plugin. Versions follow semver: MAJOR for a change t
 
 ## 0.16.5 — 2026-11-07
 
-Public teardowns are visual now and copy the landing page's design: a strip chart of every post by shape (grey except the two groups the story is about, annotated in place, readable on a phone), comparisons as `rows` lists, two or three feed screenshots of the creator's posts (third parties blurred, no AI-generated images, metadata stripped), a collapsible table of every post, and 400 to 600 words in the user's first-person voice. No metadata line of middle dots, no bullet legends, no stat tiles. The teardown footer no longer says "shapes only". The note to the creator must point at a pattern across posts, not at one post's numbers. The Dharmesh Shah page is rebuilt this way.
+Public teardowns are visual now and copy the landing page's design: a Linear-style beeswarm of every post by shape that shows a preview of the post on hover and opens it on LinkedIn on click, comparisons as `rows` lists, two or three feed screenshots of the creator's posts (third parties blurred, no AI-generated images, metadata stripped), a collapsible table of every post, and 400 to 600 words in the user's first-person voice. No metadata line of middle dots, no bullet legends, no stat tiles. The teardown footer no longer says "shapes only". The note to the creator must point at a pattern across posts, not at one post's numbers. The Dharmesh Shah page is rebuilt this way.
 
 ## 0.16.4 — 2026-11-07
 
