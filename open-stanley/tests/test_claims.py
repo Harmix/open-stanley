@@ -23,6 +23,14 @@ class ClaimsTests(unittest.TestCase):
             for n in m: self.assertEqual(int(n), skills, f"{rel} says {n} skills, repo has {skills}")
         for n in re.findall(r"(\d+) CLI scripts", read("README.md")): self.assertEqual(int(n), scripts)
         for n in re.findall(r"(\d+) agents", read("docs/index.html")): self.assertEqual(int(n), agents)
+        # test count stated as "N at <version>" in the README Tests section
+        loader = unittest.defaultTestLoader
+        suite = loader.discover(str(ROOT / "tests"), top_level_dir=str(ROOT / "tests"))
+        total = suite.countTestCases()
+        m = re.search(r"`tests/`, (\d+) at (\d+\.\d+\.\d+)", read("README.md"))
+        self.assertIsNotNone(m, "README should state the test count as '`tests/`, N at <version>'")
+        self.assertEqual(int(m.group(1)), total, f"README says {m.group(1)} tests, discover finds {total}")
+        self.assertEqual(m.group(2), json.loads(read("open-stanley/.claude-plugin/plugin.json"))["version"])
 
     def test_install_commands_everywhere(self):
         for rel in ("README.md", "docs/index.html", "llms.txt"):

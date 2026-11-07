@@ -9,6 +9,7 @@ counts:
   skills: {expected_from: open-stanley/skills, stated_in: [README.md, docs/index.html, llms.txt]}
   scripts: {expected_from: open-stanley/skills/stanley/scripts, stated_in: [README.md]}
   agents: {expected_from: open-stanley/agents, stated_in: [docs/index.html]}
+  tests: {expected_from: unittest_discover, stated_in: [README.md]}   # 'N at <version>' in the Tests section
 install_commands:       # must appear verbatim everywhere install is shown
   - "/plugin marketplace add Harmix/open-stanley"
   - "/plugin install open-stanley@open-stanley"
