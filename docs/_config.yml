@@ -1,3 +1,8 @@
 title: Open Stanley
+description: A free, open-source Claude plugin that works as an AI head of content for LinkedIn and X.
+url: https://harmix.github.io
+baseurl: /open-stanley
 markdown: kramdown
-exclude: [social-preview.png]
+plugins:
+  - jekyll-sitemap
+exclude: [social-preview.png, DESIGN-NOTES.md]

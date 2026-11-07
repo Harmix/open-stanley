@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://harmix.github.io/open-stanley/sitemap.xml
