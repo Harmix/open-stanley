@@ -66,5 +66,9 @@ class ClaimsTests(unittest.TestCase):
         missing = [l for l in labels if l.replace("'", "'") not in page]
         self.assertEqual(missing, [], f"labels in stanley-audit missing from docs/audit.html: {missing}")
 
+    def test_site_llms_txt_is_a_copy(self):
+        """docs/llms.txt is what the site serves at /llms.txt; it must equal the repo-root llms.txt."""
+        self.assertEqual(read("docs/llms.txt"), read("llms.txt"), "run: cp llms.txt docs/llms.txt")
+
 if __name__ == "__main__":
     unittest.main()

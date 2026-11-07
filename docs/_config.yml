@@ -6,3 +6,4 @@ markdown: kramdown
 plugins:
   - jekyll-sitemap
 exclude: [social-preview.png, DESIGN-NOTES.md]
+include: [llms.txt, robots.txt]
