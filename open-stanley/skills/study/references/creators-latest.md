@@ -1,0 +1,15 @@
+# Creator shapes, latest teardowns
+
+One entry per creator, newest read first. An entry here replaces the same creator's entry in `creators-2026-09.md`, because shapes drift with platforms. Each entry is written by a creator-teardown run from the public page `docs/creators/<slug>.md` in the Open Stanley repo, in the same commit, so every user gets it with the next plugin update. Shapes and numbers read in that run only; tags from `shape-vocabulary.md`; never a sentence of the creator's, and fragments under six words.
+
+## Dharmesh Shah, LinkedIn (1,202,381 followers), read 2026-11-07, 45 posts
+
+Page: `docs/creators/dharmesh-shah.md`. Median 315 reactions and 74 comments (389 engagement); bottom quarter under 175, top quarter 691 and above. 21 of 45 posts mention his product, and those land in both quarters, so the build of the post decides the result, not the topic.
+
+- Habit, then the tool: `opener:past-self` on a habit he has kept for decades, the annoying part of it, the exact request he gave his product pasted in, the "why not ChatGPT" objection answered by him, price last. `specific:own-inbox`. His best post, 3,328 reactions and 228 comments at nearly 500 words, about twice the engagement of the next post. A real pasted request beat every feature list in the set.
+- Launch-day news: `opener:breaking`, used literally now (in Sep it was a joke). One quoted line from the launch, three short lines, an ownership disclosure, "more later". Three posts at 691 to 1,048 engagement; the one that grew into a four-point essay got 131. Early and short beats thorough.
+- Ladder of wrong reasons: `opener:question-to-self` ("why switch?"), two or three likely reasons ruled out in brackets, the real reason in one line, a lesson, the plug in a p.s. 277 comments, the most in the set.
+- A new name for a thing: coin a term or acronym, define it in one line, stop. Middle reactions (150 to 390) but 30 to 55 comments per 100 reactions against about 23 at his median.
+- Launch with questions: "Woo hoo!" plus three example questions a user can now ask, in quotes, instead of a feature list. 1,773 engagement; a step-by-step "what happens after you connect" launch made the top quarter too (719).
+- What fails for him: quote-shares of other people's testimonials (median 129 over seven, against 470 for his native posts), event invitations (175), a book quote with a line or two added (165 and 334). A book quote works only when he turns it on his own weakness (145 comments).
+- Habits: p.s. in 6 of 45, usually for the plug; disclosure when he owns a stake; double hyphens, asterisks, a word in capitals; almost no hashtags; promo links in the body; the product's category in brackets after nearly every mention of its name. Native posts with an image had a median of 603 against 374 without (18 and 20 posts). Length 19 to 495 words and not the lever: the longest won, and two posts under 50 words beat the median.
