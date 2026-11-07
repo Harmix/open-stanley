@@ -2,6 +2,10 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.16.5 — 2026-11-07
+
+Public teardowns are visual now. The study skill asks for a dot chart of every post by shape, a comments-per-reaction chart on the posts above the median, two or three feed screenshots of the creator's posts (third parties blurred, no AI-generated images, metadata stripped) and a collapsible table of every post, with 400 to 700 words of text around them. The note to the creator must point at a pattern across posts, not at one post's numbers. The Dharmesh Shah page is rebuilt this way.
+
 ## 0.16.4 — 2026-11-07
 
 Teardowns now reach every user. Until now the weekly creator teardowns lived only on the website (`docs/creators/`), outside the plugin, and the only creator shapes the plugin shipped were the September snapshot. A new `skills/study/references/creators-latest.md` holds one shapes-only entry per creator from the teardowns, newest first, and wins over `creators-2026-09.md` where a creator is in both. The study skill and the `creator-teardown` template write that entry in the same commit as the page when the teardown repo is this repo; `write` and `rituals` read it. First entry: Dharmesh Shah, 45 LinkedIn posts read 2026-11-07. Teardowns and creator notes also get a plain-language pass before handover.
