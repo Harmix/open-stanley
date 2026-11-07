@@ -23,7 +23,7 @@ The top three were a story about using his product to plan a dinner guest list (
 
 We counted 18 native posts with an image and 20 without. With an image the median was 603, without it 374.
 
-21 of the 45 posts mention YouSpot, and they land in both his best and his worst quarter. How the post is built seems to matter more than the topic.
+21 of the 45 posts mention YouSpot, and they land in both his best and his worst quarter. How the post is built seems to matter more than the topic. One split is very clean: all six of his own posts that name a price or a discount beat his median (467 to 3,556), while all seven reshares of other people praising YouSpot are in his bottom quarter. Selling hard in his own words works, and borrowed praise does not.
 
 ## Five shapes that work for him
 
