@@ -15,8 +15,8 @@ I paid for Stanley. I built Open Stanley because of what it could not do for me.
 | Price | $44.99/month (iOS, 3-day trial); LinkedIn plans reported at $149/month | $0 on top of the Claude plan you have |
 | Where it runs | Stan's servers; iMessage, Telegram, WhatsApp, iOS app, MCP | Your computer, as a Claude plugin (Cowork, Claude Code, any SKILL.md agent) |
 | Where your material lives | Their servers | A folder you own, plain markdown and jsonl |
-| Platforms | X, LinkedIn, Threads, Instagram, Substack Notes, native publishing | LinkedIn and X, through your own logged-in browser |
-| What it reads | Your posts, voice notes; through its MCP: GitHub, Granola, Notion, Calendar, Slack, YouTube | Any MCP you have connected: meetings (Pam, Fathom, Granola), Slack, Gmail, Calendar, Drive, Notion, memory, code, plus voice notes |
+| Platforms | X, LinkedIn, Threads, Instagram, Substack Notes, native publishing | LinkedIn and X first; Threads, Substack Notes, Bluesky, Mastodon and Instagram captions through your own logged-in browser |
+| What it reads | Your posts, voice notes; through its MCP: GitHub, Granola, Notion, Calendar, Slack, YouTube | Anything the agent can reach: every MCP you have (meetings, Slack, Gmail, Calendar, Drive, Notion, memory, code), your logged-in browser (LinkedIn analytics, pages that block bots), local files and apps, voice notes |
 | Receipts | No | Every number and name maps to a story file with its source; a fact-checker agent recomputes |
 | Learns from edits | "Learns your voice" | Stores every draft→final diff; the same edit twice becomes a rule you can read |
 | Audit for AI tells | Per-platform quality checks | A linter for the measured 2026 demotion signals, plus a landing scorecard; [try it in the browser](../audit.html) |
@@ -28,7 +28,7 @@ I paid for Stanley. I built Open Stanley because of what it could not do for me.
 ## Choose Stanley if
 
 - You want nothing installed and no folder on your machine.
-- You need Instagram, Threads or Substack Notes today.
+- You want Instagram, Threads or Notes posted by an API while your laptop is closed.
 - You want a mobile app and overnight comment replies.
 - You want media generated for you (diagrams, carousels from code).
 

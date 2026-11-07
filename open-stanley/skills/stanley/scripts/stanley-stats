@@ -8,6 +8,7 @@ feature, plus the status of every experiment declared in strategy.md.
 
 Usage:
   stanley-stats [--vault DIR] [--platform linkedin|x] [--metric reactions|comments|impressions|engagement] [--days 90] [--json]
+  stanley-stats --predict drafts/<slug>.md [--lane L] [--has-image]   reach band from your own ledger for a draft
 
 An experiment in strategy.md is a line like:
   - experiment: number-in-hook | variants: with, without | metric: engagement | min_n: 4
@@ -64,6 +65,59 @@ def hook_features(text):
         "story-length(900-2000c)": 900 <= len(text or "") <= 2000,
     }
 
+def draft_features(text, lane=None, has_image=False):
+    """The observable features a draft shares with ledger rows: lane, hook features, image, length band."""
+    f = {k for k, on in hook_features(text).items() if on}
+    if lane: f.add("lane:" + lane)
+    if has_image: f.add("image:yes")
+    first = (text or "").strip().split("\n")[0]
+    if re.search(r"\b[A-Z][a-zA-Z]+(?: [A-Z][a-zA-Z]+)*\b", first[1:] if first[:1].isupper() else first): f.add("named-entity-early")
+    return f
+
+def quantiles(xs):
+    xs = sorted(x for x in xs if x is not None)
+    if not xs: return None
+    def q(p):
+        k = (len(xs) - 1) * p; lo = int(k); hi = min(lo + 1, len(xs) - 1)
+        return xs[lo] + (xs[hi] - xs[lo]) * (k - lo)
+    return {"p25": round(q(0.25)), "median": round(q(0.5)), "p75": round(q(0.75)), "n": len(xs)}
+
+def predict(draft_path, posts, platform, lane, has_image, as_json):
+    """Reach band for a draft, from the user's own ledger: take the posts that share the most features with it
+    (lane, image, hook features, a name early) and report p25/median/p75 of impressions and engagement.
+    This is a band, not a number: it says 'posts like this one did X to Y for you', which is all the ledger can know."""
+    import json as _json
+    text = draft_path.read_text(encoding="utf-8")
+    if text.startswith("---"):   # strip front matter
+        parts = text.split("---", 2)
+        if len(parts) == 3: text = parts[2]
+    meta_path = draft_path.with_suffix(".meta.json")
+    meta = _json.loads(meta_path.read_text()) if meta_path.exists() else {}
+    lane = lane or meta.get("lane")
+    has_image = has_image or bool(meta.get("image"))
+    want = draft_features(text, lane, has_image)
+    pool = [p for p in posts if p.get("metrics") and (not platform or p.get("platform") == platform)]
+    if len(pool) < 3:
+        return "predict: fewer than 3 posts with metrics in the window; no band yet (post more, the ledger learns)"
+    scored = []
+    for p in pool:
+        have = draft_features(p.get("text", ""), p.get("lane"), bool(p.get("image")))
+        scored.append((len(want & have), p))
+    best = max(s for s, _ in scored)
+    similar = [p for s, p in scored if s >= max(1, best - 1)]
+    if len(similar) < 3: similar = [p for s, p in sorted(scored, key=lambda t: -t[0])[:3]]
+    imp = quantiles([metric_of(p, "impressions") for p in similar]); eng = quantiles([metric_of(p, "engagement") for p in similar])
+    base_imp = quantiles([metric_of(p, "impressions") for p in pool]); base_eng = quantiles([metric_of(p, "engagement") for p in pool])
+    out = {"features": sorted(want), "similar_posts": len(similar), "of": len(pool), "impressions": imp, "engagement": eng, "baseline_impressions": base_imp, "baseline_engagement": base_eng,
+           "examples": [{"hook": (p.get("hook") or p.get("text", ""))[:80], "impressions": metric_of(p, "impressions")} for p in sorted(similar, key=lambda p: -(metric_of(p, "impressions") or 0))[:3]]}
+    if as_json: return _json.dumps(out, indent=1)
+    lines = [f"predict: {len(similar)} of your {len(pool)} posts share these features: {', '.join(sorted(want)) or 'none'}"]
+    if imp: lines.append(f"  impressions  p25 {imp['p25']:,}  median {imp['median']:,}  p75 {imp['p75']:,}   (all posts: median {base_imp['median']:,})")
+    if eng: lines.append(f"  engagement   p25 {eng['p25']}  median {eng['median']}  p75 {eng['p75']}   (all posts: median {base_eng['median']})")
+    lines.append("  a band from your own ledger, not a forecast: one post in the set can be 30x the median (n=%d)" % len(similar))
+    for e in out["examples"]: lines.append(f"  e.g. {e['impressions'] or 0:>7,}  {e['hook']}")
+    return "\n".join(lines)
+
 def median(xs):
     xs = [x for x in xs if x is not None]
     return (st.median(xs), len(xs)) if xs else (None, 0)
@@ -98,6 +152,9 @@ def main():
     ap.add_argument("--platform"); ap.add_argument("--metric", default="engagement"); ap.add_argument("--days", type=int, default=90)
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--experiments", action="store_true", help="print only the experiment arms (what the Sunday tune reads)")
+    ap.add_argument("--predict", metavar="DRAFT", help="a draft .md: print the reach band (p25-median-p75 impressions and engagement) of the user's own past posts that share the most features with it")
+    ap.add_argument("--lane", help="with --predict: the draft's lane (else read from <draft>.meta.json)")
+    ap.add_argument("--has-image", action="store_true", help="with --predict: the draft will carry an image")
     a = ap.parse_args()
     v = Path(a.vault).expanduser()
     if not (v / "ledger").exists() and (Path.cwd() / "my-human.md").exists():
@@ -108,6 +165,8 @@ def main():
     cutoff = (dt.date.today() - dt.timedelta(days=a.days)).isoformat()
     posts = [p for p in posts if p.get("date", "9999") >= cutoff and (not a.platform or p.get("platform") == a.platform) and p.get("kind", "post") != "repost"]
     with_metrics = [p for p in posts if metric_of(p, a.metric) is not None]
+    if a.predict:
+        print(predict(Path(a.predict), posts, a.platform, a.lane, a.has_image, a.json)); return
     base, n = median([metric_of(p, a.metric) for p in with_metrics])
     report = {"posts": len(posts), "posts_with_metrics": n, "metric": a.metric, "median": base, "by_lane": [], "by_shape": [], "by_hook_feature": [], "experiments": []}
     if n:

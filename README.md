@@ -8,7 +8,7 @@ An open head of content for the agent you already pay for. A free, open-source a
 
 It mines your own meetings, Slack, email, docs, and notes through whatever MCPs you have connected, drafts LinkedIn and X posts by editing your material into your voice (never by generating a claim from a topic), audits every draft against the 2026 AI-slop and platform rules, publishes and comments through your own browser, runs the daily rituals as scheduled tasks with a run log, and learns from every edit you make.
 
-It is the loop that "AI head of content" products sell for $29–149 a month, rebuilt as a plugin, with the things they still don't do: keep your material in a folder you own, turn your corrections into rules you can read, prove where every claim came from, and run experiments on your own numbers. (Since autumn 2026 the paid tools have MCP servers too, so "works from Claude" is no longer the difference; `docs/compare.md` says what is.)
+It is the loop that "AI head of content" products sell for $29–149 a month, rebuilt as a plugin, with the things they still don't do: read anything your agent can reach (your MCPs, but also your browser, so LinkedIn's own analytics and pages that block bots, and the files and apps on your computer) instead of a fixed list of integrations; keep your material in a folder you own; turn your corrections into rules you can read; prove where every claim came from; and run experiments on your own numbers. (Since autumn 2026 the paid tools have MCP servers too, so "works from Claude" is no longer the difference; `docs/compare.md` says what is.)
 
 ## Install
 
@@ -126,7 +126,7 @@ Two modes. **Laptop mode (default):** the vault is a plain folder inside your de
 
 ## Tests, versioning, CI
 
-`make test` (inside `open-stanley/`) runs the deterministic audit fixtures and the unit tests (`tests/`, 54 at 0.17.0: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency, public claims). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `tests/evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
+`make test` (inside `open-stanley/`) runs the deterministic audit fixtures and the unit tests (`tests/`, 56 at 0.17.0: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency, public claims). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `tests/evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
 
 ## Contributing
 

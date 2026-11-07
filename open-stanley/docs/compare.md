@@ -10,7 +10,7 @@ Every paid tool in this category now ships an MCP server: Stanley (`xapi.getstan
 
 Launched March 2026, iMessage/Telegram/WhatsApp-first, an iOS app, and since autumn an MCP that Claude can drive (a community cookbook, `JayantChopra/stanley-mcp-playground`, documents it). Posts natively to X, LinkedIn, Threads, Instagram and Substack Notes. $44.99/month in the App Store after a 3-day trial; earlier LinkedIn plans were reported around $149/month.
 
-What Stanley does that Open Stanley does not: native publishing on Threads, Instagram and Substack Notes; media staging from any URL, generated explainer diagrams and code-rendered carousels; SQL over your post metrics; trend clustering on X and video teardowns from a YouTube or Reels link; overnight comment replies; a mobile app; zero setup. Through its MCP it also reads GitHub commits and PRs, Granola meeting notes, Notion, Google Calendar, Slack and YouTube. If you will not install anything, or you need Instagram, use Stanley.
+What Stanley does that Open Stanley does not: native API publishing (Open Stanley posts through your logged-in browser, which covers the same platforms but needs the browser open); media staging from any URL, generated explainer diagrams and code-rendered carousels; SQL over your post metrics (Open Stanley has medians, lifts and a reach band from its ledger, not a query language); trend clustering on X and video teardowns from a YouTube or Reels link; overnight comment replies; a mobile app; zero setup. Through its MCP it also reads GitHub commits and PRs, Granola meeting notes, Notion, Google Calendar, Slack and YouTube. If you will not install anything, or you need Instagram, use Stanley.
 
 What Open Stanley does that Stanley does not: everything stays in a folder you own (Stanley's loop runs on Stan's servers, through one 8,000-character message channel); every draft→final edit is stored as a diff and a repeated edit becomes a rule you can read in a file; every number and name in a draft maps to a story file with its source, and a fact-checker agent recomputes experiments; an audit script scores each draft against the measured 2026 demotion signals and prints a `landing:` line; posts carry an experiment arm and the ledger reports lifts by lane, shape and hook feature; the research it runs on is in the repo with sources; it reads any MCP you have (Pam, Fathom, Granola, Gmail, Drive, memory servers), not a fixed list; it works in Cowork, Claude Code and any agent that reads SKILL.md; and it costs nothing beyond the Claude plan you have.
 
@@ -40,13 +40,17 @@ AuthoredUp ($20–40/month): the best LinkedIn editor and preview, formatting, s
 
 In order of how often users asked. None is promised with a date; the changelog says what shipped.
 
-1. `code` as a mine source: commits and merged PRs become build-in-public stories (Stanley's cookbook does this; the `mine` skill now lists it, through the GitHub MCP or `git log` in a connected repo).
-2. Reach-before-publish: the audit's `landing:` line plus `stanley-stats` lifts already say which shape has done well for you; a single predicted band is the missing piece.
-3. Threads and Substack Notes through the browser, the way LinkedIn and X work today. Instagram needs media and a business account; not planned.
-4. A free, client-side version of the audit on the website, so anyone can paste a post and see the flags without installing anything: `harmix.github.io/open-stanley/audit`.
+All four shipped in 0.17.0, the same day the comparison was written, because a plugin that has the browser and the ledger needed instructions, not infrastructure:
+
+1. `code` as a mine source: commits and merged PRs become build-in-public stories, through a GitHub MCP, `gh`, or `git log` in a connected repo.
+2. Reach band before publishing: `stanley-stats --predict drafts/<file>` reports the p25/median/p75 impressions and engagement of the user's own past posts that share the draft's features; `write` quotes it in every handover. It is a band from the ledger, not Taplio's single number, on purpose.
+3. Any platform with a web composer through the browser: Threads, Substack Notes, Bluesky, Mastodon, Instagram captions with the user's media (`publish` §3b); the ledger takes any platform name.
+4. The audit's vault-free rules on the website, with an "Open in Claude" button: `harmix.github.io/open-stanley/audit.html`.
+
+What stays different by design: Open Stanley reads whatever the agent can reach (MCPs, the logged-in browser, local files and apps), so a source without an MCP, or one that blocks bots like LinkedIn's analytics pages, is still readable; the paid tools read a fixed list through their own servers.
 
 ## When not to use Open Stanley
 
 - You post for a brand page with a team and approval workflow: Supergrow, or Oktopost's open-source Claude plugin, fits better.
-- You want nothing installed and no folder on your machine, or you need Instagram or Threads today: Stanley.
-- You want a scheduling calendar with reach prediction and a viral-post feed: Taplio.
+- You want nothing installed and no folder on your machine, or you want Instagram and Threads posted by an API while your laptop is closed: Stanley.
+- You want a scheduling calendar, a single predicted reach number and a viral-post feed: Taplio.

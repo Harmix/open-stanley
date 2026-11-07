@@ -8,7 +8,9 @@ The competitor check, done honestly. Stanley, Taplio and Supergrow all ship MCP 
 
 - mine: `code` is a source (commits, merged PRs, release notes through a GitHub MCP, `gh`, or `git log` in a connected repo) for build-in-public stories; `capabilities.md` maps it.
 - Website: `/audit.html`, the audit's vault-free rules (lexicon, structure, platform, landing scorecard) ported to run in the browser, so anyone can paste a post without installing anything. A test keeps its lexicon equal to the script's.
-- README FAQ and llms.txt link the browser audit; claims.yml carries the promise.
+- `stanley-stats --predict drafts/<file>`: a reach band (p25/median/p75 impressions and engagement) from the user's own posts that share the draft's features; `write` quotes it in the handover.
+- publish §3b: any platform with a web composer through the browser (Threads, Substack Notes, Bluesky, Mastodon, Instagram captions); the ledger takes any platform name.
+- README FAQ and llms.txt link the browser audit; claims.yml carries the promise; comparison pages on the site (vs Stanley, Taplio, Supergrow) with FAQ schema; llms.txt served; robots.txt allows AI crawlers.
 
 ## 0.16.5 — 2026-11-07
 

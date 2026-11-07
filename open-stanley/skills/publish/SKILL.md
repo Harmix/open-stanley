@@ -29,6 +29,10 @@ Post. Read back the post URL from the "View post" toast or the profile activity 
 
 Compose. Without Premium, post the thread: tweet 1, then reply with tweet 2… (the `---` blocks from the draft), each ≤280 chars; verify the count before each. With Premium, a single long post. Links in the first reply. Read back the status URL.
 
+## 3b. Any other platform with a web composer (Threads, Substack Notes, Bluesky, Mastodon, Instagram captions)
+
+The browser adapter is not LinkedIn-specific. For a platform the user asks for and is logged into: open its composer (threads.com → new thread; substack.com/notes → "Write a note"; bsky.app → new post; Mastodon instance → compose), insert the text the way section 2 does for a rich-text editor and section 3 for a plain one, respect the platform's limit (Threads 500 characters per post and chains; Notes no hard cap but short wins; Bluesky 300 graphemes), attach the image first if there is one, post, and read back the URL from the post's own page or the profile feed. Record it with `post-add --platform <name>` (any lowercase name works; `recap` reads metrics only where it knows the analytics page, so for a new platform record impressions by hand from the post page or leave them empty). Instagram's composer needs an image or video and a business account for scheduling; post the caption with the media the user gives you, never a generated image. First time on a new platform: write the composer steps and the limit into `my-human.md` under `post_path:` so the next run does not rediscover them.
+
 ## 4. Record and follow up
 
 - `skills/stanley/scripts/stanley-vault post-add --platform <p> --url <url> --text-file <final> --story <slug>… --lane <lane> --shape opener:<x> --shape ending:<y> [--experiment <name>=<variant>]` for each platform. The tags are what make `recap` and `stanley-stats` able to say which shapes and lanes work for this audience.

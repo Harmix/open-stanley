@@ -15,7 +15,7 @@ Taplio is the biggest LinkedIn tool, and for a lot of people it is the right one
 | Price | $39 (no AI writing), $69, $199 a month; 7-day trial | $0 on top of the Claude plan you have |
 | Where ideas come from | A daily feed of viral posts in your niche, templates, "Ask Taplio" | Your week: meetings, Slack, sent mail, calendar, docs, code, voice notes |
 | Drafting | Hooks, rewrites, "My tone" | Edits your own material into a post; refuses to generate from a topic |
-| Reach prediction | Yes, live, before publishing | A landing scorecard against the 2026 research, and lifts from your own ledger |
+| Reach prediction | Yes, one live number before publishing | A reach band (p25/median/p75) from your own past posts that share the draft's features, plus the landing scorecard |
 | Scheduling | Queue, best-time slots, carousel drip | LinkedIn's own scheduler, through your browser, after you approve the text |
 | Engagement | Engage feed, AI comment starters, Chrome extension | Scout scans your feed twice a day and drafts 1–3 sentence comments; you paste |
 | Outreach automation | Lead lists, automatic connection requests, DM on accept | None, on purpose |
