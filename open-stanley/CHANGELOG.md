@@ -6,6 +6,8 @@ All notable changes to this plugin. Versions follow semver: MAJOR for a change t
 
 Teardowns now reach every user. Until now the weekly creator teardowns lived only on the website (`docs/creators/`), outside the plugin, and the only creator shapes the plugin shipped were the September snapshot. A new `skills/study/references/creators-latest.md` holds one shapes-only entry per creator from the teardowns, newest first, and wins over `creators-2026-09.md` where a creator is in both. The study skill and the `creator-teardown` template write that entry in the same commit as the page when the teardown repo is this repo; `write` and `rituals` read it. First entry: Dharmesh Shah, 45 LinkedIn posts read 2026-11-07. Teardowns and creator notes also get a plain-language pass before handover.
 
+`stanley-vault missed`: a run up to 90 minutes before the due time now counts. Scheduled tasks written as UTC cron fire an hour early once daylight saving ends, and every such run was being reported as missed (a run on 2026-11-07 asked to catch up a soapbox, a scout, weekly drafts and the monthly that had all run).
+
 ## 0.16.3 — 2026-11-06
 
 Plugin directory: the automatic check refuses command hooks from unverified organizations. The SessionStart hook is gone; the stanley skill runs `stanley-vault missed --brief` and `queue-check --brief` as its first step instead, which is the same two read-only lines at the top of a session. No behaviour change for users.

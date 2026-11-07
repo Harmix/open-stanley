@@ -30,6 +30,15 @@ class MissedTests(unittest.TestCase):
         rows = {x["job"] for x in json.loads(self.run_missed("--json").stdout)}
         self.assertNotIn("soapbox", rows)
 
+    def test_run_an_hour_early_counts(self):
+        # after DST ends, a cron written in UTC fires an hour before the local due time; that run is not a miss
+        midnight = dt.datetime.now(dt.timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        early = (midnight - dt.timedelta(minutes=60)).isoformat(timespec="seconds")
+        with (self.v / "ledger/runs.jsonl").open("a") as f:
+            f.write(json.dumps({"id": "b", "job": "soapbox", "started": early}) + "\n")
+        rows = {x["job"] for x in json.loads(self.run_missed("--json").stdout)}
+        self.assertNotIn("soapbox", rows)
+
     def test_superseded_miss_is_not_reported(self):
         # a daily job whose miss is older than one period is dropped, not caught up
         (self.v / "my-human.md").write_text(

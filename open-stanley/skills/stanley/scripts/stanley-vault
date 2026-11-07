@@ -381,7 +381,7 @@ def missed(v, grace_min=20, max_age_h=None):
         if age_h * 60 < grace_min: continue                      # may still be starting
         cap = max_age_h if max_age_h is not None else _PERIOD_H[kind]
         if age_h > cap: continue   # superseded: the next occurrence is due, so this is not a catch-up any more
-        window = due - dt.timedelta(minutes=15)
+        window = due - dt.timedelta(minutes=90)                  # a UTC cron fires an hour early once DST ends, and that run still counts
         ran = any(r.get("job") == job and r.get("started") and dt.datetime.fromisoformat(r["started"].replace("Z", "+00:00")) >= window for r in runs)
         if not ran:
             limit = catch.get(job, "no")
