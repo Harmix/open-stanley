@@ -11,9 +11,9 @@ date: 2026-11-07
 
 # Dharmesh Shah, teardown of 45 LinkedIn posts
 
-Dharmesh Shah co-founded HubSpot and is its CTO. He is also building YouSpot in public, an AI-native personal CRM for people who run a one-person company. The product is built around a "second brain" that the user owns, so most of what he posts lately is about AI memory and personal context. He has 1,202,381 followers on LinkedIn. We wanted to see how a very large account sells a brand new product to the same feed that knows him for something else.
+Dharmesh Shah co-founded HubSpot and is its CTO. He is also building YouSpot in public, an AI-native personal CRM for people who run a one-person company. Its core is a "second brain" the user owns, so much of what he posts lately is about AI memory. He has 1,202,381 followers on LinkedIn.
 
-We read his 45 most recent original posts on 7 November 2026, from his activity page. That count includes quote-shares and leaves out plain reposts. The newest post was 21 hours old, and LinkedIn labels the oldest "1mo". Below, "engagement" means reactions plus comments as the page showed them that day. One post about company news is in the numbers but we don't discuss it.
+We read his 45 most recent original posts on 7 November 2026, from his activity page. That includes quote-shares and leaves out plain reposts. LinkedIn labels the oldest "1mo". "Engagement" means reactions plus comments as shown that day.
 
 ## What the numbers say
 
@@ -21,58 +21,52 @@ His median post got 315 reactions and 74 comments, so 389 engagement. A quarter 
 
 The top three were a story about using his product to plan a dinner guest list (3,328 reactions, 228 comments), a launch post for a Gmail connector (1,568 and 205), and a post about moving from Google Slides back to PowerPoint (1,020 and 277).
 
-Quote-shares of other people praising YouSpot did the worst as a group. Across seven of them the median was 129, while his native posts had a median of 470.
+We counted 18 native posts with an image and 20 without. With an image the median was 603, without it 374.
 
-We counted 18 native posts with an image and 20 without. With an image the median was 603, without it 374. The images we looked at were product screenshots or a simple branded graphic, not photos.
-
-21 of the 45 posts mention YouSpot, and those posts show up in both his best quarter and his worst quarter. So mentioning the product doesn't decide how a post does. How the post is built seems to matter more.
+21 of the 45 posts mention YouSpot, and they land in both his best and his worst quarter. How the post is built seems to matter more than the topic.
 
 ## Five shapes that work for him
 
 ### 1. A habit he has had for years, then the tool
 
-His best post starts with a personal habit he has kept for decades. The product comes later. He says which part of the habit is annoying, pastes the exact request he gave the product, and then answers the obvious "why not just use ChatGPT" question himself. The price comes last. The post is almost 500 words long and still got about twice the engagement of anything else he posted. We think the pasted request is what makes it work, because the reader sees a real task that only he had.
+His best post starts with a personal habit he has kept for decades. The product comes later. He says which part of the habit is annoying, pastes the exact request he gave the product, and then answers the obvious "why not just use ChatGPT" question himself. The price comes last. At almost 500 words it still got about twice the engagement of anything else. We think the pasted request does the work: the reader sees a real task that only he had.
 
 ### 2. "BREAKING NEWS:" on the day a lab ships something
 
-Three posts at or above his top-quarter line are same-day reactions to a model or product launch. Each one has the label in capitals, one quoted line from the launch, three short lines on what it is, a note on whether he owns shares, and a promise to write more later. One news post grew into a four-point essay, and it got 131, the lowest of the news posts. For news, being early and short did better than being thorough.
+Three posts at or above his top-quarter line are same-day reactions to a model or product launch. Each has the label in capitals, one quoted line from the launch, three short lines, a note on whether he owns shares, and a promise of more later. One news post grew into a four-point essay, and it got 131, the lowest of the news posts. For news, being early and short did better than being thorough.
 
 ### 3. Guessing the reason, then giving the real one
 
-The PowerPoint post asks why he would switch. Then it offers two or three likely reasons and rules each one out in brackets, before giving the real reason in one line (AI tools work better with that file format). After that he adds a lesson for software companies and a short plug in a p.s. It got 277 comments, more than any other post in the set, and many readers joined in with their own guesses.
+The PowerPoint post asks why he would switch. It rules out two or three likely reasons in brackets, then gives the real one in a line (AI tools work better with that file format). A lesson and a short plug in a p.s. follow. It got 277 comments, more than any other post in the set, and many readers joined in with their own guesses.
 
 ### 4. A new name for something, defined in one line
 
-AI Foam, Total Cost of Outcomes, a new acronym to follow WYSIWYG, and "idea taste" next to product taste. These posts got 150 to 390 reactions, so they sit in the middle. But they got a lot of comments for their size: 30 to 55 comments per 100 reactions, against about 23 for a post at his median (74 comments on 315 reactions). People seem to like arguing with a new term.
+AI Foam, Total Cost of Outcomes, a new acronym to follow WYSIWYG, and "idea taste" next to product taste. These posts got 150 to 390 reactions, so they sit in the middle. But they got a lot of comments for their size: 30 to 55 comments per 100 reactions, against about 23 at his median. People seem to like arguing with a new term.
 
 ### 5. A launch that shows three questions you can now ask
 
-His launch posts that did well don't list features. They give three example questions, in quotes, that a user can now ask the product. The Gmail connector post did this and got 1,773. The Granola integration post went through what happens step by step after you connect it, and it also made the top quarter with 719.
+His launch posts that did well don't list features. They give three example questions, in quotes, that a user can now ask the product. The Gmail connector post did this and got 1,773. A Granola launch that walked through each step after you connect also made the top quarter (719).
 
 ## What doesn't work for him
 
-Quote-shares of testimonials sit at the bottom, between 19 and 173. Event invitations are low too (175). So are book quotes with only a line or two from him under them (165 and 334, both below his median). A book quote did work once, when he followed it with a confession about his own weak spot as a writer, and that post got 145 comments. Our read is that when the post is mostly someone else's words and he just approves of them, readers treat it like an ad.
+Quote-shares of other people praising YouSpot did worst: a median of 129 across seven, against 470 for his native posts. Event invitations are low too (175). So are book quotes with only a line or two from him under them (165 and 334, both below his median). A book quote worked once, when he followed it with a confession about his own writing (145 comments). When a post is mostly someone else's words with his approval on top, readers seem to treat it like an ad.
 
 ## Cadence and habits
 
-He sometimes posts more than once a day, and his own posts are mixed in with plain reposts of customers and partners.
+Posts run from 19 to 495 words. His longest post did best, and two posts under 50 words beat his median (900 and 555), so length isn't what decides it.
 
-Posts run from 19 to 495 words. His best one is his longest, and two posts under 50 words still beat his median (900 and 555). Length doesn't seem to be what decides it.
-
-He adds a "p.s." in 6 of the 45 posts, usually for the plug, and he says when he has invested in a company he is writing about. He uses double hyphens, asterisks for emphasis, and sometimes a word in capitals. He almost never uses hashtags, and links in the body are nearly always promo links. Few posts end with a direct question to the reader. Most end on a plain last line or the p.s.
-
-Almost every time he names his product, he puts what it is in brackets right after the name. Someone who sees only one post still knows what YouSpot is.
+He adds a "p.s." in 6 of the 45 posts, usually for the plug, and says when he has invested in a company he writes about. Hashtags are rare, and links in the body are nearly always promo links. Almost every time he names YouSpot, he says what it is in brackets, so someone who sees one post still knows.
 
 ## What a founder in AI memory could try this week
 
-Paste a real request. Take one thing you asked your own memory system this week, show the request and show what came back. In this set, posts with a real request did better than posts with a feature list.
+Paste a real request. Show one thing you asked your own memory system this week and what came back. Here, a real request did better than a feature list.
 
-Post on launch day and keep it short. When a lab ships something about memory or context, write within a few hours: what shipped, a few lines on what it means for people building agents, and whether you have tested it or have a stake in it. The longer take can wait until the next day.
+Post on launch day and keep it short. When a lab ships something about memory or context, write within hours: what shipped, what it means for people building agents, and whether you tested it. The longer take can wait a day.
 
-Give a name to the problem you keep explaining. If there is a failure everyone has seen, like an agent forgetting a fact or memory stuck inside one app, give it a name, define it in one sentence, and stop there. In his posts, the new terms got a lot of comments for their size.
+Give a name to the problem you keep explaining. If everyone has seen a failure, like an agent forgetting a fact or memory stuck inside one app, name it and define it in one sentence.
 
-Don't reshare testimonials. If a user says something nice, ask them what they did with the product and tell that story yourself, with your own screenshot.
+Don't reshare testimonials. Ask the user what they did with the product and tell that story yourself, with your own screenshot.
 
-Say what your product is every time you name it. Most people will only see one of your posts.
+Say what your product is every time you name it, because most people will see only one of your posts.
 
 *Read and written with [Open Stanley](https://harmix.github.io/open-stanley/), which runs the same study for your own field with `/open-stanley:study`. Numbers are as LinkedIn showed them on 7 November 2026. No sentence of the creator's is reproduced beyond a few words.*
