@@ -2,6 +2,14 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.17.0 — 2026-11-07
+
+The competitor check, done honestly. Stanley, Taplio and Supergrow all ship MCP servers now, and Stanley's reads GitHub, Granola, Notion, Calendar and Slack, so the README no longer claims the paid tools cannot read your sources; `docs/compare.md` is rewritten from their November pages and lists what each does better, plus the roadmap that falls out of it.
+
+- mine: `code` is a source (commits, merged PRs, release notes through a GitHub MCP, `gh`, or `git log` in a connected repo) for build-in-public stories; `capabilities.md` maps it.
+- Website: `/audit.html`, the audit's vault-free rules (lexicon, structure, platform, landing scorecard) ported to run in the browser, so anyone can paste a post without installing anything. A test keeps its lexicon equal to the script's.
+- README FAQ and llms.txt link the browser audit; claims.yml carries the promise.
+
 ## 0.16.5 — 2026-11-07
 
 Public teardowns are visual now and copy the landing page's design: a Linear-style beeswarm of every post by shape that shows a preview of the post on hover and opens it on LinkedIn on click, comparisons as `rows` lists, two or three feed screenshots of the creator's posts (third parties blurred, no AI-generated images, metadata stripped), a collapsible table of every post, and 400 to 600 words in the user's first-person voice. No metadata line of middle dots, no bullet legends, no stat tiles. The teardown footer no longer says "shapes only". The creator-teardown template carries the same rules and a fallback for creators the user is not connected to: a connection request with a note under LinkedIn's 200-character limit, shown to the user first. Scheduling: crons are written with `CRON_TZ=<zone>` so daylight saving does not move runs, and a run that starts with no folders attached asks once and reports it. The note to the creator must point at a pattern across posts, not at one post's numbers. The Dharmesh Shah page is rebuilt this way.

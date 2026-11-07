@@ -1,0 +1,134 @@
+---
+layout: default
+title: "Does this LinkedIn post sound like AI?"
+description: "Paste a LinkedIn or X post and get the flags the 2026 feeds demote: AI vocabulary, not-X-but-Y, staccato lines, bait closers, hashtags, and the landing scorecard. Runs in your browser, nothing is sent anywhere."
+---
+
+<h1>Does this post sound like AI?</h1>
+<p class="meta">The same audit the <a href="https://github.com/Harmix/open-stanley">Open Stanley</a> plugin runs on every draft, ported to run in your browser. Nothing you paste leaves this page. It checks the measured tells (excess AI vocabulary from Kobak et al. 2024 and Juzek &amp; Ward 2025, the structures readers flag, and the LinkedIn patterns the 226K-post study found are demoted), not a detector's guess.</p>
+
+<div class="audit-ui">
+<div class="audit-row">
+<label><input type="radio" name="pf" value="linkedin" checked> LinkedIn post</label>
+<label><input type="radio" name="pf" value="x"> X post / thread</label>
+<label><input type="radio" name="pf" value="comment"> Comment</label>
+<label style="margin-left:auto"><input type="checkbox" id="img"> it has an image</label>
+</div>
+<textarea id="txt" rows="12" placeholder="Paste the post here. Separate tweets in a thread with a blank line and ---"></textarea>
+<div class="audit-row"><button id="run" class="pill p-in" type="button">Audit</button><span id="count" class="dim"></span></div>
+<div id="out"></div>
+</div>
+
+<h2>What the flags mean</h2>
+<p><b>BLOCK</b> is a pattern that reads generated or that LinkedIn's 2026 ranking demotes (hashtags, link in the body, explicit like/share asks). <b>WARN</b> is a pattern that is fine once and generated when it repeats. <b>INFO</b> is context. The <b>landing</b> line is eight yes/no items that correlated with reach in the 226K-post study: opening in first person, a complete thought before the fold, a name people know early, a number, a closing question, an image, 400–1,900 characters, no links or hashtags.</p>
+<p>The full script, with the receipts check against your own story files and the self-overlap check against your past posts, is <code>skills/stanley/scripts/stanley-audit</code> in the repo. The research it encodes is in <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/RESEARCH.md">RESEARCH.md</a>.</p>
+
+<style>
+.audit-ui{margin:16px 0 32px}
+.audit-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:8px 0;font-size:14px}
+.audit-row label{display:flex;gap:6px;align-items:center;color:var(--body)}
+#txt{width:100%;box-sizing:border-box;background:#13151b;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:12px;font-family:var(--mono);font-size:14px;line-height:22px}
+#run{border:0;cursor:pointer}
+.f{border-top:1px solid var(--line);padding:8px 0;display:grid;grid-template-columns:64px 1fr;gap:12px;font-size:14px;line-height:22px}
+.f:last-child{border-bottom:1px solid var(--line)}
+.lv{font-family:var(--sans);font-weight:700;font-size:12px}
+.BLOCK{color:#ff6b8a}.WARN{color:#f2c94c}.INFO{color:#8fb0ff}.PASS{color:#4bd79a}
+.ex{color:var(--dim);display:block}
+.land{margin:12px 0;font-size:14px;line-height:24px}
+.land span{display:inline-block;margin:0 10px 0 0}
+.y{color:#4bd79a}.n{color:#ff6b8a}
+</style>
+
+<script>
+(function(){
+const BANNED=[[/\bdelv(e|es|ed|ing)\b/gi,"delve"],[/\bleverag(e|es|ed|ing)\b/gi,"leverage (say 'use')"],[/\bharness(es|ed|ing)?\b/gi,"harness"],[/\bpivotal\b/gi,"pivotal"],[/\bintricate\b/gi,"intricate"],[/\bmeticulous(ly)?\b/gi,"meticulous"],[/\bunderscor(e|es|ed|ing)\b/gi,"underscore"],[/\bshowcas(e|es|ed|ing)\b/gi,"showcase"],[/\brealm\b/gi,"realm"],[/\btestament\b/gi,"testament"],[/\blandscape\b/gi,"landscape (as metaphor)"],[/\bnavigat(e|es|ed|ing)\b/gi,"navigate (as metaphor)"],[/\bunlock(s|ed|ing)?\b/gi,"unlock"],[/\belevat(e|es|ed|ing)\b/gi,"elevate"],[/\brobust\b/gi,"robust"],[/\bseamless(ly)?\b/gi,"seamless"],[/\btapestry\b/gi,"tapestry"],[/\bever-evolving\b/gi,"ever-evolving"],[/\bgame-?changer\b/gi,"game-changer"],[/\bgame changer\b/gi,"game changer"],[/\bparadigm\b/gi,"paradigm"],[/\bsynerg(y|ies|istic)\b/gi,"synergy"],[/\bcutting-edge\b/gi,"cutting-edge"],[/\bin today'?s (fast-paced|rapidly|ever)/gi,"in today's fast-paced..."],[/\bhere'?s the thing\b/gi,"here's the thing"],[/\blet that sink in\b/gi,"let that sink in"],[/\bread that again\b/gi,"read that again"],[/\bthe (real|hard) (truth|part|question) is\b/gi,"the real truth/part is"],[/\bat the end of the day\b/gi,"at the end of the day"],[/\bit'?s worth noting\b/gi,"it's worth noting"],[/\bimportantly,/gi,"importantly,"],[/\bmoreover\b/gi,"moreover"],[/\bfurthermore\b/gi,"furthermore"],[/\badditionally\b/gi,"additionally"],[/\bcrucial(ly)?\b/gi,"crucial"],[/\bcompelling\b/gi,"compelling"],[/\bprofound(ly)?\b/gi,"profound"],[/\bfoundational shift\b/gi,"foundational shift"],[/\bfundamental(ly)? (shift|change)\b/gi,"fundamental shift"],[/\bthe implications (are|of)\b/gi,"the implications are"],[/\bmakes you wonder\b/gi,"makes you wonder"],[/\bit'?s (super|really|genuinely|truly) interesting\b/gi,"it's interesting (filler opener)"],[/\bthis (really )?(resonates|hits)\b/gi,"this resonates / hits (empty agreement)"],[/\bgreat (point|post|insight)\b/gi,"great point (empty agreement)"],[/\bcouldn'?t agree more\b/gi,"couldn't agree more"],[/\bspot on\b/gi,"spot on"],[/\bwell said\b/gi,"well said"],[/\bagree\?\s*$/gi,"trailing 'Agree?'"],[/\bthoughts\?\s*$/gi,"trailing 'Thoughts?'"],[/\bwhat do you think\?\s*$/gi,"trailing 'What do you think?'"],[/\bfollow (me )?for more\b/gi,"follow for more"],[/\b(ps|p\.s\.)?\s*repost if\b/gi,"repost if"]];
+const WEASEL=[/\bexperts (say|agree|argue)\b/gi,/\bstudies show\b/gi,/\bresearch (shows|suggests)\b/gi,/\bsome (critics|people|observers) (argue|say|note)\b/gi,/\bit is widely (known|accepted)\b/gi,/\brecent literature\b/gi,/\bindustry reports\b/gi];
+const EDITORIAL=/,\s*(highlighting|underscoring|emphasizing|showcasing|demonstrating|reflecting|signaling|marking)\s+(the|a|an|its|how)\b/gi;
+const NXBY=[/\b(it'?s|this is|that'?s|they'?re|we'?re)\s+not\s+(just|only|about|simply)?\s*[^.\n]{2,60}?[,;.]\s*(it'?s|this is|that'?s|but)\s+/gi,/\bnot\s+[^.\n]{2,50}?\s*[—–-]\s*(it'?s|but)\s+/gi,/\bisn'?t\s+(just|only|about)\s+[^.\n]{2,50}?[,;.]\s*(it'?s|but)\s+/gi];
+function sentences(t){return t.replace(/\n+/g," ").split(/(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean);}
+function words(t){return (t.match(/\b[\w']+\b/g)||[]);}
+function ex(body,m){const i=m.index,w=60;return (i>w?"…":"")+body.slice(Math.max(0,i-w),i+m[0].length+w).replace(/\s+/g," ")+(i+m[0].length+w<body.length?"…":"");}
+function all(re,body){re.lastIndex=0;const out=[];let m;while((m=re.exec(body))){out.push(m);if(!re.global)break;}return out;}
+function audit(text,platform,hasImage){
+ const F=[];const add=(l,r,msg,e)=>F.push([l,r,msg,e||""]);
+ const body=text.trim();
+ const proseLines=body.split("\n").filter(l=>l.trim()&&!/^(\s*#\w+)+\s*$/.test(l)&&!/^[\W\d_]+$/.test(l));
+ const prose=proseLines.join("\n");const sents=sentences(prose);const wds=words(body);const n=wds.length;const nc=body.length;
+ for(const [re,label] of BANNED) for(const m of all(re,body)) add("BLOCK","lexicon","AI-flagged phrase: "+label,ex(body,m));
+ for(const re of WEASEL) for(const m of all(re,body)) add("BLOCK","weasel","Unattributed authority. Name the source or cut it.",ex(body,m));
+ for(const re of NXBY) for(const m of all(re,body)) add("BLOCK","not-x-but-y","Negative parallelism ('not X, it's Y'). Say the Y directly.",ex(body,m));
+ for(const m of all(EDITORIAL,body)) add("WARN","editorial-tail","Editorializing tail glued to a fact. Cut it or make it its own claim.",ex(body,m));
+ const em=(body.match(/—/g)||[]).length+(body.match(/\s–\s/g)||[]).length;
+ if(em/Math.max(1,n/100)>0.15) add("WARN","em-dash-density","Em-dash density "+(em/Math.max(1,n/100)).toFixed(2)+"/100 words (human band ~0.1).");
+ for(const m of all(/\b(\w+), (\w+),? and (\w+)\b/g,body)){const a=m[1],b=m[2],c=m[3];if([a,b,c].every(x=>x.length>3)&&new Set([a,b,c]).size===3) add("INFO","tricolon","Rule-of-three list. Fine once; more than once reads generated.",ex(body,m));}
+ const lines=body.split("\n").map(l=>l.trim()).filter(Boolean);
+ let run=0,maxRun=0;for(const s of sents){if(s.split(/\s+/).length<=8){run++;maxRun=Math.max(maxRun,run);}else run=0;}
+ if(maxRun>=3) add("BLOCK","choppy",maxRun+" consecutive sentences under 8 words. Staccato reads generated; join or expand them.");
+ const lens=sents.map(s=>s.split(/\s+/).length);
+ if(lens.length>=4){const mean=lens.reduce((a,b)=>a+b,0)/lens.length;const sd=Math.sqrt(lens.reduce((a,x)=>a+(x-mean)**2,0)/lens.length);if(sd<4) add("WARN","uniform-length","Sentence length stdev "+sd.toFixed(1)+" (mean "+mean.toFixed(1)+"). Vary it: one long, one short.");}
+ const one=lines.filter(l=>l.split(/\s+/).length<=6).length;
+ if(lines.length>=6&&one/lines.length>0.5) add("WARN","one-line-paragraphs","Most paragraphs are one short line (LinkedIn-guru scaffolding).");
+ if(/\*\*[^*]+\*\*\s*:/.test(body)) add("BLOCK","bold-colon-list","Bolded-term-colon list items are a classic generated pattern.");
+ const last=sents.length?sents[sents.length-1]:"";
+ if(last.endsWith("?")&&/\b(you|your)\b/i.test(last)&&/\b(agree|think|thoughts|experience)\b/i.test(last)) add("WARN","closing-question","Generic engagement-bait closer. A specific open question is fine; 'what do you think?' is not.",last);
+ if(sents.length&&/^(In (today|the)\b|As (we|AI|the) |With (the|AI) |It'?s no secret|We (all|often) |Have you ever|Ever wondered|Let'?s (talk|dive|face)|Picture this|Imagine )/i.test(sents[0])) add("BLOCK","setup-sentence","Opens with a throat-clearing setup line. Start on the claim.",sents[0]);
+ if(sents.length&&/^(This|That|It) (is|was) (so|really|super|very|genuinely) /i.test(sents[0])) add("WARN","empty-opener","Opener is a reaction, not a thought.",sents[0]);
+ for(const s of sents.slice(-2)){if(/^(In (short|summary|conclusion)|To (sum|wrap) up|Ultimately|The (bottom line|takeaway|lesson|key takeaways?)|Bottom line|Key takeaways?)/i.test(s)){add("BLOCK","wrap-up","Ends with a summary/conclusion line. Cut it; end on the last real sentence.",s);break;}}
+ const hasNumber=/\d/.test(body);
+ const tails=sents.map(s=>s.split(" ").slice(1).join(" ")).join(" ");
+ const hasProper=/\b[A-Z][a-z]{2,}\b/.test(tails);
+ if(!hasNumber&&!hasProper&&n>60) add("WARN","no-specifics","No numbers, names, dates or places anywhere. Generic-true reads generated; add the thing only you know.");
+ if(!/\b(I|we|my|our|me|us)\b/.test(body)) add("WARN","no-first-person","No first person at all. Where were you in this story?");
+ const emojis=(body.match(/[\u{1F300}-\u{1FAFF}☀-➿]/gu)||[]).length;
+ if(emojis>2) add("WARN","emoji",emojis+" emoji. One is a signature; several is a template.");
+ const hashtags=(body.match(/(?<!\w)#\w+/g)||[]).length;
+ if(hashtags>0) add("BLOCK","hashtags",hashtags+" hashtag(s); 2026 reach data says zero.");
+ if(platform==="comment"){
+  if(n>70) add("WARN","comment-length",n+" words. Comments that land are 1-3 sentences; long comments read like a blog post pasted in.");
+  if(sents.length&&/^(This|That|Great|Love|So|Such|Absolutely|Totally|Yes|Exactly)\b/.test(sents[0])&&/\b(true|real|point|post|resonates|hits|agree|crucial|important|interesting)\b/i.test(sents[0])) add("BLOCK","agreement-opener","Opens by agreeing with the post. Start on your own observation; the agreement is implied by replying.",sents[0]);
+ }else if(platform==="linkedin"){
+  if(/https?:\/\//.test(body)) add("BLOCK","link-in-body","Link in LinkedIn body. Put it in the first comment or drop it.");
+  if(nc>3000) add("BLOCK","length",nc+" chars > LinkedIn 3,000 limit."); else if(nc>2000) add("WARN","length",nc+" chars; 1,300-1,900 is the band that holds dwell."); else if(nc<400) add("INFO","length",nc+" chars; short is fine for an aphorism, thin for a story.");
+  const hook=body.split("\n")[0];
+  if(hook.length>210&&lines.length>1) add("WARN","hook-length","First line is "+hook.length+" chars; only ~140 show before 'see more'. Make the cut point land on a complete thought.");
+  if(/(^|[.!?\n]\s*)(please )?(like|share|repost) (this post|this if|if you|below|and (share|repost|follow))\b|\b(smash|hit|drop) (the|a) like\b|\bplease (like|share|repost)\b/i.test(body)) add("BLOCK","engagement-bait","Explicit like/share ask is demoted. (Asking for comments or ending on a question is fine.)");
+  if(hook.trim().endsWith("?")) add("WARN","question-opener","Opens with a question: -5% engagement across 226K posts. Open on the event or the claim; put the question at the end.");
+  if(/^\s*(you (should|need to|must|have to)|here'?s (how|why) you|stop doing|if you'?re not)\b/i.test(hook)) add("INFO","advice-framing","'You should' framing: -2%, and audiences prefer first-person experience (+8-25% for posts opening with 'I').");
+  if(/\b(unpopular opinion|hot take|controversial (take|opinion))\b/i.test(body)) add("INFO","hot-take","Hot-take framing has the worst risk-reward of any pattern. Say the thing without the label.");
+ }else if(platform==="x"){
+  const tweets=body.split(/\n\s*\n---+\s*\n|\n\s*\n\s*\n/).map(t=>t.trim()).filter(Boolean);
+  if(tweets.length===1&&body.length>280) add("INFO","x-length",body.length+" chars: needs X Premium for a single post, else split into a thread with '---' separators.");
+  if(tweets.length>7) add("WARN","thread-length",tweets.length+" tweets; 5-7 max, and only if the story is sequential.");
+  tweets.forEach((t,i)=>{if(t.length>280&&tweets.length>1) add("BLOCK","tweet-length","Tweet "+(i+1)+" is "+t.length+" chars (>280).");});
+  if(tweets.length&&/https?:\/\//.test(tweets[0])) add("WARN","link-in-first","Link in the first tweet; put it in the first reply.");
+ }
+ for(const m of all(/\b(just (released|announced|launched|dropped|shipped|published|came out|got|hit|acquired)|yesterday|today|this (week|morning)|breaking(?: news)?)\b/gi,body)) add("INFO","freshness","Time-relative claim. Confirm the source date before publishing.",ex(body,m));
+ for(const m of all(/\b(a|one) (recent )?(study|paper|survey|report) (found|shows|says)\b/gi,body)) add("BLOCK","uncited-study","A study is cited without a name/venue/year. Name it or cut it.",ex(body,m));
+ let landing=null;
+ if(platform==="linkedin"){
+  const first=(proseLines[0]||"").trim();const fold=body.slice(0,210);
+  const named=/(?<![.!?]\s)(?<!^)\b[A-Z][a-zA-Z]+(?: [A-Z][a-zA-Z]+)*\b/.test(fold)||/\b(YC|Y Combinator|OpenAI|Anthropic|Google|Microsoft|Apple|Meta|Amazon|Nvidia|Stripe)\b/.test(fold);
+  landing=[["opens-first-person",/^(i|i'm|i've|i'd|we|we're|we've|my|our)\b/i.test(first)],["fold-complete-thought",/[.!?]/.test(fold)&&first.length<=210],["named-entity-early",named],["number-or-receipt",/\d/.test(body)],["ends-on-question",last.trim().endsWith("?")],["has-image",!!hasImage],["length-band",nc>=400&&nc<=1900],["no-links-hashtags",!/https?:\/\/|(^|\s)#\w+/.test(body)]];
+ }
+ return {F,stats:{words:n,chars:nc,sentences:sents.length},landing};
+}
+const out=document.getElementById("out"),txt=document.getElementById("txt"),count=document.getElementById("count");
+function esc(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function render(){
+ const pf=document.querySelector('input[name=pf]:checked').value;
+ const r=audit(txt.value,pf,document.getElementById("img").checked);
+ count.textContent=r.stats.words+" words · "+r.stats.chars+" chars · "+r.stats.sentences+" sentences";
+ const order={BLOCK:0,WARN:1,INFO:2};r.F.sort((a,b)=>order[a[0]]-order[b[0]]);
+ const blocks=r.F.filter(f=>f[0]==="BLOCK").length,warns=r.F.filter(f=>f[0]==="WARN").length;
+ let h="";
+ if(!txt.value.trim()){out.innerHTML="";return;}
+ h+='<p class="lv '+(blocks?"BLOCK":warns?"WARN":"PASS")+'">RESULT: '+(blocks?"BLOCK ("+blocks+" blocking, "+warns+" warnings)":warns?"PASS with "+warns+" warning(s)":"PASS")+'</p>';
+ if(r.landing) h+='<div class="land">landing: '+r.landing.map(([k,v])=>'<span class="'+(v?"y":"n")+'">'+k+"="+(v?"yes":"no")+"</span>").join("")+"</div>";
+ for(const [l,rule,msg,e] of r.F) h+='<div class="f"><span class="lv '+l+'">'+l+'</span><span><b>'+rule+'</b> '+esc(msg)+(e?'<span class="ex">'+esc(e)+'</span>':"")+'</span></div>';
+ if(!r.F.length) h+='<p class="dim">No flags. That says the text avoids the measured tells; it does not say the post is good. The receipts check (every number against a source) and the overlap check against your own past posts run only in the plugin.</p>';
+ out.innerHTML=h;
+}
+document.getElementById("run").addEventListener("click",render);
+txt.addEventListener("input",()=>{count.textContent=words(txt.value).length+" words · "+txt.value.length+" chars";});
+})();
+</script>

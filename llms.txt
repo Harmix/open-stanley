@@ -10,6 +10,7 @@
 ## Docs
 - [README](https://github.com/Harmix/open-stanley#readme): what it does, install, the rules it runs on
 - [How it works](https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/HOW-IT-WORKS.md)
+- [Free audit in the browser: does this post sound like AI?](https://harmix.github.io/open-stanley/audit.html)
 - [Compare with paid tools](https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/compare.md)
 - [Changelog](https://github.com/Harmix/open-stanley/blob/main/open-stanley/CHANGELOG.md)
 - [Research it is built on](https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/RESEARCH.md)

@@ -56,5 +56,14 @@ class ClaimsTests(unittest.TestCase):
         for rel in re.findall(r'https://github.com/Harmix/open-stanley/blob/main/([^"#)]+)', site + read("README.md") + read("llms.txt")):
             self.assertTrue((REPO / rel).exists(), f"link to missing repo file {rel}")
 
+    def test_browser_audit_lexicon_matches_script(self):
+        """docs/audit.html claims to mirror stanley-audit's lexicon; every label in the script must appear in the page."""
+        script = read("open-stanley/skills/stanley/scripts/stanley-audit")
+        page = read("docs/audit.html")
+        labels = re.findall(r'^\s*r"[^"]+":\s*"([^"]+)",\s*$', script[script.index("BANNED = {"):script.index("WEASEL = [")], re.M)
+        self.assertGreater(len(labels), 40)
+        missing = [l for l in labels if l.replace("'", "'") not in page]
+        self.assertEqual(missing, [], f"labels in stanley-audit missing from docs/audit.html: {missing}")
+
 if __name__ == "__main__":
     unittest.main()

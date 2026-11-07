@@ -18,7 +18,8 @@ Probe capabilities (see `skills/stanley/references/capabilities.md`). Then pull,
 5. `memory` — ask it the questions a good editor would ask: "what did I decide this week", "what surprised me", "what went wrong", "what number changed".
 6. `calendar` — what happened (talks, conferences, customer calls) as prompts for the Soapbox question, not as posts ("heading to X" is the pattern the diagnosis flagged as the bottom performer).
 7. `docs` — memos, specs, decks the user authored in the window.
-8. The user's own recent posts and comments (from the ledger and `browser`) — to see which stories are already spent.
+8. `code` — commits, merged PRs and release notes the user wrote in the window, through a GitHub MCP, `gh`, or `git log --author` in a connected repository: build-in-public stories (what shipped, what broke, the number that changed). A merged PR with a real description is a story with a receipt; a commit message alone is a lead.
+9. The user's own recent posts and comments (from the ledger and `browser`) — to see which stories are already spent.
 
 Read-only, always. If a source errors, say which one and continue.
 

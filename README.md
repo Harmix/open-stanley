@@ -2,13 +2,13 @@
 
 [![Open Stanley](docs/social-preview.png)](https://harmix.github.io/open-stanley/)
 
-[![version](https://img.shields.io/badge/version-0.16.5-blue)](open-stanley/CHANGELOG.md) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![tests](https://img.shields.io/badge/tests-passing-brightgreen)](open-stanley/tests) [![works in](https://img.shields.io/badge/works%20in-Claude%20Cowork%20%C2%B7%20Claude%20Code%20%C2%B7%20any%20SKILL.md%20agent-6f42c1)](#install)
+[![version](https://img.shields.io/badge/version-0.17.0-blue)](open-stanley/CHANGELOG.md) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![tests](https://img.shields.io/badge/tests-passing-brightgreen)](open-stanley/tests) [![works in](https://img.shields.io/badge/works%20in-Claude%20Cowork%20%C2%B7%20Claude%20Code%20%C2%B7%20any%20SKILL.md%20agent-6f42c1)](#install)
 
 An open head of content for the agent you already pay for. A free, open-source alternative to Stanley (getstanley.ai), Taplio, Supergrow and the other "AI head of content" subscriptions: a Claude plugin that writes LinkedIn and X posts from your own meetings, Slack, email and notes, in your voice, with a receipt for every claim.
 
 It mines your own meetings, Slack, email, docs, and notes through whatever MCPs you have connected, drafts LinkedIn and X posts by editing your material into your voice (never by generating a claim from a topic), audits every draft against the 2026 AI-slop and platform rules, publishes and comments through your own browser, runs the daily rituals as scheduled tasks with a run log, and learns from every edit you make.
 
-It is the loop that "AI head of content" products sell for $47–149 a month, rebuilt as a plugin, with the three things they can't do: read your custom sources, remember your corrections, and prove where every claim came from.
+It is the loop that "AI head of content" products sell for $29–149 a month, rebuilt as a plugin, with the things they still don't do: keep your material in a folder you own, turn your corrections into rules you can read, prove where every claim came from, and run experiments on your own numbers. (Since autumn 2026 the paid tools have MCP servers too, so "works from Claude" is no longer the difference; `docs/compare.md` says what is.)
 
 ## Install
 
@@ -45,7 +45,7 @@ The full comparison, with what the paid tools do better, is in [docs/compare.md]
 **Is there a free alternative to Stanley AI?** This. Same loop (ideas → drafts in your voice → schedule → numbers back), no subscription, your data stays on your machine.
 **Does it work with Claude Cowork?** Yes, that is where it was built and where the first account runs it; also Claude Code and any agent that reads `SKILL.md`.
 **Does it post for me?** It schedules and posts through your own logged-in browser after you say yes to the exact text; nothing goes out unapproved.
-**Will the posts sound like AI?** Every draft starts from your words and goes through an audit for the patterns LinkedIn demotes; the first account went from a 1,150-impression median to a post with 85,934 impressions in its first week (November 2026), 91% of the account's 90-day reach from outside its network.
+**Will the posts sound like AI?** Every draft starts from your words and goes through an audit for the patterns LinkedIn demotes (try it on any post, no install: [does this post sound like AI?](https://harmix.github.io/open-stanley/audit.html)); the first account went from a 1,150-impression median to a post with 85,934 impressions in its first week (November 2026), 91% of the account's 90-day reach from outside its network.
 **Does it need a LinkedIn API key?** No. It reads and posts through the browser you are logged into.
 
 ## Newsletter, tips, teardowns
@@ -126,7 +126,7 @@ Two modes. **Laptop mode (default):** the vault is a plain folder inside your de
 
 ## Tests, versioning, CI
 
-`make test` (inside `open-stanley/`) runs the deterministic audit fixtures and the unit tests (`tests/`, 52 at 0.16.5: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency, public claims). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `tests/evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
+`make test` (inside `open-stanley/`) runs the deterministic audit fixtures and the unit tests (`tests/`, 53 at 0.17.0: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency, public claims). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `tests/evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
 
 ## Contributing
 

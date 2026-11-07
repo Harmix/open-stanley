@@ -10,6 +10,7 @@ Declare the capability you need, then find any server that satisfies it. Tool na
 | `mail` | `gmail`, `search_threads`, `get_message`, `outlook` | Gmail (`search_threads`, `get_thread`), Outlook | mine (sent mail only, by default; the user's own writing) |
 | `calendar` | `list_events`, `calendar` | Google Calendar, Outlook | mine (what happened this week; conference/event posts), rituals |
 | `docs` | `drive`, `notion`, `search_files`, `read_file_content`, `fetch` | Google Drive, Notion, Confluence, Dropbox | mine (memos, decks, specs the user wrote) |
+| `code` | `github`, `list_commits`, `list_pull_requests`, `get_pull_request`, `gh`, `git` | GitHub MCP, `gh` CLI, `git log --author=<me>` in a connected repo | mine (build-in-public stories: what shipped, what broke, the number that changed) |
 | `crm` / `data` | `sql`, `query`, `hubspot`, `execute_sql` | Cloud SQL, HubSpot, Postgres | mine (real numbers for receipts; read-only queries only) |
 | `browser` | `navigate`, `get_page_text`, `read_page`, `find`, `computer` | Claude in Chrome, built-in browser | scout (feeds), publish (LinkedIn/X UI), fact-check (open the source) |
 <!-- Before automating a platform, read platform-access.md: official MCP/API for writes, browser for reads. -->
