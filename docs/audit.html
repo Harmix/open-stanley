@@ -15,10 +15,11 @@ description: "Paste a LinkedIn or X post and get the flags the 2026 feeds demote
 <label style="margin-left:auto"><input type="checkbox" id="img"> it has an image</label>
 </div>
 <textarea id="txt" rows="12" placeholder="Paste the post here. Separate tweets in a thread with a blank line and ---"></textarea>
-<div class="audit-row"><button id="run" class="pill p-in" type="button">Audit</button><span id="count" class="dim"></span></div>
+<div class="audit-row"><button id="run" class="pill p-in" type="button">Audit</button><a id="claude" class="pill p-doc" href="#" target="_blank" rel="noopener" style="display:none">Open in Claude with the full audit</a><span id="count" class="dim"></span></div>
 <div id="out"></div>
 </div>
 
+<p class="dim" id="claude-note" style="display:none">The button opens claude.ai with your post and the audit instructions in the prompt. With the <a href="https://github.com/Harmix/open-stanley">Open Stanley</a> plugin installed, Claude runs the full script (receipts against your stories, overlap with your past posts); without it, Claude applies the same rules by hand.</p>
 <h2>What the flags mean</h2>
 <p><b>BLOCK</b> is a pattern that reads generated or that LinkedIn's 2026 ranking demotes (hashtags, link in the body, explicit like/share asks). <b>WARN</b> is a pattern that is fine once and generated when it repeats. <b>INFO</b> is context. The <b>landing</b> line is eight yes/no items that correlated with reach in the 226K-post study: opening in first person, a complete thought before the fold, a name people know early, a number, a closing question, an image, 400–1,900 characters, no links or hashtags.</p>
 <p>The full script, with the receipts check against your own story files and the self-overlap check against your past posts, is <code>skills/stanley/scripts/stanley-audit</code> in the repo. The research it encodes is in <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/RESEARCH.md">RESEARCH.md</a>.</p>
@@ -128,7 +129,12 @@ function render(){
  if(!r.F.length) h+='<p class="dim">No flags. That says the text avoids the measured tells; it does not say the post is good. The receipts check (every number against a source) and the overlap check against your own past posts run only in the plugin.</p>';
  out.innerHTML=h;
 }
-document.getElementById("run").addEventListener("click",render);
+function claudeLink(){
+ const pf=document.querySelector('input[name=pf]:checked').value;const post=txt.value.trim();if(!post) return "#";
+ const prompt="Audit this "+(pf==="x"?"X post":pf==="comment"?"LinkedIn comment":"LinkedIn post")+" for the patterns that read as AI-generated and the patterns LinkedIn demotes in 2026, the way the Open Stanley plugin's stanley-audit does. If the open-stanley plugin is installed, run `skills/stanley/scripts/stanley-audit` on it with --platform "+pf+" and show the output. If it is not, install it with /plugin marketplace add Harmix/open-stanley then /plugin install open-stanley@open-stanley, or apply these rules by hand: flag AI-flagged vocabulary (delve, leverage, harness, pivotal, robust, seamless, game-changer, 'here's the thing', 'let that sink in', moreover, furthermore, crucial, compelling, 'at the end of the day', 'couldn't agree more'); unattributed authority ('studies show', 'experts say'); negative parallelism ('not X, it's Y'); editorializing tails ('..., highlighting the'); three or more consecutive sentences under 8 words; uniform sentence length; mostly one-line paragraphs; bold-term-colon lists; a generic engagement-bait closer; a throat-clearing opener ('In today's', 'Imagine', 'Let's dive'); a summary line at the end; no numbers, names or dates; no first person; more than two emoji; any hashtag; a link in the body; a like/share ask; a question as the first line; an uncited study. Then print a landing line with yes/no for: opens-first-person, fold-complete-thought (a complete sentence in the first 210 characters), named-entity-early, number-or-receipt, ends-on-question, has-image, length-band (400 to 1,900 characters), no-links-hashtags. Finish with the three edits that would do the most, keeping my words. Here is the post:\n\n"+post;
+ return "https://claude.ai/new?q="+encodeURIComponent(prompt);
+}
+document.getElementById("run").addEventListener("click",function(){render();const a=document.getElementById("claude");a.href=claudeLink();a.style.display=txt.value.trim()?"inline-flex":"none";document.getElementById("claude-note").style.display=txt.value.trim()?"block":"none";});
 txt.addEventListener("input",()=>{count.textContent=words(txt.value).length+" words · "+txt.value.length+" chars";});
 })();
 </script>
