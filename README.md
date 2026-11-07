@@ -45,7 +45,7 @@ The full comparison, with what the paid tools do better, is in [docs/compare.md]
 **Is there a free alternative to Stanley AI?** This. Same loop (ideas → drafts in your voice → schedule → numbers back), no subscription, your data stays on your machine.
 **Does it work with Claude Cowork?** Yes, that is where it was built and where the first account runs it; also Claude Code and any agent that reads `SKILL.md`.
 **Does it post for me?** It schedules and posts through your own logged-in browser after you say yes to the exact text; nothing goes out unapproved.
-**Will the posts sound like AI?** Every draft starts from your words and goes through an audit for the patterns LinkedIn demotes; the first account's posts reached ten times its median within six weeks.
+**Will the posts sound like AI?** Every draft starts from your words and goes through an audit for the patterns LinkedIn demotes; the first account went from a 1,150-impression median to a post with 85,934 impressions in its first week (November 2026), 91% of the account's 90-day reach from outside its network.
 **Does it need a LinkedIn API key?** No. It reads and posts through the browser you are logged into.
 
 ## Newsletter, tips, teardowns
