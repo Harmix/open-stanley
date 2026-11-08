@@ -22,7 +22,7 @@ Most "Stanley alternatives" lists are written by one of the alternatives, and th
 
 ## <svg class="rose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.5 6 .9-4.4 4.2 1 6-5.3-2.8-5.3 2.8 1-6L3.3 9.4l6-.9z"/></svg>Why people leave Stanley
 
-I used Stanley every day in September 2026 and cancelled after five days. The comment scans were fine. The posts were the problem: Stanley did not know what happened in my week, because my meetings live in a tool it could not read. On the first day it gave me eight drafts and I rejected seven. It suggested I comment on my own post and cited a 2024 paper as news. If your stories are in your meetings and chats, a tool that writes from a topic will keep guessing.
+I paid for Stanley from August 2026 and used it every day in early September, then cancelled. The comment scans were fine. The posts were the problem: Stanley did not know what happened in my week, because my meetings live in a tool it could not read. On the first day it gave me eight drafts and I rejected seven. It suggested I comment on my own post and cited a 2024 paper as news. If your stories are in your meetings and chats, a tool that writes from a topic will keep guessing.
 
 ## <svg class="green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>What changed this autumn
 
