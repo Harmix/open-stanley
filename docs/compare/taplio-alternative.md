@@ -6,7 +6,7 @@ description: "Taplio is a $39 to $199 a month LinkedIn suite built around a vira
 
 # Open Stanley vs Taplio
 
-Taplio is the biggest LinkedIn tool, and for a lot of people it is the right one. This page is for the people it is not right for. Facts from Taplio's pages read on 7 November 2026; prices change.
+Taplio is the biggest LinkedIn tool, and for a lot of people it is the right one. This page is for founders it doesn't fit. Facts from Taplio's pages read on 7 November 2026; prices change.
 
 ## <svg class="orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>The short version
 
@@ -18,7 +18,7 @@ Taplio is the biggest LinkedIn tool, and for a lot of people it is the right one
 | Reach prediction | Yes, one live number before publishing | A reach band (p25/median/p75) from your own past posts that share the draft's features, plus the landing scorecard |
 | Scheduling | Queue, best-time slots, carousel drip | LinkedIn's own scheduler, through your browser, after you approve the text |
 | Engagement | Engage feed, AI comment starters, Chrome extension | Scout scans your feed twice a day and drafts 1–3 sentence comments; you paste |
-| Outreach automation | Lead lists, automatic connection requests, DM on accept | None, on purpose |
+| Outreach automation | Lead lists, automatic connection requests, DM on accept | None. The plugin never sends requests or DMs |
 | Teams | Seats, approvals | Single user |
 | Where your material lives | Their servers | A folder you own |
 | MCP | MCP V2 for comments | Is a plugin: Cowork, Claude Code, any SKILL.md agent |
@@ -33,7 +33,7 @@ Taplio is the biggest LinkedIn tool, and for a lot of people it is the right one
 ## <svg class="green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Choose Open Stanley if
 
 - You have material of your own (meetings, threads, decisions, numbers) and want posts that could only have been written by you, with the source attached.
-- You want an audit that blocks the patterns LinkedIn demotes instead of a reach guess ([try it](../audit.html)).
+- You want an audit that points at the lines LinkedIn demotes ([try it](../audit.html)) next to a reach band from your own past posts.
 - You want your corrections kept as rules and your results attached to the story that produced them.
 - You do not want automation touching connection requests or DMs.
 

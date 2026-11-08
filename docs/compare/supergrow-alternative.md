@@ -27,12 +27,12 @@ Supergrow's best idea is the interview: an AI asks you questions and drafts from
 
 - You run a team and need approval workflows and a board.
 - You want a hosted app with support and a 4.8 on G2.
-- You like the interview format and want a question bank, not your calendar, to drive it.
+- You like the interview format and want it to run from a question bank.
 
 ## <svg class="green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Choose Open Stanley if
 
 - You want the question to come from something that happened to you this week, and the answer filed with its source before anything is drafted.
-- You want the linter and the experiments, not just the editor.
+- You want the audit and the experiments as well as an editor.
 - You want nothing of yours on a server you do not control, and no new subscription.
 
 ## <svg class="sky" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 21h16"/></svg>Install
