@@ -2,6 +2,13 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.17.1 — 2026-11-08
+
+Two misses from the first real nights after 0.17.0.
+
+- recap: the 100K milestone post was never drafted. The recap read the top-posts page, which has no 90-day total, and a note in `strategy.md` ("100K on 2026-11-07, one post for 100K") read as done. Now every recap opens the 90-day content analytics page and runs `stanley-vault milestone-check --impressions-90d N`, which reads only the numbers in `milestones` and `milestones_done` (never notes) and exits 2 when one is crossed. `--mark-done M` records it after the draft is saved. Tested.
+- scout: LinkedIn's feed, search and activity pages no longer carry post URNs, so the scout delivered profile links and once guessed a URL. `skills/scout/references/linkedin-permalinks.md` reads each post's real link from its "Copy link to post" item by recording the clipboard write (tested on the feed and an activity page); a target without a link from that method is never delivered with a guess.
+
 ## 0.17.0 — 2026-11-07
 
 The competitor check, done honestly. Stanley, Taplio and Supergrow all ship MCP servers now, and Stanley's reads GitHub, Granola, Notion, Calendar and Slack, so the README no longer claims the paid tools cannot read your sources; `docs/compare.md` is rewritten from their November pages and lists what each does better, plus the roadmap that falls out of it.

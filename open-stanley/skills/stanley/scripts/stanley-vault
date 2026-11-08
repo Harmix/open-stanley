@@ -25,6 +25,7 @@ Commands
   queue-add --job J --payload JSON [--expires-hours H]   cloud runs park browser-only work here
   queue-check [--brief]         list pending, unexpired items (exit 1 if any); --brief prints one line for hooks
   queue-done ID [--result TEXT] [--failed]               mark an item done (or failed, kept for the recap)
+  milestone-check --impressions-90d N | --mark-done M   exit 2 when a strategy.md milestone is crossed and not done
   is-self URL_OR_HANDLE         exit 0 if this belongs to the user (from my-human.md handles)
   snapshot                      record sha256 of every vault file (call right after mirroring from Drive/Notion)
   changed                       list files added/changed/deleted since the snapshot (what to upload back)
@@ -482,6 +483,45 @@ def cmd_drafts_due(a):
         print(f"DUE {d['scheduled_for']}  {d['draft']}\n  hook: {d['hook'][:100]}\n  post-add --platform linkedin --url <live url> --text-file drafts/{d['draft']} --from-meta drafts/{d['meta']} --via reconciled")
     if not due: print("no scheduled drafts past their time without a ledger row")
 
+def _milestone_lists(text):
+    """Read `- milestones:` and `- milestones_done:` from strategy.md. Only the numbers before any '(' or '#' count,
+    so a note such as '(100K crossed on 11-07, one post for it)' never marks 100000 done."""
+    def nums(key):
+        m = re.search(r"^\s*-?\s*" + key + r"\s*:\s*(.*)$", text, re.M)
+        if not m: return []
+        val = re.split(r"[#(]", m.group(1))[0]
+        out = []
+        for t in re.findall(r"\d[\d,_]*\s*[kKmM]?", val):
+            t = t.strip().replace(",", "").replace("_", "")
+            mult = 1000 if t[-1] in "kK" else 1_000_000 if t[-1] in "mM" else 1
+            out.append(int(t.rstrip("kKmM").strip()) * mult)
+        return out
+    return nums("milestones"), nums("milestones_done")
+
+def cmd_milestone_check(a):
+    """Compare the 90-day impressions read from LinkedIn's content analytics with strategy.md's milestones."""
+    v = resolve(a.vault); p = v / "strategy.md"
+    text = p.read_text(encoding="utf-8") if p.exists() else ""
+    todo, done = _milestone_lists(text)
+    if a.mark_done is not None:
+        m = a.mark_done
+        new_done = sorted(set(done) | {m}); new_todo = [x for x in todo if x != m]
+        line_done = "- milestones_done: " + ", ".join(str(x) for x in new_done) + f"   # {m} marked done {dt.date.today().isoformat()}"
+        if re.search(r"^\s*-?\s*milestones_done\s*:.*$", text, re.M):
+            text = re.sub(r"^\s*-?\s*milestones_done\s*:.*$", line_done, text, count=1, flags=re.M)
+        else:
+            text = text.rstrip("\n") + "\n" + line_done + "\n"
+        text = re.sub(r"^(\s*-?\s*milestones\s*:)[^#\n]*", lambda mm: mm.group(1) + " " + ", ".join(str(x) for x in new_todo) + "   ", text, count=1, flags=re.M)
+        p.write_text(text, encoding="utf-8"); print(f"marked {m} done"); return
+    n = a.impressions_90d
+    crossed = [m for m in sorted(set(todo) | set(done)) if n >= m and m not in done]
+    if crossed:
+        m = max(crossed)
+        print(f"CROSSED {m}: 90-day impressions {n:,} >= {m:,} and {m} is not in milestones_done. Draft the milestone post now (recap 4c); one post for the highest number crossed: {', '.join(str(x) for x in crossed)}.")
+        sys.exit(2)
+    nxt = [m for m in sorted(todo) if m > n and m not in done]
+    print(f"no milestone crossed: 90-day impressions {n:,}" + (f"; next {nxt[0]:,} ({n * 100 // nxt[0]}%)" if nxt else "; no milestone left in strategy.md"))
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--vault")
     sp = ap.add_subparsers(dest="cmd", required=True)
@@ -511,6 +551,7 @@ def main():
     p = sp.add_parser("queue-check"); p.add_argument("--brief", action="store_true"); p.set_defaults(f=cmd_queue_check)
     p = sp.add_parser("queue-done"); p.add_argument("id"); p.add_argument("--result"); p.add_argument("--failed", action="store_true"); p.set_defaults(f=cmd_queue_done)
     p = sp.add_parser("missed", help="scheduled runs that did not happen (needs `- schedule:` in my-human.md)"); p.add_argument("--brief", action="store_true"); p.add_argument("--json", action="store_true"); p.add_argument("--max-age-hours", type=float, default=None); p.set_defaults(f=cmd_missed)
+    p = sp.add_parser("milestone-check", help="90-day impressions vs strategy.md milestones; exit 2 when one is crossed and not done"); g = p.add_mutually_exclusive_group(required=True); g.add_argument("--impressions-90d", type=lambda x: int(x.replace(",", ""))); g.add_argument("--mark-done", type=int); p.set_defaults(f=cmd_milestone_check)
     p = sp.add_parser("is-self"); p.add_argument("target"); p.set_defaults(f=cmd_is_self)
     a = ap.parse_args(); a.f(a)
 

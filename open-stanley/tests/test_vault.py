@@ -24,6 +24,15 @@ class VaultTests(unittest.TestCase):
         self.assertEqual(self.v("is-self", "https://www.linkedin.com/in/someone/").returncode, 0)
         self.assertEqual(self.v("is-self", "@some_one").returncode, 0)
         self.assertEqual(self.v("is-self", "@stranger").returncode, 1)
+    def test_milestone_check_ignores_notes_and_fires_once(self):
+        """A note mentioning 100K in milestones_done must not mark it done (the 2026-11-08 miss)."""
+        (self.d / "strategy.md").write_text("- milestones: 100000, 250000   # 90-day\n- milestones_done: 50000 (crossed 2026-11-06 and 100K on 2026-11-07, one post for 100K)\n")
+        r = self.v("milestone-check", "--impressions-90d", "109,450")
+        self.assertEqual(r.returncode, 2, r.stdout); self.assertIn("CROSSED 100000", r.stdout)
+        self.assertEqual(self.v("milestone-check", "--impressions-90d", "60000").returncode, 0)
+        self.assertEqual(self.v("milestone-check", "--mark-done", "100000").returncode, 0)
+        r = self.v("milestone-check", "--impressions-90d", "109450")
+        self.assertEqual(r.returncode, 0); self.assertIn("next 250,000", r.stdout)
     def test_run_records(self):
         rid = self.v("run-start", "scout", "--promised", "3 picks").stdout.strip()
         self.assertEqual(self.v("run-end", rid, "--delivered", "2").returncode, 0)

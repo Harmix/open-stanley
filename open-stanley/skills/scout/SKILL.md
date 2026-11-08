@@ -14,7 +14,7 @@ Use the `browser` capability, logged in as the user. Sources, in order:
 - X: home/For You (~3 screens), a list if the user has one, and search for lane phrases with `min_faves:50` where the UI allows it.
 - If a `post`/social MCP with feed-reading tools exists, use it as a supplement, not a replacement (API feeds lack the ranking the user actually sees).
 
-Capture for each candidate: URL, author handle and display name, follower count if shown, age of the post, reactions/comments, the text. Save the raw pull to `inbox/scan-<date>-<am|pm>.md` so a re-run never re-scrapes.
+Capture for each candidate: URL (on LinkedIn, the post's own link from its "Copy link to post" menu item, read with the method in `references/linkedin-permalinks.md`; never a profile link, a guessed URL or a URN taken from nearby HTML), author handle and display name, follower count if shown, age of the post, reactions/comments, the text. Save the raw pull to `inbox/scan-<date>-<am|pm>.md` so a re-run never re-scrapes.
 
 If no browser is available, say so and ask the user to paste links; do not fabricate candidates from memory.
 

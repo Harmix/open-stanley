@@ -47,7 +47,9 @@ If `strategy.md` has `share_card: yes`, the Sunday recap renders one card from t
 
 ## 4c. Milestones
 
-`strategy.md` may list `milestones: 50000, 100000, 250000` (90-day impressions, from the analytics page the recap already reads) and `milestone_lane: <lane>`. The night the 90-day number crosses one, say so first, screenshot the analytics page (the receipt), and draft the milestone post through `write`: what the number is, what the plugin did and did not do, the one lesson, the link in the first comment, and the screenshot cleaned (`image-clean`) as the image. Mark the milestone done in `strategy.md` so it fires once.
+`strategy.md` may list `milestones: 100000, 250000` (90-day impressions) and `milestone_lane: <lane>`. The top-posts page does not show the 90-day total, so every recap also opens `https://www.linkedin.com/analytics/creator/content/?metricType=IMPRESSIONS&timeRange=past_90_days`, reads the cumulative "Impressions" number and the "vs. prior 90 days" percentage, and runs `stanley-vault milestone-check --impressions-90d <number>`. Decide from the script, not from notes in `strategy.md`: in real use a note reading "100K on 2026-11-07, one post for 100K" made a recap report "250K is not close" and skip the 100K post.
+
+When it prints `CROSSED` (exit 2), say so first, screenshot the analytics card (the receipt), and draft the milestone post through `write`: what the number is, what the plugin did and did not do, the one lesson, the link in the first comment, and the screenshot cleaned (`image-clean`) as the image. Save it in `drafts/` with its `.meta.json` and hand it over in this run. Then run `stanley-vault milestone-check --mark-done <M>` so it fires once. Never mark a milestone done without a draft saved in `drafts/`.
 
 ## 5. Weekly and monthly
 
