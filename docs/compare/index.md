@@ -11,5 +11,8 @@ One page per tool. I wrote them from each tool's own pages and MCP docs, and eac
 - [Open Stanley vs Stanley AI](stanley-alternative.html): the tool this one replies to; $44.99–149 a month, hosted, Instagram and Threads.
 - [Open Stanley vs Taplio](taplio-alternative.html): the viral-post feed, reach prediction and queue at $39–199 a month.
 - [Open Stanley vs Supergrow](supergrow-alternative.html): the AI interview, teams and a board from $29 a month.
+- [Stanley alternatives in 2026](stanley-alternatives.html): seven tools in one table, with who should pick each.
+- [Claude skills for LinkedIn posts](claude-linkedin-skills.html): the open-source skill repos and when a single skill is enough.
+- [Meeting notes to a LinkedIn post](../guides/meeting-notes-to-linkedin-post.html): the steps, by hand or with the plugin.
 
 All three now have an MCP, so you can use each of them from Claude too. None of them keeps your material in a folder you own or turns your edits into rules you can read. None attaches a source to every claim or runs experiments on your own numbers.
