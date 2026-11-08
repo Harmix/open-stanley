@@ -128,6 +128,14 @@ Two modes. **Laptop mode (default):** the vault is a plain folder inside your de
 
 `make test` (inside `open-stanley/`) runs the deterministic audit fixtures and the unit tests (`tests/`, 58 at 0.17.0: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency, public claims). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `tests/evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
 
+## Related open-source projects
+
+- [sergebulaev/linkedin-skills](https://github.com/sergebulaev/linkedin-skills): Claude Code and Codex skills for LinkedIn posts, comments and replies, with a post audit. Good if you want single skills you call by hand.
+- [liftli-ai/linkedin-agent-skills](https://github.com/liftli-ai/linkedin-agent-skills): A set of skills for Claude Code, Codex, Cursor and Gemini CLI: hooks, comments, a profile audit and a pre-post check.
+- [JayantChopra/stanley-mcp-playground](https://github.com/JayantChopra/stanley-mcp-playground): recipes for driving the paid Stanley from Claude over its MCP.
+
+Open Stanley is the loop around skills like these: it mines your own sources, keeps a vault, runs on a schedule and learns from your edits.
+
 ## Contributing
 
 Rules are measurable. `tests/evals/run_audit_tests.py` runs the deterministic tests; `tests/evals/evals.json` holds the behavioral evals for skill-creator. A rule PR needs a fixture that proves it. See `open-stanley/docs/CONTRIBUTING.md`; coding agents read `AGENTS.md`. Every public number and promise is listed in `open-stanley/docs/claims.yml` and checked by CI, so the README, the website and the plugin cannot drift apart. Security: `SECURITY.md`, audit in `open-stanley/docs/SECURITY-AUDIT.md`. If you opt in inside the plugin, it will prepare a monthly, text-free contribution of which rules fired and which edits you made (schema in `skills/learn/references/contribution-schema.md`). MIT.
