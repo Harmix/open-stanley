@@ -48,9 +48,10 @@ description: "Paste a LinkedIn or X post and get the flags the 2026 feeds demote
 .audit-row input{margin:0;width:14px;height:14px;accent-color:#8fb0ff;vertical-align:middle}
 #txt{width:100%;box-sizing:border-box;background:#13151b;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:12px;font-family:var(--mono);font-size:14px;line-height:22px;resize:vertical}
 #run,.agents button{border:0;cursor:pointer;font-family:var(--sans)}
-#out .rows li{grid-template-columns:150px 1fr}
+#out .rows li{grid-template-columns:180px 1fr}
 #out .rows b,.legend b{font-weight:600}
-.BLOCK{color:#ff6b8a}.WARN{color:#f2c94c}.INFO{color:#8fb0ff}.LAND{color:#4bd79a}
+.rows b.BLOCK,#out li.BLOCK b{color:#ff6b8a}.rows b.WARN,#out li.WARN b{color:#f2c94c}.rows b.INFO,#out li.INFO b{color:#8fb0ff}.rows b.LAND{color:#4bd79a}
+#out pre{white-space:pre-wrap}
 .legend li{grid-template-columns:90px 1fr}
 .ex{color:var(--dim);display:block}
 #out pre .y{color:#4bd79a}#out pre .n{color:#ff6b8a}
@@ -143,7 +144,7 @@ function render0(){
  let h="";
  if(!txt.value.trim()){out.innerHTML="";return;}
  h+='<pre>$ stanley-audit your-post.md --platform '+pf+(document.getElementById("img").checked?" --has-image":"")+"\n";
- if(r.landing) h+='landing: '+r.landing.map(([k,v])=>'<span class="'+(v?"y":"n")+'">'+k+"="+(v?"yes":"no")+"</span>").join(" ")+"\n";
+ if(r.landing){const L=r.landing.map(([k,v])=>'<span class="'+(v?"y":"n")+'">'+k+"="+(v?"yes":"no")+"</span>");h+='landing: '+L.slice(0,3).join(" ")+"\n         "+L.slice(3,6).join(" ")+"\n         "+L.slice(6).join(" ")+"\n";}
  h+='RESULT: '+(blocks?"BLOCK ("+blocks+" blocking, "+warns+" warnings)":warns?"PASS with "+warns+" warning(s)":"PASS")+'</pre>';
  if(r.F.length){h+='<ul class="rows">';for(const [l,rule,msg,e] of r.F) h+='<li class="'+l+'"><b>'+l.toLowerCase()+' · '+rule+'</b><span>'+esc(msg)+(e?'<span class="ex">'+esc(e)+'</span>':"")+'</span></li>';h+='</ul>';}
  if(!r.F.length) h+='<p class="dim">No flags. That says the text avoids the measured tells; it does not say the post is good. The receipts check (every number against a source) and the overlap check against your own past posts run only in the plugin.</p>';

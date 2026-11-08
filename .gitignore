@@ -13,3 +13,4 @@ open-stanley/tests/evals/private/
 dist/
 *.skill
 __pycache__/
+.preview/
