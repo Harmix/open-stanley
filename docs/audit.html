@@ -5,7 +5,7 @@ description: "Paste a LinkedIn or X post and get the flags the 2026 feeds demote
 ---
 
 <h1>Does this post sound like AI?</h1>
-<p class="meta">The same audit the <a href="https://github.com/Harmix/open-stanley">Open Stanley</a> plugin runs on every draft, ported to run in your browser. Nothing you paste leaves this page. It checks the measured tells (excess AI vocabulary from Kobak et al. 2024 and Juzek &amp; Ward 2025, the structures readers flag, and the LinkedIn patterns the 226K-post study found are demoted), not a detector's guess.</p>
+<p>The same audit the <a href="https://github.com/Harmix/open-stanley">Open Stanley</a> plugin runs on every draft, ported to run in your browser. Nothing you paste leaves this page. It checks the measured tells (excess AI vocabulary from Kobak et al. 2024 and Juzek &amp; Ward 2025, the structures readers flag, and the LinkedIn patterns the 226K-post study found are demoted), not a detector's guess.</p>
 
 <div class="audit-ui">
 <div class="audit-row">
@@ -20,8 +20,8 @@ description: "Paste a LinkedIn or X post and get the flags the 2026 feeds demote
 </div>
 
 <p class="dim" id="claude-note" style="display:none">The button opens claude.ai with your post and the audit instructions in the prompt. With the <a href="https://github.com/Harmix/open-stanley">Open Stanley</a> plugin installed, Claude runs the full script (receipts against your stories, overlap with your past posts); without it, Claude applies the same rules by hand.</p>
-<h2>What the flags mean</h2>
-<p><b>BLOCK</b> is a pattern that reads generated or that LinkedIn's 2026 ranking demotes (hashtags, link in the body, explicit like/share asks). <b>WARN</b> is a pattern that is fine once and generated when it repeats. <b>INFO</b> is context. The <b>landing</b> line is eight yes/no items that correlated with reach in the 226K-post study: opening in first person, a complete thought before the fold, a name people know early, a number, a closing question, an image, 400–1,900 characters, no links or hashtags.</p>
+<h2><svg class="orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>What the flags mean</h2>
+<p><b>Block</b> is a pattern that reads generated or that LinkedIn's 2026 ranking demotes (hashtags, link in the body, explicit like/share asks). <b>Warn</b> is a pattern that is fine once and generated when it repeats. <b>Info</b> is context. The <b>landing</b> line is eight yes/no items that correlated with reach in the 226K-post study: opening in first person, a complete thought before the fold, a name people know early, a number, a closing question, an image, 400–1,900 characters, no links or hashtags.</p>
 <p>The full script, with the receipts check against your own story files and the self-overlap check against your past posts, is <code>skills/stanley/scripts/stanley-audit</code> in the repo. The research it encodes is in <a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/RESEARCH.md">RESEARCH.md</a>.</p>
 
 <style>
@@ -30,14 +30,11 @@ description: "Paste a LinkedIn or X post and get the flags the 2026 feeds demote
 .audit-row label{display:flex;gap:6px;align-items:center;color:var(--body)}
 #txt{width:100%;box-sizing:border-box;background:#13151b;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:12px;font-family:var(--mono);font-size:14px;line-height:22px}
 #run{border:0;cursor:pointer}
-.f{border-top:1px solid var(--line);padding:8px 0;display:grid;grid-template-columns:64px 1fr;gap:12px;font-size:14px;line-height:22px}
-.f:last-child{border-bottom:1px solid var(--line)}
-.lv{font-family:var(--sans);font-weight:700;font-size:12px}
-.BLOCK{color:#ff6b8a}.WARN{color:#f2c94c}.INFO{color:#8fb0ff}.PASS{color:#4bd79a}
+#out .rows li{grid-template-columns:140px 1fr}
+#out .rows b{font-weight:600}
+#out .BLOCK b{color:#ff6b8a}#out .WARN b{color:#f2c94c}#out .INFO b{color:#8fb0ff}
 .ex{color:var(--dim);display:block}
-.land{margin:12px 0;font-size:14px;line-height:24px}
-.land span{display:inline-block;margin:0 10px 0 0}
-.y{color:#4bd79a}.n{color:#ff6b8a}
+#out pre .y{color:#4bd79a}#out pre .n{color:#ff6b8a}
 </style>
 
 <script>
@@ -45,7 +42,7 @@ description: "Paste a LinkedIn or X post and get the flags the 2026 feeds demote
 const BANNED=[[/\bdelv(e|es|ed|ing)\b/gi,"delve"],[/\bleverag(e|es|ed|ing)\b/gi,"leverage (say 'use')"],[/\bharness(es|ed|ing)?\b/gi,"harness"],[/\bpivotal\b/gi,"pivotal"],[/\bintricate\b/gi,"intricate"],[/\bmeticulous(ly)?\b/gi,"meticulous"],[/\bunderscor(e|es|ed|ing)\b/gi,"underscore"],[/\bshowcas(e|es|ed|ing)\b/gi,"showcase"],[/\brealm\b/gi,"realm"],[/\btestament\b/gi,"testament"],[/\blandscape\b/gi,"landscape (as metaphor)"],[/\bnavigat(e|es|ed|ing)\b/gi,"navigate (as metaphor)"],[/\bunlock(s|ed|ing)?\b/gi,"unlock"],[/\belevat(e|es|ed|ing)\b/gi,"elevate"],[/\brobust\b/gi,"robust"],[/\bseamless(ly)?\b/gi,"seamless"],[/\btapestry\b/gi,"tapestry"],[/\bever-evolving\b/gi,"ever-evolving"],[/\bgame-?changer\b/gi,"game-changer"],[/\bgame changer\b/gi,"game changer"],[/\bparadigm\b/gi,"paradigm"],[/\bsynerg(y|ies|istic)\b/gi,"synergy"],[/\bcutting-edge\b/gi,"cutting-edge"],[/\bin today'?s (fast-paced|rapidly|ever)/gi,"in today's fast-paced..."],[/\bhere'?s the thing\b/gi,"here's the thing"],[/\blet that sink in\b/gi,"let that sink in"],[/\bread that again\b/gi,"read that again"],[/\bthe (real|hard) (truth|part|question) is\b/gi,"the real truth/part is"],[/\bat the end of the day\b/gi,"at the end of the day"],[/\bit'?s worth noting\b/gi,"it's worth noting"],[/\bimportantly,/gi,"importantly,"],[/\bmoreover\b/gi,"moreover"],[/\bfurthermore\b/gi,"furthermore"],[/\badditionally\b/gi,"additionally"],[/\bcrucial(ly)?\b/gi,"crucial"],[/\bcompelling\b/gi,"compelling"],[/\bprofound(ly)?\b/gi,"profound"],[/\bfoundational shift\b/gi,"foundational shift"],[/\bfundamental(ly)? (shift|change)\b/gi,"fundamental shift"],[/\bthe implications (are|of)\b/gi,"the implications are"],[/\bmakes you wonder\b/gi,"makes you wonder"],[/\bit'?s (super|really|genuinely|truly) interesting\b/gi,"it's interesting (filler opener)"],[/\bthis (really )?(resonates|hits)\b/gi,"this resonates / hits (empty agreement)"],[/\bgreat (point|post|insight)\b/gi,"great point (empty agreement)"],[/\bcouldn'?t agree more\b/gi,"couldn't agree more"],[/\bspot on\b/gi,"spot on"],[/\bwell said\b/gi,"well said"],[/\bagree\?\s*$/gi,"trailing 'Agree?'"],[/\bthoughts\?\s*$/gi,"trailing 'Thoughts?'"],[/\bwhat do you think\?\s*$/gi,"trailing 'What do you think?'"],[/\bfollow (me )?for more\b/gi,"follow for more"],[/\b(ps|p\.s\.)?\s*repost if\b/gi,"repost if"]];
 const WEASEL=[/\bexperts (say|agree|argue)\b/gi,/\bstudies show\b/gi,/\bresearch (shows|suggests)\b/gi,/\bsome (critics|people|observers) (argue|say|note)\b/gi,/\bit is widely (known|accepted)\b/gi,/\brecent literature\b/gi,/\bindustry reports\b/gi];
 const EDITORIAL=/,\s*(highlighting|underscoring|emphasizing|showcasing|demonstrating|reflecting|signaling|marking)\s+(the|a|an|its|how)\b/gi;
-const NXBY=[/\b(it'?s|this is|that'?s|they'?re|we'?re)\s+not\s+(just|only|about|simply)?\s*[^.\n]{2,60}?[,;.]\s*(it'?s|this is|that'?s|but)\s+/gi,/\bnot\s+[^.\n]{2,50}?\s*[—–-]\s*(it'?s|but)\s+/gi,/\bisn'?t\s+(just|only|about)\s+[^.\n]{2,50}?[,;.]\s*(it'?s|but)\s+/gi];
+const NXBY=[/\b(it'?s|this is|that'?s|they'?re|we'?re)\s+not\s+(just|only|about|simply)?\s*[^.\n]{2,60}?[,;.]\s*(it'?s|this is|that'?s|but)\s+/gi,/\bnot\s+[^.\n]{2,50}?\s*[-–-]\s*(it'?s|but)\s+/gi,/\bisn'?t\s+(just|only|about)\s+[^.\n]{2,50}?[,;.]\s*(it'?s|but)\s+/gi];
 function sentences(t){return t.replace(/\n+/g," ").split(/(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean);}
 function words(t){return (t.match(/\b[\w']+\b/g)||[]);}
 function ex(body,m){const i=m.index,w=60;return (i>w?"…":"")+body.slice(Math.max(0,i-w),i+m[0].length+w).replace(/\s+/g," ")+(i+m[0].length+w<body.length?"…":"");}
@@ -59,7 +56,7 @@ function audit(text,platform,hasImage){
  for(const re of WEASEL) for(const m of all(re,body)) add("BLOCK","weasel","Unattributed authority. Name the source or cut it.",ex(body,m));
  for(const re of NXBY) for(const m of all(re,body)) add("BLOCK","not-x-but-y","Negative parallelism ('not X, it's Y'). Say the Y directly.",ex(body,m));
  for(const m of all(EDITORIAL,body)) add("WARN","editorial-tail","Editorializing tail glued to a fact. Cut it or make it its own claim.",ex(body,m));
- const em=(body.match(/—/g)||[]).length+(body.match(/\s–\s/g)||[]).length;
+ const em=(body.match(/-/g)||[]).length+(body.match(/\s–\s/g)||[]).length;
  if(em/Math.max(1,n/100)>0.15) add("WARN","em-dash-density","Em-dash density "+(em/Math.max(1,n/100)).toFixed(2)+"/100 words (human band ~0.1).");
  for(const m of all(/\b(\w+), (\w+),? and (\w+)\b/g,body)){const a=m[1],b=m[2],c=m[3];if([a,b,c].every(x=>x.length>3)&&new Set([a,b,c]).size===3) add("INFO","tricolon","Rule-of-three list. Fine once; more than once reads generated.",ex(body,m));}
  const lines=body.split("\n").map(l=>l.trim()).filter(Boolean);
@@ -115,7 +112,7 @@ function audit(text,platform,hasImage){
 }
 const out=document.getElementById("out"),txt=document.getElementById("txt"),count=document.getElementById("count");
 function esc(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
-function render(){
+function render0(){
  const pf=document.querySelector('input[name=pf]:checked').value;
  const r=audit(txt.value,pf,document.getElementById("img").checked);
  count.textContent=r.stats.words+" words · "+r.stats.chars+" chars · "+r.stats.sentences+" sentences";
@@ -123,9 +120,10 @@ function render(){
  const blocks=r.F.filter(f=>f[0]==="BLOCK").length,warns=r.F.filter(f=>f[0]==="WARN").length;
  let h="";
  if(!txt.value.trim()){out.innerHTML="";return;}
- h+='<p class="lv '+(blocks?"BLOCK":warns?"WARN":"PASS")+'">RESULT: '+(blocks?"BLOCK ("+blocks+" blocking, "+warns+" warnings)":warns?"PASS with "+warns+" warning(s)":"PASS")+'</p>';
- if(r.landing) h+='<div class="land">landing: '+r.landing.map(([k,v])=>'<span class="'+(v?"y":"n")+'">'+k+"="+(v?"yes":"no")+"</span>").join("")+"</div>";
- for(const [l,rule,msg,e] of r.F) h+='<div class="f"><span class="lv '+l+'">'+l+'</span><span><b>'+rule+'</b> '+esc(msg)+(e?'<span class="ex">'+esc(e)+'</span>':"")+'</span></div>';
+ h+='<pre>$ stanley-audit your-post.md --platform '+pf+(document.getElementById("img").checked?" --has-image":"")+"\n";
+ if(r.landing) h+='landing: '+r.landing.map(([k,v])=>'<span class="'+(v?"y":"n")+'">'+k+"="+(v?"yes":"no")+"</span>").join(" ")+"\n";
+ h+='RESULT: '+(blocks?"BLOCK ("+blocks+" blocking, "+warns+" warnings)":warns?"PASS with "+warns+" warning(s)":"PASS")+'</pre>';
+ if(r.F.length){h+='<ul class="rows">';for(const [l,rule,msg,e] of r.F) h+='<li class="'+l+'"><b>'+l.toLowerCase()+' · '+rule+'</b><span>'+esc(msg)+(e?'<span class="ex">'+esc(e)+'</span>':"")+'</span></li>';h+='</ul>';}
  if(!r.F.length) h+='<p class="dim">No flags. That says the text avoids the measured tells; it does not say the post is good. The receipts check (every number against a source) and the overlap check against your own past posts run only in the plugin.</p>';
  out.innerHTML=h;
 }
@@ -134,6 +132,7 @@ function claudeLink(){
  const prompt="Audit this "+(pf==="x"?"X post":pf==="comment"?"LinkedIn comment":"LinkedIn post")+" for the patterns that read as AI-generated and the patterns LinkedIn demotes in 2026, the way the Open Stanley plugin's stanley-audit does. If the open-stanley plugin is installed, run `skills/stanley/scripts/stanley-audit` on it with --platform "+pf+" and show the output. If it is not, install it with /plugin marketplace add Harmix/open-stanley then /plugin install open-stanley@open-stanley, or apply these rules by hand: flag AI-flagged vocabulary (delve, leverage, harness, pivotal, robust, seamless, game-changer, 'here's the thing', 'let that sink in', moreover, furthermore, crucial, compelling, 'at the end of the day', 'couldn't agree more'); unattributed authority ('studies show', 'experts say'); negative parallelism ('not X, it's Y'); editorializing tails ('..., highlighting the'); three or more consecutive sentences under 8 words; uniform sentence length; mostly one-line paragraphs; bold-term-colon lists; a generic engagement-bait closer; a throat-clearing opener ('In today's', 'Imagine', 'Let's dive'); a summary line at the end; no numbers, names or dates; no first person; more than two emoji; any hashtag; a link in the body; a like/share ask; a question as the first line; an uncited study. Then print a landing line with yes/no for: opens-first-person, fold-complete-thought (a complete sentence in the first 210 characters), named-entity-early, number-or-receipt, ends-on-question, has-image, length-band (400 to 1,900 characters), no-links-hashtags. Finish with the three edits that would do the most, keeping my words. Here is the post:\n\n"+post;
  return "https://claude.ai/new?q="+encodeURIComponent(prompt);
 }
+function render(){render0();}
 document.getElementById("run").addEventListener("click",function(){render();const a=document.getElementById("claude");a.href=claudeLink();a.style.display=txt.value.trim()?"inline-flex":"none";document.getElementById("claude-note").style.display=txt.value.trim()?"block":"none";});
 txt.addEventListener("input",()=>{count.textContent=words(txt.value).length+" words · "+txt.value.length+" chars";});
 })();

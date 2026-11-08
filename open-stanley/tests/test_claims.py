@@ -70,5 +70,16 @@ class ClaimsTests(unittest.TestCase):
         """docs/llms.txt is what the site serves at /llms.txt; it must equal the repo-root llms.txt."""
         self.assertEqual(read("docs/llms.txt"), read("llms.txt"), "run: cp llms.txt docs/llms.txt")
 
+    def test_subpages_follow_the_landing_design(self):
+        """docs/DESIGN-NOTES.md: subpage ## headings carry a coloured line icon; no em dashes anywhere in docs/."""
+        pages = [p for p in (REPO / "docs").rglob("*.md") if p.name not in ("DESIGN-NOTES.md",)] + [REPO / "docs/audit.html"]
+        for p in pages:
+            s = p.read_text(encoding="utf-8")
+            self.assertNotIn("\u2014", s, f"em dash in {p.relative_to(REPO)}")
+            for h in re.findall(r"^## (.*)$", s, re.M):
+                self.assertTrue(h.startswith('<svg class="'), f"{p.relative_to(REPO)}: heading without an icon: {h[:60]}")
+            for h in re.findall(r"<h2>(.*?)</h2>", s):
+                self.assertTrue(h.startswith('<svg class="'), f"{p.relative_to(REPO)}: <h2> without an icon: {h[:60]}")
+
 if __name__ == "__main__":
     unittest.main()

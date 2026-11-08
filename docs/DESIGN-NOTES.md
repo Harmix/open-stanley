@@ -14,3 +14,7 @@ Ban list (from the AI-design tells collected in Nov 2026: the ux-skill wiki, the
 - stock photos, AI-generated images, placeholder testimonials
 
 What the site uses instead: a canvas that shows the material the plugin reads; the founder's real analytics screenshot; first-person copy in short sentences; lists with a border line between rows; one table. Every claim on the page is listed in `open-stanley/docs/claims.yml` and tested.
+
+## Subpages follow the landing page, nothing else
+
+Teardowns (`docs/creators/`), the comparison pages (`docs/compare/`) and the browser audit (`docs/audit.html`) use only the landing page's elements: the Jekyll `default` layout, a `##` heading with a coloured line icon in front of it, `img class="shot"` for real screenshots, `ul class="rows"` for small comparisons, plain tables, `pre` for command output, pill links. First person, short sentences, no em dashes, no metadata line under the title, no legends with coloured bullets, no stat tiles, no cards, no coloured badges of their own. A test (`tests/test_claims.py`) checks that every `##` heading on a subpage carries an icon and that no page in `docs/` contains an em dash. Render a new page at desktop and phone width and look at it before committing.

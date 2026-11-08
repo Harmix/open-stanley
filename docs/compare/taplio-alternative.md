@@ -8,7 +8,7 @@ description: "Taplio is a $39 to $199 a month LinkedIn suite built around a vira
 
 Taplio is the biggest LinkedIn tool, and for a lot of people it is the right one. This page is for the people it is not right for. Facts from Taplio's pages read on 7 November 2026; prices change.
 
-## The short version
+## <svg class="orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>The short version
 
 | | Taplio | Open Stanley |
 |---|---|---|
@@ -23,20 +23,20 @@ Taplio is the biggest LinkedIn tool, and for a lot of people it is the right one
 | Where your material lives | Their servers | A folder you own |
 | MCP | MCP V2 for comments | Is a plugin: Cowork, Claude Code, any SKILL.md agent |
 
-## Choose Taplio if
+## <svg class="rose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.5 6 .9-4.4 4.2 1 6-5.3-2.8-5.3 2.8 1-6L3.3 9.4l6-.9z"/></svg>Choose Taplio if
 
 - You want a calendar, a queue and reach prediction in one polished web app.
 - You post from trends and templates and want a feed of what is working in your niche.
 - You run a team, or you want lead lists and automated outreach.
 - You want the free post generator and carousel maker on their site.
 
-## Choose Open Stanley if
+## <svg class="green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Choose Open Stanley if
 
 - You have material of your own (meetings, threads, decisions, numbers) and want posts that could only have been written by you, with the source attached.
 - You want an audit that blocks the patterns LinkedIn demotes instead of a reach guess ([try it](../audit.html)).
 - You want your corrections kept as rules and your results attached to the story that produced them.
 - You do not want automation touching connection requests or DMs.
 
-## Install
+## <svg class="sky" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 21h16"/></svg>Install
 
 Cowork: Plugins → Add marketplace → `Harmix/open-stanley`. Claude Code: `/plugin marketplace add Harmix/open-stanley` then `/plugin install open-stanley@open-stanley`. Other agents: `npx skills add Harmix/open-stanley`. Source: [github.com/Harmix/open-stanley](https://github.com/Harmix/open-stanley).
