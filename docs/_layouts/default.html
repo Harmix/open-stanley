@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ page.title }} · Open Stanley</title>
+<title>{{ page.title }}, Open Stanley</title>
 <meta name="description" content="{{ page.description | default: 'Open Stanley creator teardowns: what works for creators who win on LinkedIn and X, shapes only.' }}">
 <link rel="icon" href="{{ '/icon.png' | relative_url }}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,6 +19,12 @@
 <article>
 {{ content }}
 </article>
-<footer style="margin-top:48px"><span>Written with the plugin, read by me before it goes up.</span><span><a href="{{ '/' | relative_url }}">Open Stanley</a> <a href="https://github.com/Harmix/open-stanley">Source</a></span></footer>
+<footer class="cols" style="margin-top:48px">
+<div><b>Plugin</b><a href="{{ '/' | relative_url }}">Home</a><a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/docs/HOW-IT-WORKS.md">How it works</a><a href="{{ '/#install' | relative_url }}">Install</a><a href="https://github.com/Harmix/open-stanley/blob/main/open-stanley/CHANGELOG.md">Changelog</a></div>
+<div><b>Compared</b><a href="{{ '/compare/stanley-alternative.html' | relative_url }}">vs Stanley AI</a><a href="{{ '/compare/taplio-alternative.html' | relative_url }}">vs Taplio</a><a href="{{ '/compare/supergrow-alternative.html' | relative_url }}">vs Supergrow</a></div>
+<div><b>Free</b><a href="{{ '/audit.html' | relative_url }}">Does this post sound like AI?</a><a href="{{ '/creators/' | relative_url }}">Creator teardowns</a><a href="https://openstanley.substack.com/subscribe">Newsletter</a></div>
+<div><b>Community</b><a href="https://github.com/Harmix/open-stanley">Source, MIT</a><a href="https://github.com/Harmix/open-stanley/discussions">Discussions</a><a href="https://github.com/Harmix/open-stanley/issues/new?template=strategy-tip.yml">Send a tactic</a></div>
+<p class="note">Written with the plugin, read by me before it goes up.</p>
+</footer>
 </main>
 </body></html>

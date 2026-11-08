@@ -20,9 +20,9 @@ description: "Paste a LinkedIn or X post and get the flags the 2026 feeds demote
 <div id="next" hidden>
 <p>Continue the audit, and install the plugin, in the agent you use:</p>
 <div class="agents">
-<a id="go-claude" class="pill p-doc" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Claude</a>
-<a id="go-chatgpt" class="pill p-in" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>ChatGPT</a>
-<a id="go-cursor" class="pill p-git" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 8-7 2-2 7z"/></svg>Cursor</a>
+<a id="go-claude" class="pill p-doc" href="#" target="_blank" rel="noopener"><img src="https://cdn.simpleicons.org/anthropic/fdebd9" alt="">Claude</a>
+<a id="go-chatgpt" class="pill p-in" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>ChatGPT</a>
+<a id="go-cursor" class="pill p-git" href="#" target="_blank" rel="noopener"><img src="https://cdn.simpleicons.org/cursor/dbe6ff" alt="">Cursor</a>
 <button id="go-code" class="pill p-how" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-5-6-5M12 19h8"/></svg>Claude Code</button>
 <button id="go-codex" class="pill p-disc" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-5-6-5M12 19h8"/></svg>Codex</button>
 </div>
@@ -48,7 +48,9 @@ description: "Paste a LinkedIn or X post and get the flags the 2026 feeds demote
 .audit-row input{margin:0;width:14px;height:14px;accent-color:#8fb0ff;vertical-align:middle}
 #txt{width:100%;box-sizing:border-box;background:#13151b;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:12px;font-family:var(--mono);font-size:14px;line-height:22px;resize:vertical}
 #run,.agents button{border:0;cursor:pointer;font-family:var(--sans)}
-#out .rows li{grid-template-columns:180px 1fr}
+#out .rows li{grid-template-columns:90px 1fr}
+#out .rule{color:var(--ink);margin-right:6px}
+.agents img{width:18px;height:18px;flex:none}
 #out .rows b,.legend b{font-weight:600}
 .rows b.BLOCK,#out li.BLOCK b{color:#ff6b8a}.rows b.WARN,#out li.WARN b{color:#f2c94c}.rows b.INFO,#out li.INFO b{color:#8fb0ff}.rows b.LAND{color:#4bd79a}
 #out pre{white-space:pre-wrap}
@@ -138,7 +140,7 @@ function esc(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"
 function render0(){
  const pf=document.querySelector('input[name=pf]:checked').value;
  const r=audit(txt.value,pf,document.getElementById("img").checked);
- count.textContent=r.stats.words+" words · "+r.stats.chars+" chars · "+r.stats.sentences+" sentences";
+ count.textContent=r.stats.words+" words, "+r.stats.chars+" characters, "+r.stats.sentences+" sentences";
  const order={BLOCK:0,WARN:1,INFO:2};r.F.sort((a,b)=>order[a[0]]-order[b[0]]);
  const blocks=r.F.filter(f=>f[0]==="BLOCK").length,warns=r.F.filter(f=>f[0]==="WARN").length;
  let h="";
@@ -146,7 +148,7 @@ function render0(){
  h+='<pre>$ stanley-audit your-post.md --platform '+pf+(document.getElementById("img").checked?" --has-image":"")+"\n";
  if(r.landing){const L=r.landing.map(([k,v])=>'<span class="'+(v?"y":"n")+'">'+k+"="+(v?"yes":"no")+"</span>");h+='landing: '+L.slice(0,3).join(" ")+"\n         "+L.slice(3,6).join(" ")+"\n         "+L.slice(6).join(" ")+"\n";}
  h+='RESULT: '+(blocks?"BLOCK ("+blocks+" blocking, "+warns+" warnings)":warns?"PASS with "+warns+" warning(s)":"PASS")+'</pre>';
- if(r.F.length){h+='<ul class="rows">';for(const [l,rule,msg,e] of r.F) h+='<li class="'+l+'"><b>'+l.toLowerCase()+' · '+rule+'</b><span>'+esc(msg)+(e?'<span class="ex">'+esc(e)+'</span>':"")+'</span></li>';h+='</ul>';}
+ if(r.F.length){h+='<ul class="rows">';for(const [l,rule,msg,e] of r.F) h+='<li class="'+l+'"><b>'+l.toLowerCase()+'</b><span><span class="rule">'+rule+'</span> '+esc(msg)+(e?'<span class="ex">'+esc(e)+'</span>':"")+'</span></li>';h+='</ul>';}
  if(!r.F.length) h+='<p class="dim">No flags. That says the text avoids the measured tells; it does not say the post is good. The receipts check (every number against a source) and the overlap check against your own past posts run only in the plugin.</p>';
  out.innerHTML=h;
 }
@@ -167,6 +169,6 @@ document.getElementById("go-code").addEventListener("click",()=>copy(INSTALL,"Cl
 document.getElementById("go-codex").addEventListener("click",()=>copy(SKILLS,"Codex"));
 function render(){render0();}
 document.getElementById("run").addEventListener("click",function(){render();wire();document.getElementById("next").hidden=!txt.value.trim();});
-txt.addEventListener("input",()=>{count.textContent=words(txt.value).length+" words · "+txt.value.length+" chars";});
+txt.addEventListener("input",()=>{count.textContent=words(txt.value).length+" words, "+txt.value.length+" characters";});
 })();
 </script>

@@ -37,3 +37,9 @@ article h2{font-size:22px;line-height:32px;margin:28px 0 8px}
 article .meta{color:var(--dim);font-size:14px;margin:0 0 20px}
 @media (max-width:720px){.top{justify-content:flex-end}.top .g.l{display:none}.hero{height:66vh}h2{font-size:24px;line-height:36px}.mark p{font-size:14px;line-height:22px}.pill{padding:7px 14px;font-size:13px}.mark .row{gap:6px}.mark .row .p-tear{display:none}.rows li{grid-template-columns:1fr}.rows b{display:block}}
 @media (prefers-reduced-motion:reduce){#field{opacity:.6}}
+
+.agents{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 12px}.agents img{width:18px;height:18px;flex:none}
+footer.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 24px;justify-content:start}
+footer.cols div{display:flex;flex-direction:column;gap:6px}footer.cols b{color:var(--ink);font-weight:600;margin-bottom:4px}footer.cols a{color:var(--dim);text-decoration:none}footer.cols a:hover{color:var(--ink)}
+footer.cols .note{grid-column:1/-1;margin:12px 0 0;border-top:1px solid var(--line);padding-top:16px;font-size:13px;line-height:20px;color:var(--dim)}
+@media (max-width:720px){footer.cols{grid-template-columns:1fr 1fr}}

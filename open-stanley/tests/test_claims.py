@@ -72,10 +72,11 @@ class ClaimsTests(unittest.TestCase):
 
     def test_subpages_follow_the_landing_design(self):
         """docs/DESIGN-NOTES.md: subpage ## headings carry a coloured line icon; no em dashes anywhere in docs/."""
-        pages = [p for p in (REPO / "docs").rglob("*.md") if p.name not in ("DESIGN-NOTES.md",)] + [REPO / "docs/audit.html"]
+        pages = [p for p in (REPO / "docs").rglob("*.md") if p.name not in ("DESIGN-NOTES.md",)] + [REPO / "docs/audit.html", REPO / "docs/index.html", REPO / "docs/_layouts/default.html"]
         for p in pages:
             s = p.read_text(encoding="utf-8")
             self.assertNotIn("\u2014", s, f"em dash in {p.relative_to(REPO)}")
+            self.assertNotIn(" \u00b7 ", s, f"middle-dot separator in {p.relative_to(REPO)} (DESIGN-NOTES: no rows of facts joined by dots)")
             for h in re.findall(r"^## (.*)$", s, re.M):
                 self.assertTrue(h.startswith('<svg class="'), f"{p.relative_to(REPO)}: heading without an icon: {h[:60]}")
             for h in re.findall(r"<h2>(.*?)</h2>", s):
