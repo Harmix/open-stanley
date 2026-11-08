@@ -126,7 +126,7 @@ Two modes. **Laptop mode (default):** the vault is a plain folder inside your de
 
 ## Tests, versioning, CI
 
-`make test` (inside `open-stanley/`) runs the deterministic audit fixtures and the unit tests (`tests/`, 57 at 0.17.0: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency, public claims). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `tests/evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
+`make test` (inside `open-stanley/`) runs the deterministic audit fixtures and the unit tests (`tests/`, 58 at 0.17.0: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency, public claims). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `tests/evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
 
 ## Contributing
 

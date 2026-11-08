@@ -81,7 +81,7 @@ function audit(text,platform,hasImage){
  for(const re of WEASEL) for(const m of all(re,body)) add("BLOCK","weasel","Unattributed authority. Name the source or cut it.",ex(body,m));
  for(const re of NXBY) for(const m of all(re,body)) add("BLOCK","not-x-but-y","Negative parallelism ('not X, it's Y'). Say the Y directly.",ex(body,m));
  for(const m of all(EDITORIAL,body)) add("WARN","editorial-tail","Editorializing tail glued to a fact. Cut it or make it its own claim.",ex(body,m));
- const em=(body.match(/-/g)||[]).length+(body.match(/\s–\s/g)||[]).length;
+ const em=(body.match(/\u2014/g)||[]).length+(body.match(/\s\u2013\s/g)||[]).length;
  if(em/Math.max(1,n/100)>0.15) add("WARN","em-dash-density","Em-dash density "+(em/Math.max(1,n/100)).toFixed(2)+"/100 words (human band ~0.1).");
  for(const m of all(/\b(\w+), (\w+),? and (\w+)\b/g,body)){const a=m[1],b=m[2],c=m[3];if([a,b,c].every(x=>x.length>3)&&new Set([a,b,c]).size===3) add("INFO","tricolon","Rule-of-three list. Fine once; more than once reads generated.",ex(body,m));}
  const lines=body.split("\n").map(l=>l.trim()).filter(Boolean);

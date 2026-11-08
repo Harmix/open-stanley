@@ -49,7 +49,7 @@ class ClaimsTests(unittest.TestCase):
     def test_landing_links_resolve(self):
         site = read("docs/index.html")
         for rel in re.findall(r'href="(?!https?:|#|mailto:)([^"]+)"', site):
-            path = rel.split("#")[0].rstrip("/")
+            path = rel.split("#")[0].split("?")[0].rstrip("/")
             if not path: continue
             p = REPO / "docs" / path
             md = p.with_suffix(".md") if p.suffix == ".html" else None
@@ -81,6 +81,13 @@ class ClaimsTests(unittest.TestCase):
                 self.assertTrue(h.startswith('<svg class="'), f"{p.relative_to(REPO)}: heading without an icon: {h[:60]}")
             for h in re.findall(r"<h2>(.*?)</h2>", s):
                 self.assertTrue(h.startswith('<svg class="'), f"{p.relative_to(REPO)}: <h2> without an icon: {h[:60]}")
+
+    def test_browser_audit_em_dash_rule_counts_dashes_not_hyphens(self):
+        """The em-dash rule must match U+2014 by escape; a literal-hyphen regex flags every 'fast-paced'."""
+        page = read("docs/audit.html")
+        line = next(l for l in page.splitlines() if "const em=" in l)
+        self.assertIn("\\u2014", line)
+        self.assertNotIn("match(/-/g)", line)
 
 if __name__ == "__main__":
     unittest.main()
