@@ -38,7 +38,12 @@ article .meta{color:var(--dim);font-size:14px;margin:0 0 20px}
 @media (max-width:720px){.top{justify-content:flex-end}.top .g.l{display:none}.hero{height:66vh}h2{font-size:24px;line-height:36px}.mark p{font-size:14px;line-height:22px}.pill{padding:7px 14px;font-size:13px}.mark .row{gap:6px}.mark .row .p-tear{display:none}.rows li{grid-template-columns:1fr}.rows b{display:block}}
 @media (prefers-reduced-motion:reduce){#field{opacity:.6}}
 
-.agents{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 12px}.agents img{width:18px;height:18px;flex:none}
+.agents{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 12px}
+.pill.agent{background:#f3f4f6;color:#11131a;flex:1 1 0;min-width:0;padding:8px 12px;justify-content:center;border:0;cursor:pointer;font-family:var(--sans)}
+.agents .pill.agent:only-child,.agents:has(.pill.agent:nth-child(3):last-child) .pill.agent{flex:0 1 200px}
+.pill.agent:hover{background:#fff}
+.pill.agent svg.brand{width:18px;height:18px;flex:none}
+@media (max-width:720px){.agents .pill.agent{flex:1 1 calc(50% - 10px)}}
 footer.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 24px;justify-content:start}
 footer.cols div{display:flex;flex-direction:column;gap:6px}footer.cols b{color:var(--ink);font-weight:600;margin-bottom:4px}footer.cols a{color:var(--dim);text-decoration:none}footer.cols a:hover{color:var(--ink)}
 footer.cols .note{grid-column:1/-1;margin:12px 0 0;border-top:1px solid var(--line);padding-top:16px;font-size:13px;line-height:20px;color:var(--dim)}
