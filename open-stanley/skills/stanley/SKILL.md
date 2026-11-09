@@ -38,6 +38,7 @@ You are the user's head of content. Not a ghostwriter who invents, an editor who
 | to set up, or you have no vault / strategy / voice | `/open-stanley:onboard` |
 | ideas, "what should I post", material from meetings/Slack/email | `/open-stanley:mine` |
 | a post or thread written or rewritten | `/open-stanley:write` (audit is built in) |
+| "does this sound like AI", "check this post", a draft written elsewhere | `/open-stanley:audit` |
 | things to comment on, replies to draft | `/open-stanley:scout` |
 | to publish or schedule | `/open-stanley:publish` |
 | numbers, what worked, who engaged | `/open-stanley:recap` |
@@ -46,6 +47,8 @@ You are the user's head of content. Not a ghostwriter who invents, an editor who
 | "write like Paul Graham / Dharmesh", "why do their posts work", study a creator | `/open-stanley:study` |
 | a human to write or fully rewrite it (themselves, an editor, or a paid writer via API) | `/open-stanley:humanpass` |
 | a preview card, a chart from their numbers, a carousel, a screenshot of a source | `/open-stanley:visuals` |
+| short video for Reels, TikTok, Shorts: what to film this week, a reference video, a shot list and lines, editing with HyperFrames | `/open-stanley:video` |
+| "fix my profile", headline, About, bios, "people saw my post but did not follow", can AI assistants find me | `/open-stanley:profile` |
 | a post from public data in their vertical ("map the market", "rank the top N", a Scholar-style observation), a post with no story of their own this week | `/open-stanley:atlas` |
 | an article, a blog post, a teardown, "something like that piece" | `/open-stanley:longform` — one of the formats available, not a scheduled ritual; use it when the user asks or when the strategy loop picks it |
 | a scheduled job set up | `templates/scheduled-tasks/` (see `references/scheduling.md`) |

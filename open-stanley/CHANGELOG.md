@@ -2,6 +2,18 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.19.0 — 2026-11-09
+
+Setup that works without anyone explaining it, for people who do not post the way the first user does.
+
+- onboard asks six things first (platforms, formats, languages, audience and goal, drafts or questions, the machine) and writes them where every run reads them; counts the connected sources and, at two or fewer, says plainly that mining will be thin and which two connectors to add first (notetaker, team chat), offers messenger chats through the logged-in browser and a ChatGPT history import into Claude's memory; offers two or three strategies from `references/strategies.md` (story first, data maps, habit then the tool, short essays, founder life on video, questions not drafts, industry field notes, memes), each labelled tested here, from a teardown, or untested; schedules a light set of runs for 8 GB laptops; team mode for co-founders; a setup check before it says done.
+- `video` (new skill): weekly video ideas from mined stories for Reels, TikTok and Shorts, each with a reference video found on the platform, a shot list, spoken lines in the user's voice, on-screen text and a caption; cuts and captions the user's footage with HyperFrames when installed. No generated faces or voices. `templates/scheduled-tasks/video-weekly.md`.
+- `profile` (new skill): reads each profile as a stranger would, checks it against the lanes, rewrites failing parts in the user's voice, asks AI assistants who the user is; changes only with a yes, verified live. Closes the one feature both open-source LinkedIn skill sets had that this plugin did not.
+- mine: chats the user names in Telegram Web, WhatsApp Web or LinkedIn messages; coding-agent sessions; every story states the situation in two or three sentences and quotes the line with the sentences around it ("quotes pulled out of context" is why an early user stopped).
+- write and weekly drafts follow `platforms:`, `languages:` (written in the language, never translated line by line) and `drafting: questions` (the story, the one question and two or three angles, no prose).
+- publish: Reddit only where a subreddit's rules allow it, written for that community; Instagram and TikTok by web upload or recorded as manual.
+- Tests: every skill is in the router table (`audit` was missing); onboarding asks and checks what it says. 65 tests.
+
 ## 0.18.0 — 2026-11-09
 
 What one user's Sunday took eight rounds of prompts to get, so the next user gets it on the first run.

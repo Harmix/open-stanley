@@ -17,7 +17,7 @@ If you search for a Claude skill that writes LinkedIn posts, you find hundreds o
 | [JayantChopra/stanley-mcp-playground](https://github.com/JayantChopra/stanley-mcp-playground) | Recipes for driving the paid Stanley from Claude over its MCP | You already pay for Stanley and want Claude to run it |
 | [dimamak/sdp](https://github.com/dimamak/sdp) | Social Daily Poster: a Python app that drafts one post a night from your Claude Code or Codex sessions, screenshots and messages, asks for approval in Telegram and posts through the official LinkedIn and X APIs | You want one post a day from your coding work, with a tap to approve |
 | Oktopost's Claude plugin | Open source, built for brand pages and employee advocacy | You post for a company with a team and approvals |
-| [Open Stanley](https://github.com/Harmix/open-stanley) | A full plugin: 16 skills and 3 agents that find stories in your meetings, Slack and mail, draft, audit, schedule, measure and learn from your edits | You want the whole loop running on a schedule, not single skills |
+| [Open Stanley](https://github.com/Harmix/open-stanley) | A full plugin: 18 skills and 3 agents that find stories in your meetings, chats and mail, draft for LinkedIn, X, Threads and other platforms, plan short videos, audit, schedule, measure, fix your profile and learn from your edits | You want the whole loop running on a schedule, not single skills |
 
 ## <svg class="rose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.5 6 .9-4.4 4.2 1 6-5.3-2.8-5.3 2.8 1-6L3.3 9.4l6-.9z"/></svg>Skills or a loop
 

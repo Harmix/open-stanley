@@ -58,5 +58,11 @@ The skills carry the judgment; the runs mostly execute them.
 |---|---|---|
 | soapbox, scout (both), recap, mine, monthly, drain, watchdog | Sonnet | reading, linting, one short message; no writing in the user's voice |
 | weekly drafts, longform | Opus | writes in the user's voice and runs the critic and fact-checker |
+| video ideas (weekly, when short video is in `formats`) | Opus | writes spoken lines in the user's voice; reads the platform for references |
 
 Change it per task in Scheduled → task → model. Model ids accepted in September 2026: `claude-sonnet-5`, `claude-opus-5`.
+
+
+## Light schedule (8 GB laptops, or a machine that froze during a run)
+
+A run drives the same Chrome the user works in, and on an 8 GB laptop a scan during working hours can freeze both. Onboarding asks about the machine and, for a light schedule, sets: one scout a day at a time the user is away (lunch or evening) with the recap folded into it, mine and weekly drafts on the weekend, the monthly check-in as is, and no browser runs in the user's working hours. If a user says a run made the computer slow, move that task out of their working hours first, then drop the second daily scout.

@@ -14,6 +14,10 @@ You are not generating a post about a topic. You are editing something the perso
 - **Voice** (`voice.md` exemplars + yaml). Missing → onboarding.
 - **Platform** and whether it also goes to X (default: both, same time, X as thread if no Premium; from `strategy.md`).
 
+## 1b. Platform, language and mode from setup
+
+Read `platforms:`, `languages:` and `drafting:` in `strategy.md`. Write for the platform the draft is for, in that platform's shape: LinkedIn the full story; X one long post or a thread; Threads short and conversational, a stream of thought is fine; an Instagram or TikTok caption that carries the video in its first line; Substack Notes like a short post. A second language is written in that language from the story, in the voice of that language's exemplars in `voice.md`, never translated line by line. With `drafting: questions`, do not write the post: give the situation in two lines, the one question that makes it theirs, and two or three angles, then audit what they write back.
+
 ## 2. Drafting
 
 Read 10–15 exemplars from `voice.md` right before writing; match their sentence rhythm, vocabulary level, punctuation, and how they open and close. If the user asked for a shape ("PG-style", "like Dharmesh's episode posts") or the lane names a reference creator, read that creator's entry in `shapes/` (vault) or `skills/study/references/creators-latest.md` (then `creators-2026-09.md` for creators not in it) and borrow the *moves* only; every word still comes from the story and the voice. Then:

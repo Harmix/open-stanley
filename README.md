@@ -2,7 +2,7 @@
 
 [![Open Stanley](docs/social-preview.png)](https://harmix.github.io/open-stanley/)
 
-[![version](https://img.shields.io/badge/version-0.18.0-blue)](open-stanley/CHANGELOG.md) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![tests](https://img.shields.io/badge/tests-passing-brightgreen)](open-stanley/tests) [![works in](https://img.shields.io/badge/works%20in-Claude%20Cowork%20%C2%B7%20Claude%20Code%20%C2%B7%20any%20SKILL.md%20agent-6f42c1)](#install)
+[![version](https://img.shields.io/badge/version-0.19.0-blue)](open-stanley/CHANGELOG.md) [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![tests](https://img.shields.io/badge/tests-passing-brightgreen)](open-stanley/tests) [![works in](https://img.shields.io/badge/works%20in-Claude%20Cowork%20%C2%B7%20Claude%20Code%20%C2%B7%20any%20SKILL.md%20agent-6f42c1)](#install)
 
 An open head of content for the agent you already pay for. A free, open-source alternative to Stanley (getstanley.ai), Taplio, Supergrow and the other "AI head of content" subscriptions: a Claude plugin that writes LinkedIn and X posts from your own meetings, Slack, email and notes, in your voice, with a receipt for every claim.
 
@@ -22,7 +22,9 @@ It is the loop that "AI head of content" products sell for $29–149 a month, re
 npx skills add Harmix/open-stanley
 ```
 
-Then say: **"set up Stanley"**. Onboarding reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, proposes three lanes, builds a voice profile from your own words, and asks where the vault should live (a plain folder in your synced Google Drive, so scheduled runs on your laptop can read it).
+Before you start, connect what holds your week, because mining finds stories only where it can read: your meeting notetaker (Pam Memory & Notetaker, Fathom, Granola or Fireflies), your team chat (Slack, Teams, Discord), Gmail and Google Drive or Notion. If ChatGPT is your main assistant, export your ChatGPT history and ask Claude to fill its memory from it. Setup counts your sources and tells you when there are too few.
+
+Then say: **"set up Stanley"**. It asks six short questions first (the platforms you post on, the formats you will make, your languages, who should care, whether you want drafts or only questions, and how much your laptop can run). Then it reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, offers two or three strategies that fit (from creators who do it well, labelled tested or untested), proposes three lanes, builds a voice profile from your own words, schedules the runs for your machine, and checks the whole setup before it says done.
 
 ## Open Stanley vs the paid tools
 
@@ -58,7 +60,7 @@ The repo is a one-plugin marketplace: `.claude-plugin/marketplace.json` at the r
 
 ```
 open-stanley/.claude-plugin/   plugin manifest
-skills/           16 skills; stanley/scripts/ holds the 7 CLI scripts, stanley/references/ the shared rules
+skills/           18 skills; stanley/scripts/ holds the 7 CLI scripts, stanley/references/ the shared rules
 agents/           critic, fact-checker, scout subagents
 templates/        scheduled-task prompts (laptop and cloud preambles) and the launchd drain job
 vault-template/   the empty vault a new user starts from
@@ -74,6 +76,8 @@ docs/             HOW-IT-WORKS, DESIGN, RESEARCH, CONTRIBUTING, research notes
 | "write it" | `write`: edits the story into a post in your voice, audits it, hands it over with one question |
 | "does this sound like AI?" | `audit`: the linter (`skills/stanley/scripts/stanley-audit`) plus an editor's read: claims, freshness, novelty |
 | "find posts to comment on" | `scout`: your feeds through your browser, hard filters (not yours, not shown before, not stale), 1–3 sentence comments |
+| "what should I film this week", "make a reel from this" | `video`: ideas from your real stories for Reels, TikTok and Shorts, each with a reference video that already works on the platform, a shot list you can film on a phone, your lines in your voice, captions; cuts and captions your footage with HyperFrames when installed. No generated faces or voices |
+| "fix my profile", "rewrite my headline" | `profile`: reads your LinkedIn, X, Threads, Instagram and TikTok profiles as a stranger would, checks them against your lanes, rewrites the parts that fail in your voice, and asks AI assistants who you are |
 | "map the market", "rank the top N", a post with no story of my own this week | `atlas`: a post from public data in your vertical, rendered with `stanley-chart` (a sector-coloured treemap with real logos, no image model), every number checked with `stanley-trace`, four details from the sources, and "what should I map next"; the lane a new account can post in from day one |
 | "write an article / a teardown" | `longform`: one long piece a month from the vault's receipts, cut down into the posts that point at it |
 | "post it to both" | `publish`: LinkedIn + X through your browser (threads, first-comment links, scheduling), ledger updated |
@@ -126,7 +130,7 @@ Two modes. **Laptop mode (default):** the vault is a plain folder inside your de
 
 ## Tests, versioning, CI
 
-`make test` (inside `open-stanley/`) runs the deterministic audit fixtures and the unit tests (`tests/`, 63 at 0.18.0: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency, public claims). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `tests/evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
+`make test` (inside `open-stanley/`) runs the deterministic audit fixtures and the unit tests (`tests/`, 65 at 0.19.0: audit rules, vault ledger, stats and experiments, preview rendering, plugin structure and version consistency, public claims). `.github/workflows/ci.yml` runs them on every push. Versions are semver in `.claude-plugin/plugin.json`, mirrored in `marketplace.json` and `CHANGELOG.md`; a test fails if they disagree. Behavioral evals for the skills live in `tests/evals/evals.json` and run through Anthropic's skill-creator (blind A/B against the previous version).
 
 ## Related open-source projects
 

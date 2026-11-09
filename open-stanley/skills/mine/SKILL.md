@@ -19,9 +19,13 @@ Probe capabilities (see `skills/stanley/references/capabilities.md`). Then pull,
 6. `calendar` — what happened (talks, conferences, customer calls) as prompts for the Soapbox question, not as posts ("heading to X" is the pattern the diagnosis flagged as the bottom performer).
 7. `docs` — memos, specs, decks the user authored in the window.
 8. `code` — commits, merged PRs and release notes the user wrote in the window, through a GitHub MCP, `gh`, or `git log --author` in a connected repository: build-in-public stories (what shipped, what broke, the number that changed). A merged PR with a real description is a story with a receipt; a commit message alone is a lead.
-9. The user's own recent posts and comments (from the ledger and `browser`) — to see which stories are already spent.
+9. `browser_sources` from `my-human.md` — chats the user agreed to have read in the logged-in browser (Telegram Web, WhatsApp Web, LinkedIn messages, a community forum). Only the chats named there, only the user's own messages and the replies to them, never a contact list. Many founders run their real work in messengers, and a plugin that reads only Slack misses it.
+10. Coding-agent sessions on this machine, when the user builds in public: Claude Code transcripts (`~/.claude/projects/`), Codex sessions. What was built, what broke and what the agent got wrong are stories; secrets, keys and customer data in them never leave the file.
+11. The user's own recent posts and comments (from the ledger and `browser`) — to see which stories are already spent.
 
 Read-only, always. If a source errors, say which one and continue.
+
+Context, not quotes. An early user stopped using the plugin because its stories were "quotes pulled out of context": a line from a meeting with no who, no before and no after. Every story file states the situation in two or three plain sentences (who was there, what they were trying to do, what happened just before and after the line) so that a stranger, and the user a week later, understands it without opening the source. Quote the line with the sentence before and after it. If you cannot tell the situation from the source, open more of it or mark the story `status: needs-confirmation`.
 
 ## 2. What counts as a story
 
