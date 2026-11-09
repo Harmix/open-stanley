@@ -65,3 +65,7 @@ Short. The user is a founder reading on a phone. Lead with the thing (the draft,
 - Nothing leaves the machine for community learning unless the user opted in through `/open-stanley:learn`, and then only rule statistics, never text.
 
 Before the first draft or comment of a run, `skills/stanley/scripts/stanley-audit selftest` (three bundled texts, one second) confirms the linter runs in this session. Close each run with `stanley-vault run-end ID --delivered "..." --shown N --queued N --browser yes|no` so `runs.jsonl` can tell a quiet day from a broken one.
+
+Browser tabs: a run that uses the browser opens its own tabs (Claude in Chrome: `tabs_create_mcp`; built-in browser: `tabs_create` or `preview_start`), notes their ids, and closes every one of them before `run-end` (`tabs_close_mcp` / `tabs_close`). Never close a tab the user had open before the run. The user found scheduled runs leaving their tabs open in Chrome. `run-end --browser yes` needs `--tabs-closed N`, the number of tabs the run opened and then closed, and refuses without it.
+
+Never report a post or comment as live from the state of the composer. Reload and check per `references/verify-live.md` first.

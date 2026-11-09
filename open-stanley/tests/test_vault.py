@@ -33,6 +33,19 @@ class VaultTests(unittest.TestCase):
         self.assertEqual(self.v("milestone-check", "--mark-done", "100000").returncode, 0)
         r = self.v("milestone-check", "--impressions-90d", "109450")
         self.assertEqual(r.returncode, 0); self.assertIn("next 250,000", r.stdout)
+    def test_posted_comment_and_publish_need_verification(self):
+        """2026-11-08: a run said 'posted' from the comment box; the ledger now refuses an unverified posted comment or published post."""
+        f = self.d / "c.txt"; f.write_text("what if the agent decides")
+        self.assertNotEqual(self.v("comment-add", "--platform", "linkedin", "--url", "https://l/c", "--text-file", str(f)).returncode, 0)
+        self.assertEqual(self.v("comment-add", "--platform", "linkedin", "--url", "https://l/c", "--text-file", str(f), "--skipped", "--reason", "no").returncode, 0)
+        self.assertEqual(self.v("comment-add", "--platform", "linkedin", "--url", "https://l/c", "--text-file", str(f), "--verified", "reloaded, found under name, 8 -> 9").returncode, 0)
+        self.assertNotEqual(self.v("post-add", "--platform", "linkedin", "--url", "https://l/p", "--text-file", str(f), "--via", "publish").returncode, 0)
+        self.assertEqual(self.v("post-add", "--platform", "linkedin", "--url", "https://l/p", "--text-file", str(f), "--via", "publish", "--verified", "reloaded, first line found").returncode, 0)
+    def test_browser_run_must_close_tabs(self):
+        rid = self.v("run-start", "scout").stdout.strip()
+        self.assertNotEqual(self.v("run-end", rid, "--delivered", "x", "--browser", "yes").returncode, 0)
+        self.assertEqual(self.v("run-end", rid, "--delivered", "x", "--browser", "yes", "--tabs-closed", "2").returncode, 0)
+        self.assertEqual(self.v("run-end", rid, "--delivered", "x", "--browser", "no").returncode, 0)
     def test_run_records(self):
         rid = self.v("run-start", "scout", "--promised", "3 picks").stdout.strip()
         self.assertEqual(self.v("run-end", rid, "--delivered", "2").returncode, 0)
@@ -110,7 +123,7 @@ class DecisionsAndDedupeTests(unittest.TestCase):
             vault("init", d, "--no-git"); v = Path(d)
             (v / "stories").mkdir(exist_ok=True); (v / "stories/s1.md").write_text("---\ntopic: a\nstatus: fresh\n---\nbody\n")
             (v / "drafts").mkdir(exist_ok=True); (v / "drafts/p.md").write_text("A hook\n\nbody\n")
-            r = vault("--vault", d, "post-add", "--platform", "linkedin", "--url", "https://l/1", "--text-file", str(v / "drafts/p.md"), "--story", "s1", "--via", "publish")
+            r = vault("--vault", d, "post-add", "--platform", "linkedin", "--url", "https://l/1", "--text-file", str(v / "drafts/p.md"), "--story", "s1", "--via", "publish", "--verified", "reloaded, found")
             self.assertEqual(r.returncode, 0, r.stderr)
             self.assertIn("status: used", (v / "stories/s1.md").read_text())
             r = vault("--vault", d, "post-add", "--platform", "linkedin", "--url", "https://l/1", "--text-file", str(v / "drafts/p.md"), "--via", "reconciled")

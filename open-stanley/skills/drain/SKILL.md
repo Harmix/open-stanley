@@ -15,7 +15,7 @@ description: Work through the local queue that cloud scheduled runs left for thi
 
 | `job` | payload | action |
 |---|---|---|
-| `comment` | platform, url, text, author | Open the post, confirm it still exists and the author is not the user, post `text` exactly, `comment-add`, `surfaced-add` |
+| `comment` | platform, url, text, author | Open the post, confirm it still exists and the author is not the user, post `text` exactly, reload and verify (`../stanley/references/verify-live.md`), `comment-add --verified`, `surfaced-add` |
 | `publish` | platform, draft path or text, assets, schedule time | Follow `/open-stanley:publish`; if the scheduled time has passed by more than 2h, ask before posting |
 | `scan` | platform, lanes, since | Follow `/open-stanley:scout` steps 1–5 for that platform only; results go to the user through `notify` and to `surfaced.jsonl` |
 | `analytics` | post urls | Pull metrics via the browser, `metrics-add` for each |

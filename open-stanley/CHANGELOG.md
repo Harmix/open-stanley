@@ -2,6 +2,11 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.17.2 — 2026-11-09
+
+- Nothing is reported as posted until it is seen live. A scout run told the user a comment was posted when the text was still in LinkedIn's comment box: its check searched the page text, which includes the box. `references/verify-live.md` reloads the post and looks for the text outside every editor, under the user's name (tested on a saved comment and on unsent text). `comment-add` refuses a posted comment without `--verified "<what you saw>"`, and `post-add --via publish` refuses without it; scout, drain, publish and the stanley rules say to check first.
+- Browser runs close the tabs they opened. Scheduled runs left tabs open in the user's Chrome. Each run notes the tabs it creates and closes them before `run-end`, never a tab that was open before, and `run-end --browser yes` refuses without `--tabs-closed N`. Tested.
+
 ## 0.17.1 — 2026-11-08
 
 Two misses from the first real nights after 0.17.0.

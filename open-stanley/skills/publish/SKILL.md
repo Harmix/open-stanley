@@ -35,6 +35,7 @@ The browser adapter is not LinkedIn-specific. For a platform the user asks for a
 
 ## 4. Record and follow up
 
+- Before anything else here: reload the live post and check it per `../stanley/references/verify-live.md`. Say "posted" only after that, and pass what you saw as `--verified` (with `--via publish` the script refuses without it).
 - `skills/stanley/scripts/stanley-vault post-add --platform <p> --url <url> --text-file <final> --story <slug>… --lane <lane> --shape opener:<x> --shape ending:<y> [--experiment <name>=<variant>]` for each platform. The tags are what make `recap` and `stanley-stats` able to say which shapes and lanes work for this audience.
 - A scheduled post has no URL yet: set `status: scheduled` and `scheduled_for: <ISO local time>` in the draft's `.meta.json` and stop there; `recap` picks it up with `stanley-vault drafts-due` once the time has passed and adds the ledger row with `post-add --from-meta … --via reconciled` when it finds the live post.
 - If a draft→final diff exists, make sure it was stored (`diff-add`).

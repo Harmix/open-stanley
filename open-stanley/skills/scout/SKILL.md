@@ -51,7 +51,7 @@ For each pick: the link, the author, one line of why, then the comment on its ow
 
 - Scanning is the highest-volume thing this plugin does, so the pacing discipline belongs here rather than around posting: the 25-posts-per-run cap, one page at a time, and stop-and-report on any captcha or rate-limit notice. `../stanley/references/platform-access.md` has the rules and the reasoning.
 - A reply to someone who answered the user's comment is a different register from a first comment: see the *Conversations* section of the `recap` skill and the *Reply voice* block in `voice.md`; the no-agreement-opener rule does not apply there.
-- Approved → post through the browser (LinkedIn comment box; X reply box, which works for any account, unlike the API) or through a `post` MCP; then `skills/stanley/scripts/stanley-vault comment-add`.
+- Approved → post through the browser (LinkedIn comment box; X reply box, which works for any account, unlike the API) or through a `post` MCP. Then reload the post and check it per `skills/stanley/references/verify-live.md` (the text found outside the comment box, under the user's name). Only then say it is posted and run `skills/stanley/scripts/stanley-vault comment-add ... --verified "<what you saw>"`; the script refuses a posted comment without it. A run once said "posted" because the unsent text was still in the box.
 - Skipped → `comment-add --skipped --reason "<their words>"`; the reason tunes the next scan.
 - Everything shown → `skills/stanley/scripts/stanley-vault surfaced-add <urls> --author <handle> --platform <p>`.
 

@@ -10,7 +10,7 @@ Commands
   path                          print the resolved vault path
   sync                          git pull --rebase && push if the vault is a git repo (no-op otherwise)
   run-start JOB                 append a run record; prints the run id
-  run-end ID --delivered TEXT [--error TEXT] [--shown N] [--queued N] [--browser yes|no]
+  run-end ID --delivered TEXT [--error TEXT] [--shown N] [--queued N] [--browser yes --tabs-closed N | --browser no]
   surfaced-check URL...         exit 1 and print the ones already surfaced
   surfaced-add URL --author H --platform P [--reason R]
   post-add --platform P --url U --text-file F [--story S ...] [--hook H] [--lane L] [--shape opener:event ...] [--experiment name=variant ...] [--from-meta drafts/X.meta.json] [--via publish|manual|reconciled]
@@ -19,7 +19,7 @@ Commands
   decision-add --job J --candidates JSON [--chosen S ...] [--rule R]   why a run picked what it picked (ledger/decisions.jsonl)
   verdict-add --kind draft|comment|target|question --ref X --verdict good|bad|edited|held|skipped|posted [--reason R]   the user's reaction (ledger/verdicts.jsonl)
   metrics-add --url U --bucket 1h|24h|7d --impressions N --reactions N --comments N --reposts N [--saves N]
-  comment-add --platform P --url U --text-file F [--skipped --reason R]
+  comment-add --platform P --url U --text-file F --verified SEEN | --skipped --reason R   (a posted comment needs --verified, see references/verify-live.md)
   diff-add --draft-file D --final-file F --platform P [--kind post|comment]
   stories-index                 rebuild stories/index.md from the story files' frontmatter
   queue-add --job J --payload JSON [--expires-hours H]   cloud runs park browser-only work here
@@ -148,6 +148,11 @@ def cmd_run_end(a):
     if a.shown is not None: row["shown"] = a.shown            # candidates/drafts/items actually shown to the human
     if a.queued is not None: row["queued"] = a.queued         # items parked for the laptop
     if a.browser is not None: row["browser"] = a.browser      # "yes" if a browser was available this run
+    if a.browser == "yes":
+        if a.tabs_closed is None:
+            sys.exit("refused: a browser run must close the tabs it opened before run-end and pass --tabs-closed N "
+                     "(skills/stanley/SKILL.md, browser tabs). Close them with tabs_close_mcp / tabs_close, then run run-end again.")
+        row["tabs_closed"] = a.tabs_closed
     append(v, "ledger/runs.jsonl", row)
     print("ok")
 
@@ -166,6 +171,8 @@ def cmd_surfaced_add(a):
 
 def cmd_post_add(a):
     v = resolve(a.vault)
+    if a.via == "publish" and not (a.verified or "").strip():
+        sys.exit(VERIFY_MSG.format(what="post"))
     text = Path(a.text_file).read_text(encoding="utf-8")
     shape = dict(kv.split(":", 1) for kv in (a.shape or []) if ":" in kv)
     exp = dict(kv.split("=", 1) for kv in (a.experiment or []) if "=" in kv)
@@ -184,7 +191,7 @@ def cmd_post_add(a):
         if p.get("url") == a.url or (p.get("platform") == a.platform and p.get("hook", "")[:60].lower() == hook[:60].lower() and p.get("date", "") >= (dt.date.today() - dt.timedelta(days=30)).isoformat()):
             sys.exit(f"already in the ledger: {p.get('url')} ({p.get('date')}). Use metrics-add for numbers; nothing written.")
     append(v, "ledger/posts.jsonl", {"platform": a.platform, "url": a.url, "date": date, "hook": a.hook or text.split("\n")[0][:140],
-                                     "stories": stories, "lane": lane, "shape": shape, "experiment": exp, "image": image, "kind": a.kind, "via": a.via, "text": text, "metrics": {}})
+                                     "stories": stories, "lane": lane, "shape": shape, "experiment": exp, "image": image, "kind": a.kind, "via": a.via, "verified": a.verified or "", "text": text, "metrics": {}})
     if meta is not None:
         meta.update({"status": "published", "url": a.url, "published": date}); mp.write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
     for slug in stories:   # a published story is spent: flip it so the next weekly run does not pick it again
@@ -209,12 +216,18 @@ def cmd_metrics_add(a):
     if not hit: sys.exit("no ledger post with that url")
     p.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8"); print("ok")
 
+VERIFY_MSG = ("refused: a posted {what} needs --verified \"<what you saw after reloading the page>\". "
+              "Reload the post, find the text outside the comment box under the user's name "
+              "(skills/stanley/references/verify-live.md), then pass what you saw. Nothing is posted until that check passes.")
+
 def cmd_comment_add(a):
     v = resolve(a.vault)
+    if not a.skipped and not (a.verified or "").strip():
+        sys.exit(VERIFY_MSG.format(what="comment"))
     text = Path(a.text_file).read_text(encoding="utf-8")
     append(v, "ledger/comments.jsonl", {"platform": a.platform, "url": a.url, "date": now()[:10], "text": text,
                                         "skipped": bool(a.skipped), "reason": a.reason or "", "reply_to": a.reply_to or "",
-                                        "kind": "reply" if a.reply_to else "comment"})
+                                        "kind": "reply" if a.reply_to else "comment", "verified": a.verified or ""})
     print("ok")
 
 def cmd_diff_add(a):
@@ -530,10 +543,10 @@ def main():
     p = sp.add_parser("sync"); p.set_defaults(f=cmd_sync)
     p = sp.add_parser("run-start"); p.add_argument("job"); p.add_argument("--promised"); p.set_defaults(f=cmd_run_start)
     p = sp.add_parser("run-end"); p.add_argument("id"); p.add_argument("--delivered", required=True); p.add_argument("--error")
-    p.add_argument("--shown", type=int); p.add_argument("--queued", type=int); p.add_argument("--browser", choices=["yes", "no"]); p.set_defaults(f=cmd_run_end)
+    p.add_argument("--shown", type=int); p.add_argument("--queued", type=int); p.add_argument("--browser", choices=["yes", "no"]); p.add_argument("--tabs-closed", type=int, help="browser tabs this run opened and closed (required with --browser yes)"); p.set_defaults(f=cmd_run_end)
     p = sp.add_parser("surfaced-check"); p.add_argument("urls", nargs="+"); p.set_defaults(f=cmd_surfaced_check)
     p = sp.add_parser("surfaced-add"); p.add_argument("urls", nargs="+"); p.add_argument("--author"); p.add_argument("--platform", required=True); p.add_argument("--reason"); p.set_defaults(f=cmd_surfaced_add)
-    p = sp.add_parser("post-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--story", action="append"); p.add_argument("--hook"); p.add_argument("--lane"); p.add_argument("--shape", action="append", help="opener:event ending:flat"); p.add_argument("--experiment", action="append", help="name=variant"); p.add_argument("--image", default="", help="image|carousel|video|doc or a URL; empty = text-only"); p.add_argument("--kind", default="post", choices=["post", "repost"]); p.add_argument("--via", default="", help="publish|manual|reconciled"); p.add_argument("--from-meta", help="drafts/<slug>.meta.json: take story/lane/shape/experiment/image from it and mark it published"); p.set_defaults(f=cmd_post_add)
+    p = sp.add_parser("post-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--story", action="append"); p.add_argument("--hook"); p.add_argument("--lane"); p.add_argument("--shape", action="append", help="opener:event ending:flat"); p.add_argument("--experiment", action="append", help="name=variant"); p.add_argument("--image", default="", help="image|carousel|video|doc or a URL; empty = text-only"); p.add_argument("--kind", default="post", choices=["post", "repost"]); p.add_argument("--via", default="", help="publish|manual|reconciled"); p.add_argument("--verified", help="what you saw after reloading the live post (required with --via publish)"); p.add_argument("--from-meta", help="drafts/<slug>.meta.json: take story/lane/shape/experiment/image from it and mark it published"); p.set_defaults(f=cmd_post_add)
     p = sp.add_parser("image-clean", help="strip C2PA/EXIF/XMP from a PNG or JPEG in place (or --out)"); p.add_argument("files", nargs="+"); p.add_argument("--out"); p.set_defaults(f=cmd_image_clean)
     p = sp.add_parser("drafts-due", help="scheduled drafts past their time with no ledger row"); p.add_argument("--json", action="store_true"); p.set_defaults(f=cmd_drafts_due)
     p = sp.add_parser("decision-add", help="log a run's ranked candidates and what it chose"); p.add_argument("--job", required=True); p.add_argument("--kind", default="story-pick", help="story-pick|comment-target|slot"); p.add_argument("--candidates", required=True, help='JSON list of {"slug","score","why"}'); p.add_argument("--chosen", action="append"); p.add_argument("--rule", help="the one line that decided it"); p.add_argument("--run"); p.set_defaults(f=cmd_decision_add)
@@ -542,7 +555,7 @@ def main():
     for k in ("impressions", "reactions", "comments", "reposts", "saves"): p.add_argument("--" + k, type=int, default=0)
     for k in ("like", "celebrate", "support", "love", "insight", "funny"): p.add_argument("--" + k, type=int, default=0, help="reaction-type count from the post page")
     p.set_defaults(f=cmd_metrics_add)
-    p = sp.add_parser("comment-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--skipped", action="store_true"); p.add_argument("--reason"); p.add_argument("--reply-to", help="URL of the comment/reply this answers (marks it kind=reply)"); p.set_defaults(f=cmd_comment_add)
+    p = sp.add_parser("comment-add"); p.add_argument("--platform", required=True); p.add_argument("--url", required=True); p.add_argument("--text-file", required=True); p.add_argument("--skipped", action="store_true"); p.add_argument("--reason"); p.add_argument("--reply-to", help="URL of the comment/reply this answers (marks it kind=reply)"); p.add_argument("--verified", help="what you saw after reloading the post: the comment under the user's name (required unless --skipped)"); p.set_defaults(f=cmd_comment_add)
     p = sp.add_parser("diff-add"); p.add_argument("--draft-file", required=True); p.add_argument("--final-file", required=True); p.add_argument("--platform", required=True); p.add_argument("--kind", default="post"); p.set_defaults(f=cmd_diff_add)
     p = sp.add_parser("stories-index"); p.set_defaults(f=cmd_stories_index)
     p = sp.add_parser("snapshot"); p.set_defaults(f=cmd_snapshot)
