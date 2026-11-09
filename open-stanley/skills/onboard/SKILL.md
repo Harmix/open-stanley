@@ -1,6 +1,6 @@
 ---
 name: onboard
-description: Set up Open Stanley for a person — ask which platforms, formats and languages they post in, check which sources are connected and say what is missing, diagnose their posts so far (median engagement, what worked and why), offer strategies from creators who do it well, propose three content lanes, build a voice profile from their own posts, and schedule the runs for their machine. Use when the user says "set up Stanley", "onboard me", shares their LinkedIn or X profile for the first time, asks "what should my content strategy be", or whenever the vault has no strategy.md or voice.md yet.
+description: Set up Open Stanley for a person — work out from memory, connected sources, profiles and the machine which platforms, formats, languages and audience they have and confirm it in one message, say plainly which sources are missing, diagnose what they have tried (median engagement, what worked and why), offer strategies with evidence, propose three lanes, build a voice from their own posts plus the changes the evidence supports as experiments, check the profile strangers land on, and schedule the runs. Use when the user says "set up Stanley", "onboard me", shares their LinkedIn or X profile for the first time, asks "what should my content strategy be", or whenever the vault has no strategy.md or voice.md yet.
 ---
 
 # Onboard
@@ -9,18 +9,22 @@ Goal: in one sitting, produce four short files the rest of the plugin runs on: `
 
 Setup has to work without anyone explaining it. An early user installed the plugin, followed the written steps, got drafts that made no sense to him and stopped. Every reason was something setup should have asked or checked: which platforms and formats he posts in (short video and Threads, not LinkedIn text), which languages, where his context lives (chat apps and messengers the plugin was not reading), and how much his laptop can run (a daily run froze it). Ask, check, and say what is missing before the first draft.
 
-## 0. Six questions first (one message, multiple choice where the tool allows)
+## 0. Work it out first, then confirm once
 
-Ask these together, before reading anything, with an "other" option each. Record the answers in `my-human.md` and `strategy.md`; every later step reads them.
+Do not open with a questionnaire. Most of what setup needs is already readable: Claude's memory of the user, their connected sources (calendar, mail signature, Slack profile, docs), their public profiles and posts in the browser, and the machine itself. Read those first, then show one short proposal with your best guess for each item and why, and ask them to correct anything that is wrong. "I think this works for you: ... Tell me what to change" is one message; six questions are six chances to stop.
 
-1. **Platforms**, as many as apply: LinkedIn, X, Threads, Instagram, TikTok, YouTube Shorts, Substack (Notes or newsletter), Bluesky, Reddit, a blog. → `platforms:` in `strategy.md`. The plugin posts through the user's logged-in browser on any of them (`publish` §3b), so do not steer them to LinkedIn.
-2. **Formats** they will actually make: text posts, posts with images or charts, carousels, short video, long articles, memes. → `formats:`. Short video turns on the `video` skill.
-3. **Languages**, and whether each language is the same account or a separate one. → `languages:`. Drafts come in the first language; a second language is a rewrite in that language's voice, not a translation, and needs its own exemplars in `voice.md`.
-4. **Who should care and what for**: the audience in one line (industry, role, city) and the goal (followers, inbound leads, credibility for direct sales, hiring, a personal brand). → `audience:` and `goal:`.
-5. **How much help with the writing**: full drafts they edit, or questions and angles only and they write ("I write well myself, I just run out of things to say"). → `drafting: drafts | questions`.
-6. **The machine**: laptop RAM (8 GB is tight), whether it stays on and open during the day, and when they would rather the runs happen. → `machine:` in `my-human.md`; decides the schedule in step 8.
+What to fill in, and where to find it:
 
-If they named creators they like ("I want to post like X"), write them down; step 3 studies them.
+- **Platforms** they post on or should: the profiles they are logged into in the browser, links in their bios and mail signature, where their past posts are. The plugin posts through the logged-in browser on any platform (`publish` §3b); do not steer them to LinkedIn. → `platforms:` in `strategy.md`.
+- **Formats** they make: what their own best posts are (text, images, carousels, short video, articles). Short video turns the `video` mode on for weekly drafts. → `formats:`.
+- **Languages**: the languages of their posts and of their messages. A second language is written in that language from the story, never translated line by line, and needs its own exemplars in `voice.md`. → `languages:`.
+- **Audience and goal**: their role, company and customers from memory and sources; the goal from what the company sells (followers, inbound leads, credibility for direct sales, hiring, a personal brand). → `audience:`, `goal:`.
+- **Drafts or questions**: default full drafts they edit; offer `drafting: questions` (the story, one question, two or three angles, no prose) if their own posts are already well written and frequent, or if they say they write themselves.
+- **The machine**: read the RAM on the device (`sysctl -n hw.memsize` on a Mac, `free -g` on Linux) rather than asking. 8 GB or less gets the light schedule in step 8. → `machine:` in `my-human.md`.
+
+Ask a question only for what nothing above can answer, and then one at a time. Creators they admire, if they mention any, go to step 3.
+
+Setup has to work without anyone explaining it. An early user installed the plugin, followed the written steps, got drafts that made no sense to him and stopped. Every reason was something setup should have found out: the platforms and formats he posts in (short video and Threads, not LinkedIn text), his languages, where his context lives (chat apps and messengers the plugin was not reading), and his laptop (a daily run froze it).
 
 ## 1. Vault and mode
 
@@ -69,16 +73,23 @@ This diagnosis is the most-liked thing the paid product did; keep the numbers ex
 
 ## 3. Strategy, then three lanes
 
-Offer two or three strategies from `references/strategies.md` that fit the step 0 answers and the diagnosis (story first, data maps, habit then the tool, short essays, founder life on video, questions not drafts, industry field notes, memes), each in one line with its evidence and whether the plugin has tested it. If they named creators, run `/open-stanley:study` on one of them now and offer what it finds. They pick one main and at most one second; write `strategy:` and `strategy_second:` into `strategy.md`. The pick decides what the weekly run produces: text drafts, data graphics, video ideas, or questions.
+Read `references/strategies.md` (its "From teardowns" and "From users" sections first; they grow) and offer the two or three that fit the step 0 picture and the diagnosis, each in one line with its evidence and its label (tested here, from a teardown, untested). If they named creators, run `/open-stanley:study` on one of them now and offer what it finds. They pick one main and at most one second; write `strategy:` and `strategy_second:` into `strategy.md`. The pick decides what the weekly run produces: text drafts, data graphics, video ideas, or questions.
 
 Then propose three lanes, each with: the thesis this person can own, who it's for, the existing post that proves it, and the first three angles. One of the three, or a fourth, is the **atlas** lane (`/open-stanley:atlas`): posts from public data in their vertical that need no meetings or voice notes, so the account can post from day one while mining builds up stories; name the first three questions it would answer, with the famous name each ranking would carry. A lane is not a topic ("AI agents"); it is a position ("memory systems ask the wrong first question"). Write them into `strategy.md` with a follower/inbound goal the user states, cadence (default 2–3 LinkedIn posts/week, X mirrored, 2–4 comments/day), and the "what good looks like" numbers from step 2.
 
-## 4. Voice profile
+## 4. Voice: where they are, and where to take it
 
-Fill `voice.md`:
-- Paste 15–40 of their real posts verbatim (best and newest first) under "Post exemplars", and 10–20 real comments under "Comment exemplars". These are the few-shot set for `write`; a description of their style is not a substitute.
-- Derive the yaml block by looking at the exemplars: do they use em dashes at all, hashtags, closing questions, emoji; typical sentence length spread. Set `banned_extra` from words they never use and `allowed` for global-ban words they genuinely do.
-- Write "How this person writes" as observations with evidence ("opens on the event: 'Ran a quick experiment with my team this weekend.'"), not adjectives.
+People come to this plugin because their posts are not getting read. Their current voice is the starting point, not the target. Build `voice.md` in two parts.
+
+**Keep** (from their own words): paste 15–40 of their real posts verbatim (best by reach first, then newest) under "Post exemplars", and 10–20 real comments under "Comment exemplars". Derive the yaml block from them (em dashes, hashtags, closing questions, emoji, sentence length spread, `banned_extra`, `allowed`), and write "How this person writes" as observations with evidence. This is what makes a draft sound like them: their words, their rhythm, the things they know.
+
+**Change** (from the evidence, not taste): a short list of what to do differently, each line with where it came from:
+- from their own ledger: what their weaker posts share that their better ones do not (announcements, academic framing, a hook that hides the point, no name or number early);
+- from their audience: what the people they want to reach respond to (read the comments and the posts those people share and engage with);
+- from creators in their field, and in one field outside it: run `/open-stanley:study` on one or two (the ones they named, or ones who reach their audience), and take the moves that beat those creators' own medians;
+- from `skills/stanley/references/research-linkedin-2026.md` where the platform data is clear.
+
+Each change goes into `strategy.md` as an open experiment (variant vs their current habit, the metric, `min_n`), so the plugin tests it on their own posts instead of imposing it. The weekly tune promotes what wins and drops what does not. The goal is their own voice, getting better on numbers, not a borrowed one.
 
 ## 5. My human and instructions
 
@@ -90,18 +101,19 @@ Fill `voice.md`:
 
 Run `/open-stanley:mine` for the last 30 days immediately so the first draft can be source-first. Then offer one draft, from a fresh story, in a lane, and ask the one question that makes it theirs ("what do you actually believe about this?").
 
-## 7. Gaps and recommended MCPs
+## 7. The profile people land on, and the other gaps
 
-Step 1b already said what is missing for mining. Here, for the rest: For each gap, suggest one server from `skills/stanley/references/recommended-mcps.md` with its one-line install (e.g. Exa for fact-checking works with no key). Ask once; record `recommended_mcps: asked` in `my-human.md`. Also ask whether they want a human pass lane (`/open-stanley:humanpass`) and at which tier; record `humanpass:`.
+A post that reaches strangers sends them to the profile. From the profiles read in step 2, check as a stranger would: does the first line of the headline or bio say who they are and for whom, is a lane from step 3 visible, is there one checkable proof, does the featured or pinned item show their best post or the next step. If not, offer a rewrite that a stranger understands at a glance; clarity first, their voice second. Change a profile only with a yes to the exact text, then reload and check it (`skills/stanley/references/verify-live.md`). The monthly check-in looks at it again.
 
-## 8. Schedule the runs for their machine
+Step 1b covered the sources for mining. For the rest, suggest one server per gap from `skills/stanley/references/recommended-mcps.md` with its one-line install (e.g. Exa for fact-checking works with no key). Ask once; record `recommended_mcps: asked` in `my-human.md`. Also ask whether they want a human pass lane (`/open-stanley:humanpass`) and at which tier; record `humanpass:`.
 
-Create the scheduled tasks from `templates/scheduled-tasks/` (see `skills/stanley/references/scheduling.md`), matched to the answers:
+## 8. Schedule the runs (the same tasks for everyone; modes change what they do)
 
-- **Standard** (16 GB or more, laptop open in the day): soapbox 08:00, scout 10:00 and 22:00, recap 22:00, mine Saturday, weekly drafts Sunday, monthly check-in.
-- **Light** (8 GB, or "it froze"): one scout a day at a time they are away from the computer (lunch or evening), recap folded into that run, mine and weekly drafts on the weekend, and no browser runs during their working hours. Say why: a run drives the same Chrome they work in.
-- **Questions only** (`drafting: questions`): weekly drafts become weekly prompts; keep scout and recap.
-- **Video** (`formats` has short video): add the weekly `video` ideas run after mine.
+Create the standard scheduled tasks from `templates/scheduled-tasks/` (see `skills/stanley/references/scheduling.md`): soapbox 08:00, scout 10:00 and 22:00, recap 22:00, mine Saturday, weekly drafts Sunday, monthly check-in. What each task produces follows `strategy.md`, so the person switches with one sentence and the tasks stay the same:
+
+- `drafting: questions` makes weekly drafts deliver prompts instead of prose.
+- `formats` with short video makes weekly drafts include video ideas (`/open-stanley:video`).
+- `schedule: light` (set automatically at 8 GB or less, or when they say a run made the computer slow): keep one scout at a time they are away, fold the recap into it, and move every browser run out of their working hours; say why (a run drives the same Chrome they work in).
 
 Every task runs only while the computer is on and the desktop app is open; say that once, and how to keep it awake (lid open, a keep-awake app).
 
@@ -115,4 +127,4 @@ Run through this and show the list with a yes or a fix for each: the vault folde
 
 ## Output of onboarding (say this back)
 
-Six lines: where the vault is; median + top post reason; the strategy they picked and the three lanes in one line each; what sources you can mine and what is missing; which runs are scheduled and when; the one draft (or, for `drafting: questions`, the one question) you're offering. Then stop and wait.
+Six lines: where the vault is; median + top post reason; the strategy they picked, the three lanes in one line each, and the first experiment from the voice's change list; what sources you can mine and what is missing; which runs are scheduled and when; the one draft (or, for `drafting: questions`, the one question) you're offering. Then stop and wait.

@@ -24,7 +24,7 @@ npx skills add Harmix/open-stanley
 
 Before you start, connect what holds your week, because mining finds stories only where it can read: your meeting notetaker (Pam Memory & Notetaker, Fathom, Granola or Fireflies), your team chat (Slack, Teams, Discord), Gmail and Google Drive or Notion. If ChatGPT is your main assistant, export your ChatGPT history and ask Claude to fill its memory from it. Setup counts your sources and tells you when there are too few.
 
-Then say: **"set up Stanley"**. It asks six short questions first (the platforms you post on, the formats you will make, your languages, who should care, whether you want drafts or only questions, and how much your laptop can run). Then it reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, offers two or three strategies that fit (from creators who do it well, labelled tested or untested), proposes three lanes, builds a voice profile from your own words, schedules the runs for your machine, and checks the whole setup before it says done.
+Then say: **"set up Stanley"**. It works out what it can from Claude's memory, your connected sources, your profiles and your machine (platforms, formats, languages, audience, how much your laptop can run) and asks you to correct one short proposal instead of a list of questions. Then it reads your last 40–60 posts through your browser, tells you your median engagement and why your top three posts worked, offers two or three strategies that fit (from creators who do it well, labelled tested or untested), proposes three lanes, builds a voice from your own words plus the changes the evidence supports, each tested as an experiment on your own posts, schedules the runs for your machine, and checks the whole setup before it says done.
 
 ## Open Stanley vs the paid tools
 
@@ -60,7 +60,7 @@ The repo is a one-plugin marketplace: `.claude-plugin/marketplace.json` at the r
 
 ```
 open-stanley/.claude-plugin/   plugin manifest
-skills/           18 skills; stanley/scripts/ holds the 7 CLI scripts, stanley/references/ the shared rules
+skills/           17 skills; stanley/scripts/ holds the 7 CLI scripts, stanley/references/ the shared rules
 agents/           critic, fact-checker, scout subagents
 templates/        scheduled-task prompts (laptop and cloud preambles) and the launchd drain job
 vault-template/   the empty vault a new user starts from
@@ -77,7 +77,6 @@ docs/             HOW-IT-WORKS, DESIGN, RESEARCH, CONTRIBUTING, research notes
 | "does this sound like AI?" | `audit`: the linter (`skills/stanley/scripts/stanley-audit`) plus an editor's read: claims, freshness, novelty |
 | "find posts to comment on" | `scout`: your feeds through your browser, hard filters (not yours, not shown before, not stale), 1–3 sentence comments |
 | "what should I film this week", "make a reel from this" | `video`: ideas from your real stories for Reels, TikTok and Shorts, each with a reference video that already works on the platform, a shot list you can film on a phone, your lines in your voice, captions; cuts and captions your footage with HyperFrames when installed. No generated faces or voices |
-| "fix my profile", "rewrite my headline" | `profile`: reads your LinkedIn, X, Threads, Instagram and TikTok profiles as a stranger would, checks them against your lanes, rewrites the parts that fail in your voice, and asks AI assistants who you are |
 | "map the market", "rank the top N", a post with no story of my own this week | `atlas`: a post from public data in your vertical, rendered with `stanley-chart` (a sector-coloured treemap with real logos, no image model), every number checked with `stanley-trace`, four details from the sources, and "what should I map next"; the lane a new account can post in from day one |
 | "write an article / a teardown" | `longform`: one long piece a month from the vault's receipts, cut down into the posts that point at it |
 | "post it to both" | `publish`: LinkedIn + X through your browser (threads, first-comment links, scheduling), ledger updated |

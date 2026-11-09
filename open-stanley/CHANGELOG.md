@@ -6,6 +6,16 @@ All notable changes to this plugin. Versions follow semver: MAJOR for a change t
 
 Second public teardown: James Hawkins (PostHog), 45 LinkedIn posts, with a shapes-only entry in `creators-latest.md`. The study skill now decodes posting times from LinkedIn post ids (id >> 22 is milliseconds since 1970), which is how the teardown compares a creator's first and second post of the day.
 
+## 0.19.1 — 2026-11-09
+
+From the first review of 0.19.0.
+
+- onboard works things out before it asks: platforms, formats, languages, audience and goal from Claude's memory, connected sources and the profiles in the browser, the machine's RAM read on the device; then one proposal to correct ("I think this works for you, tell me what to change"), and a question only for what nothing can answer.
+- Voice is a starting point, not the target: `voice.md` has **Keep** (their words and rhythm, from their posts) and **Change** (what the evidence says holds them back: their weaker posts, their audience, creators in their field and one outside it, the platform research), and each change is an open experiment on their own posts that the weekly tune promotes or drops. `write` and `video` apply it.
+- No profile skill: the profile check is onboarding step 7 and the monthly check-in, written so a stranger understands it, clarity before voice.
+- Modes, not new skills or tasks: `drafting: questions`, video in `formats` and `schedule: light` change what the same scheduled tasks do, switched with one sentence; the separate video task is gone.
+- `onboard/references/strategies.md` now matches the landing page's list (your stories, atlas, observation, experiment, series, repackage, study, longform, yours), with "From teardowns" and "From users" sections that grow and are read first.
+
 ## 0.19.0 — 2026-11-09
 
 Setup that works without anyone explaining it, for people who do not post the way the first user does.

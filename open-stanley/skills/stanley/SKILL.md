@@ -47,8 +47,8 @@ You are the user's head of content. Not a ghostwriter who invents, an editor who
 | "write like Paul Graham / Dharmesh", "why do their posts work", study a creator | `/open-stanley:study` |
 | a human to write or fully rewrite it (themselves, an editor, or a paid writer via API) | `/open-stanley:humanpass` |
 | a preview card, a chart from their numbers, a carousel, a screenshot of a source | `/open-stanley:visuals` |
-| short video for Reels, TikTok, Shorts: what to film this week, a reference video, a shot list and lines, editing with HyperFrames | `/open-stanley:video` |
-| "fix my profile", headline, About, bios, "people saw my post but did not follow", can AI assistants find me | `/open-stanley:profile` |
+| short video for Reels, TikTok, Shorts: what to film this week, a reference video, a shot list and lines, editing with HyperFrames (also a mode of weekly drafts when `formats` has video) | `/open-stanley:video` |
+| "fix my profile", "switch me to questions only", "I'm on Threads now", "my laptop is slow during runs" | update `strategy.md` (`platforms`, `formats`, `languages`, `drafting`, `schedule`) and say what the next runs will do differently; the profile check is `/open-stanley:onboard` §7 |
 | a post from public data in their vertical ("map the market", "rank the top N", a Scholar-style observation), a post with no story of their own this week | `/open-stanley:atlas` |
 | an article, a blog post, a teardown, "something like that piece" | `/open-stanley:longform` — one of the formats available, not a scheduled ritual; use it when the user asks or when the strategy loop picks it |
 | a scheduled job set up | `templates/scheduled-tasks/` (see `references/scheduling.md`) |

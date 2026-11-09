@@ -24,14 +24,14 @@ class StructureTests(unittest.TestCase):
         for s in re.findall(r"scripts/(stanley-[a-z]+)", text):
             self.assertTrue((ROOT / "skills" / "stanley" / "scripts" / s).exists(), s)
     def test_every_skill_is_routed(self):
-        """A skill the router never names is a skill no user reaches (video and profile were added 2026-11-09)."""
+        """A skill the router never names is a skill no user reaches (video was added 2026-11-09)."""
         router = (ROOT / "skills/stanley/SKILL.md").read_text(encoding="utf-8")
         missing = [p.name for p in (ROOT / "skills").iterdir() if (p / "SKILL.md").exists() and p.name != "stanley" and f"/open-stanley:{p.name}" not in router]
         self.assertEqual(missing, [], f"skills not in the stanley router table: {missing}")
     def test_onboarding_asks_and_checks(self):
-        """Setup asks platforms, formats, languages, audience, drafting mode and machine; warns on too few sources; offers strategies."""
+        """Setup infers platforms, formats, languages, audience, mode and machine and confirms once; warns on too few sources; offers strategies; voice = keep + change."""
         s = (ROOT / "skills/onboard/SKILL.md").read_text(encoding="utf-8")
-        for k in ("**Platforms**", "**Formats**", "**Languages**", "**Who should care", "**How much help with the writing**", "**The machine**", "Two or fewer", "references/strategies.md", "Light", "Team mode", "Check the setup"):
+        for k in ("Work it out first, then confirm once", "**Platforms**", "**Formats**", "**Languages**", "**Audience and goal**", "**Drafts or questions**", "hw.memsize", "Two or fewer", "references/strategies.md", "**Keep**", "**Change**", "schedule: light", "Team mode", "Check the setup"):
             self.assertIn(k, s, k)
         self.assertTrue((ROOT / "skills/onboard/references/strategies.md").exists())
     def test_no_top_level_bin(self):

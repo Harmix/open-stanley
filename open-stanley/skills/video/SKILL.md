@@ -1,6 +1,6 @@
 ---
 name: video
-description: Short vertical video for Instagram Reels, TikTok, YouTube Shorts, LinkedIn or X — turn the user's mined stories into video ideas, each paired with a reference video that already works on the platform, a shot list they can film on a phone, the spoken lines in their voice, on-screen text and a caption; then cut and caption their footage with HyperFrames when it is installed. Use when the user says "give me reel ideas", "what should I film", "make a video from this story", "turn this into a reel", "edit my clips", or when strategy.md lists short video in formats.
+description: Short vertical video (on demand, and as a mode of the weekly drafts when strategy.md lists video in formats) for Instagram Reels, TikTok, YouTube Shorts, LinkedIn or X — turn the user's mined stories into video ideas, each paired with a reference video that already works on the platform, a shot list they can film on a phone, the spoken lines in their voice, on-screen text and a caption; then cut and caption their footage with HyperFrames when it is installed. Use when the user says "give me reel ideas", "what should I film", "make a video from this story", "turn this into a reel", "edit my clips", or when strategy.md lists short video in formats.
 ---
 
 # Video: what to film this week, and how
@@ -20,7 +20,7 @@ With the browser, logged in as the user, search the platform for the format: the
 For each idea, in `drafts/<date>-video-<slug>.md`:
 - **Hook**: what is on screen and said in the first two seconds. The same two-sentence test as `write`: something surprising, funny or personal, shown, not announced.
 - **Shot list**: 3 to 8 shots, each with where the phone goes, what is in frame, and how long; vertical 9:16.
-- **Spoken lines** (only if they talk): in their voice from `voice.md`, short, in the language of the account; under 40 seconds unless their past videos say longer works.
+- **Spoken lines** (only if they talk): from their voice in `voice.md`, with its Change list applied, short, in the language of the account; under 40 seconds unless their past videos say longer works.
 - **On-screen text**: the few words that carry it with the sound off.
 - **Caption**: platform-native (Instagram: the first line carries it, 3 hashtags at most if their past posts use them; TikTok: short; LinkedIn: the story as a short text post).
 - **The reference** from step 2, and the one move it copies.

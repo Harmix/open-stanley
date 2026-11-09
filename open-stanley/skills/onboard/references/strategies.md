@@ -1,59 +1,32 @@
-# Strategies to offer at setup
+# Strategies
 
-Onboarding offers two or three of these, picked by the person's audience, platforms, formats and how much time they have. The choice decides what the scheduled runs produce: text drafts, data graphics, video ideas or questions. Each one says where its evidence comes from. "Tested here" means the plugin's own users have numbers for it; "from a teardown" means a creator page in this plugin; "untested here" means general knowledge only, so say that when you offer it.
+The same list as the landing page (`docs/index.html`, #strategies). Your own stories come first; the rest are for thin weeks and new accounts, and the ledger's numbers decide which ones stay for each person. This list grows: new creator teardowns (`docs/creators/`, `skills/study/references/creators-latest.md`, the vault's `shapes/`) and tactics users send with their numbers (the `strategy-tip` issue form) are added under "From teardowns" and "From users" with the source and the numbers. Read those two sections first every time; they are newer than the rest.
 
-When the user adds creator teardowns (`docs/creators/`, `skills/study/references/creators-latest.md`, or `shapes/` in their vault), read them first: a strategy backed by a creator the user admires beats one from this list. When someone names a creator ("I like how X posts"), run `/open-stanley:study` on them during setup and offer the strategy it finds.
+Each entry says what it is, where it runs in the plugin, and the evidence: "tested here" (users of this plugin have numbers), "from a teardown" (a creator page in this plugin), or "untested here". Say the label when you offer it.
 
-## 1. Story first (tested here)
+## The list
 
-For: anyone with a real working week (founders, operators, researchers, salespeople) on LinkedIn or X.
-What it is: every post starts from something that happened, found in their meetings, chats and mail, with a name people know in the first line when there is one. The first user's two biggest posts were "I asked / I saw" stories with an institution's name in the first line and a real screenshot (87,288 and 31,324 impressions on an account under 5K followers); his announcements stayed in his network.
-Set up: lanes from their own work, `mine` weekly, the morning Soapbox question, weekly drafts as text, 2 posts a week.
-Needs: at least two connected sources (meetings and messages are the best pair). Without them this strategy runs dry; say so.
+- **Your stories.** What happened to you this week, with the source. Runs in `mine` → `write`, weekly drafts, the morning question. Tested here: the first user's two furthest posts were "I asked / I saw" stories with an institution's name in the first line and a real screenshot (87,288 and 31,324 impressions on an account under 5K followers). Needs connected sources; with two or fewer it runs dry.
+- **Atlas.** Your industry mapped from public data; works from day one, no stories needed. Runs in `atlas`. Tested here and from a teardown: "Top 30 copper miners by market cap" (1,342 reactions on under 5K followers), "Top 17 Toronto AI startups by money raised in 2026". Strongest for people who sell into one industry or city and need credibility there.
+- **Observation.** A screenshot of something odd and one plain line about it. Runs in `write` from a story of `kind: observation`; `scout` and the morning question find candidates. Tested here: the Google Scholar alert post.
+- **Experiment.** A small test you ran, raw outputs saved, result first. Runs in `mine` (`kind: experiment`, assets saved) → `write`. Tested here, with one lesson: the first one flipped when rerun under a cleaner setup, so the numbers must be recomputable from the saved files.
+- **Series.** A build log, each post linked to the one before. Runs in `write` + `publish` (the "How this started" first comment). Tested here (the hackathon hour-by-hour posts and the YC series).
+- **Repackage.** The shape of your best post with a new story in it. Runs in `rituals` every two weeks from the ledger's top posts.
+- **Study.** What works for creators in your field, and in one field outside it. Runs in `study`; weekly teardowns on the site. From teardowns, e.g. Dharmesh Shah: a habit, then the exact request to his own product pasted in, the price last; his reshares of others' praise were all in his bottom quarter.
+- **Longform.** One long piece a month, cut into posts. Runs in `longform`.
+- **Yours.** A tactic a user sent with their numbers; if it holds up, it goes in below with their name.
 
-## 2. Data maps for a vertical (from a teardown, tested here)
+## From teardowns
 
-For: anyone selling into an industry who needs credibility there (real estate, mining, manufacturing, healthcare, a city's startup scene). Works with no personal stories at all.
-What it is: "Top N <things the audience knows> by <one money or size number>" as a treemap with real logos, three details behind the names, and "what should I map next". A mining data designer's best post was "Top 30 copper miners by market cap" (1,342 reactions, 70 reposts on under 5K followers); the first user's "Top 17 Toronto AI startups by money raised in 2026" was built the same way.
-Set up: the `atlas` lane weekly, the data check in `skills/atlas/references/data-check.md`, local or industry data first.
+(Add one line per creator page as teardowns are published: the creator, the field, the one move that beat their median, the numbers, the page.)
 
-## 3. Habit, then the tool (from a teardown: Dharmesh Shah)
+- Dharmesh Shah (SaaS founder, LinkedIn): habit then the tool; price in his own words beats borrowed praise. `docs/creators/dharmesh-shah.md`.
+- A mining data designer (LinkedIn, under 5K followers): "Top N <names the audience knows> by <one number>" treemaps; the most universal unit and the biggest names won. See `skills/atlas/SKILL.md`.
 
-For: founders whose product is something they use themselves.
-What it is: a habit they have kept for years, the annoying part, the exact request they gave their own product pasted in, the obvious objection answered, the price last. His best post in 45 was this shape, about twice the next one; his reshares of other people's praise were all in his bottom quarter.
-Set up: one post every two weeks in this shape inside the story-first lane; never reshare praise.
+## From users
 
-## 4. Short essays and observations (from a teardown: Paul Graham)
+(Tactics accepted from the `strategy-tip` form, with the sender's name, their numbers and the date checked.)
 
-For: people with opinions and a following on X, or people who write well and want to.
-What it is: one observation, said plainly, often from a conversation, no hook formula. Works on X and Threads.
-Set up: X and Threads as the main platforms, short posts, the comment lane weighted up.
+## Formats and modes are not strategies
 
-## 5. Founder life on video (untested here)
-
-For: people on Instagram, TikTok, YouTube Shorts or Threads who want followers to know them as a person first, with the product in the background.
-What it is: short vertical videos from their real days (a trip, a meal, a move, a hard week at work), each one copying a format that already works on the platform, with the business story mixed in sometimes. The bottleneck is usually the idea and the reference, not the filming.
-Set up: the `video` skill: weekly video ideas from mined stories, each with a reference reel found on the platform, a shot list, the spoken lines in their voice, on-screen text and a caption; editing with HyperFrames when installed. Text posts for Threads from the same stories.
-Ask: which accounts they like on that platform, so the references come from formats they would actually shoot.
-
-## 6. Questions, not drafts (untested here)
-
-For: people who write well themselves and do not want a model's draft, but run out of things to say.
-What it is: the plugin finds the story and asks the one question that gets the post out of them, and gives two or three angles; it never writes the prose unless asked.
-Set up: `drafting: questions` in `strategy.md`; weekly drafts become weekly prompts; the audit still runs on what they write.
-
-## 7. Industry field notes for direct sales (untested here)
-
-For: people whose sales happen in person (office visits, events, calls) and who post so that a prospect who looks them up sees someone who knows the industry.
-What it is: short notes from the field (what a broker said about this month's market, what an office visit showed), plus data maps of the local market, plus comments on the industry's local voices.
-Set up: lanes around the industry, `scout` pointed at the industry's people, atlas monthly with local data, fewer posts and more comments.
-
-## 8. Memes and jokes for a technical audience (untested here)
-
-For: people whose audience shares an inside world (developers, security, AI engineers). Some co-founders of developer tools post mostly memes.
-What it is: a joke about a situation every reader has lived, as text or a simple image the user makes or screenshots. Never a copyrighted character or a stock meme with a brand on it.
-Set up: an occasional format inside another strategy, not a whole strategy, until the ledger shows it works for this person.
-
-## How to offer them
-
-Say which two or three fit and why, in one line each, with the evidence and its label. Ask them to pick one main strategy and at most one second. Write the pick into `strategy.md` as `strategy: <name>` and `strategy_second: <name>`, then set the lanes, formats, platforms, cadence and the scheduled tasks to match. Revisit at the monthly check-in with the ledger's numbers.
+Any strategy can come out as text, an image, a carousel, a data graphic or a short video (`video` skill), in any language, on any platform the person uses. How much the plugin writes is a mode (`drafting: drafts | questions`), and how often it runs is a schedule (`schedule: standard | light`). All of these live in `strategy.md` and change with one sentence ("switch me to questions only", "I'm on Threads now"); they never need a different skill or a different scheduled task.
