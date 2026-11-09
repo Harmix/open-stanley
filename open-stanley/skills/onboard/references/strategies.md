@@ -21,6 +21,7 @@ Each entry says what it is, where it runs in the plugin, and the evidence: "test
 (Add one line per creator page as teardowns are published: the creator, the field, the one move that beat their median, the numbers, the page.)
 
 - Dharmesh Shah (SaaS founder, LinkedIn): habit then the tool; price in his own words beats borrowed praise. `docs/creators/dharmesh-shah.md`.
+- James Hawkins (PostHog co-founder, LinkedIn, 65K followers): jokes about startups and AI, never naming his own product. A screenshot or meme with a caption of 0 to 17 words had a median of 493 against his 259 and all three of his biggest posts; a parody list ranking something every founder knows had a median of 901; reshares of his company sat at the bottom. Pictures brought reach, text jokes brought replies, and his first post of the day beat the second. For an audience with a shared inside world, this is the evidence for Observation as a joke. `docs/creators/james-hawkins.md`.
 - A mining data designer (LinkedIn, under 5K followers): "Top N <names the audience knows> by <one number>" treemaps; the most universal unit and the biggest names won. See `skills/atlas/SKILL.md`.
 
 ## From users

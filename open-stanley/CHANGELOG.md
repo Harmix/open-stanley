@@ -2,11 +2,7 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
-## 0.19.1 — 2026-11-09
-
-Second public teardown: James Hawkins (PostHog), 45 LinkedIn posts, with a shapes-only entry in `creators-latest.md`. The study skill now decodes posting times from LinkedIn post ids (id >> 22 is milliseconds since 1970), which is how the teardown compares a creator's first and second post of the day.
-
-## 0.19.1 — 2026-11-09
+## 0.19.2 — 2026-11-09
 
 From the first review of 0.19.0.
 
@@ -15,6 +11,10 @@ From the first review of 0.19.0.
 - No profile skill: the profile check is onboarding step 7 and the monthly check-in, written so a stranger understands it, clarity before voice.
 - Modes, not new skills or tasks: `drafting: questions`, video in `formats` and `schedule: light` change what the same scheduled tasks do, switched with one sentence; the separate video task is gone.
 - `onboard/references/strategies.md` now matches the landing page's list (your stories, atlas, observation, experiment, series, repackage, study, longform, yours), with "From teardowns" and "From users" sections that grow and are read first.
+
+## 0.19.1 — 2026-11-09
+
+Second public teardown: James Hawkins (PostHog), 45 LinkedIn posts, with a shapes-only entry in `creators-latest.md`. The study skill now decodes posting times from LinkedIn post ids (id >> 22 is milliseconds since 1970), which is how the teardown compares a creator's first and second post of the day.
 
 ## 0.19.0 — 2026-11-09
 
