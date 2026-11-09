@@ -26,7 +26,7 @@ class StructureTests(unittest.TestCase):
     def test_no_top_level_bin(self):
         # claude.ai-hosted plugins may not ship a top-level bin/ (it would be added to PATH); scripts live under a skill.
         self.assertFalse((ROOT / "bin").exists())
-        for s in ("stanley-audit", "stanley-vault", "stanley-stats", "stanley-preview", "stanley-brief"):
+        for s in ("stanley-audit", "stanley-vault", "stanley-stats", "stanley-preview", "stanley-brief", "stanley-chart", "stanley-trace"):
             self.assertTrue((ROOT / "skills" / "stanley" / "scripts" / s).exists(), s)
     def test_gitignore_in_template(self):
         self.assertIn(".stanley-scripts/", (ROOT / "vault-template/.gitignore").read_text())

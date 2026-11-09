@@ -54,4 +54,32 @@ class ChartTests(unittest.TestCase):
                 html = out.with_suffix(".html").read_text()
                 self.assertGreaterEqual(html.count("<rect"), n); self.assertIn(">T<", html); self.assertNotIn("http", html.split("<svg")[1][:50])
             r = subprocess.run([sys.executable, str(ROOT / "skills/stanley/scripts/stanley-chart"), str(csv), "--title", "T", "--top", "2", "--out", str(Path(d) / "t.png")], capture_output=True, text=True)
-            self.assertEqual(r.returncode, 0); self.assertEqual((Path(d) / "t.html").read_text().count("font-weight=\"600\""), 2)
+            self.assertEqual(r.returncode, 0); self.assertEqual((Path(d) / "t.html").read_text().count("font-weight=\"700\""), 3)   # title + 2 tiles
+    def test_chart_default_style_groups_targets_and_money_pattern(self):
+        """The style the first user approved: portrait, paper, one colour per group with a legend, dashed targets, $750M not 750 $M."""
+        with tempfile.TemporaryDirectory() as d:
+            csv = Path(d) / "d.csv"; csv.write_text("name,value,group,status\nBig,750,Physical,\nMid,425,Enterprise,\nOut,5000,Enterprise,target\nSmall,4.1,Health,\n")
+            out = Path(d) / "c.png"
+            r = subprocess.run([sys.executable, str(ROOT / "skills/stanley/scripts/stanley-chart"), str(csv), "--title", "Top 4", "--unit", "${}M", "--source", "x", "--asof", "Data as of Nov 8", "--out", str(out)], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stderr); html = out.with_suffix(".html").read_text()
+            self.assertIn('width="1080" height="1350"', html); self.assertIn("#F3F0E8", html); self.assertIn("$750M", html); self.assertNotIn("750 $M", html)
+            self.assertIn("stroke-dasharray", html)                       # the target row
+            for g in ("Physical", "Enterprise", "Health"): self.assertIn(f">{g}<", html)   # legend
+            self.assertIn("Small boxes: Small $4.1M", html); self.assertIn("Data as of Nov 8", html); self.assertNotIn("monospace", html)
+
+class TraceTests(unittest.TestCase):
+    def run_trace(self, d, *files, claims=None):
+        args = [sys.executable, str(ROOT / "skills/stanley/scripts/stanley-trace"), "--data", str(d / "data.csv")] + (["--claims", str(claims)] if claims else []) + [str(d / f) for f in files]
+        return subprocess.run(args, capture_output=True, text=True)
+    def test_every_number_traces_or_fails(self):
+        """The Toronto atlas post needed four rounds of checks by eye; the script refuses any number it cannot trace."""
+        with tempfile.TemporaryDirectory() as t:
+            d = Path(t); (d / "data.csv").write_text("name,value\nCohere,5000\nWaabi,750\nBeacon,425\nBiossil,196\n")
+            (d / "post.md").write_text("Top 4 Toronto AI startups in 2026. Waabi leads with $750M, Beacon has $425M, Biossil $196M. Without Cohere the other 3 raised $1.37B. Cohere targets C$7B, about 3.6 times the rest. Biossil is valued at $1B. Data as of Nov 8, 2026.\n")
+            r = self.run_trace(d, "post.md"); self.assertEqual(r.returncode, 1)
+            for bad in ("C$7B", "3.6 times", "$1B"): self.assertIn(bad, r.stdout)
+            for good in ("$750M", "$1.37B", "Nov 8", "2026"): self.assertNotIn("untraced: post.md: " + good, r.stdout)
+            (d / "claims.csv").write_text('claim,value,url,quote\ntarget,7,https://e.com/a,"targeting CAD 7 billion"\nratio,3.6,computed,"5000 / (sum(d.values()) - d[\'Cohere\'])"\nvaluation,1,https://e.com/b,"at a $1 billion valuation"\n')
+            r = self.run_trace(d, "post.md", claims=d / "claims.csv"); self.assertEqual(r.returncode, 0, r.stdout); self.assertIn("PASS", r.stdout)
+            (d / "claims.csv").write_text('claim,value,url,quote\ntarget,7,https://e.com/a,"targeting a big round"\n')
+            r = self.run_trace(d, "post.md", claims=d / "claims.csv"); self.assertIn("not in the quoted sentence", r.stdout)

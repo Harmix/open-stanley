@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+"""stanley-trace: every number in a post must trace to data.csv or to a sourced claim.
+
+  stanley-trace --data stories/assets/atlas-<slug>/data.csv --claims stories/assets/atlas-<slug>/claims.csv \
+                drafts/<post>.md [graphic-labels.txt first-comment.txt ...] [--unit-scale M]
+
+Why: an atlas post in real use went through four rounds of checking because each checker re-read the numbers by eye.
+Six of 19 rows were wrong, the title count was wrong, and a total in the text did not match the graphic. A script
+that refuses any number it cannot trace ends that loop.
+
+data.csv: name,value[,...]. Values are in one unit (say $M); a number in the text matches a value, a sum of all
+values, or the same value written in the next unit up ($1.72B for 1720).
+claims.csv: claim,value,url,quote. Every number the data cannot explain (a valuation, a date-free count, a ratio,
+a percentage from a source) gets a row. `quote` is the exact sentence from the source, and the value must appear
+in it. A computed number uses url `computed` and a Python expression over `d` (name -> value) in `quote`, e.g.
+`5000 / (sum(d.values()) - d["Cohere"])`.
+Years (1900-2099), day numbers next to a month, list ordinals ("#1", "1.") and "Top N" where N is the row count
+are not data. Exit 0 and "PASS" when every number traces; exit 1 and the list of untraced numbers otherwise.
+"""
+import argparse, csv, re, sys
+from pathlib import Path
+
+MONTHS = r"(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?"
+NUM = re.compile(r"(?<![\w.])(C\$|A\$|US\$|\$|€|£)?(\d[\d,]*(?:\.\d+)?)\s?(%|[KMB]\b|bn\b|billion\b|million\b|thousand\b|x\b|times\b)?", re.I)
+SCALE = {"k": 1e-3, "thousand": 1e-3, "m": 1, "million": 1, "b": 1e3, "bn": 1e3, "billion": 1e3}
+
+def decimals(tok):
+    return len(tok.split(".")[1]) if "." in tok else 0
+
+def close(x, v, dec):
+    return abs(x - round(v, dec)) < 1e-9 or abs(x - v) <= 0.5 * 10 ** (-dec) + 1e-9
+
+def load_data(p):
+    d = {}
+    for r in csv.DictReader(open(p, newline="", encoding="utf-8")):
+        val = r.get("value") or next((r[k] for k in r if k not in ("name",) and re.fullmatch(r"-?[\d,.]+", (r[k] or "").strip())), None)
+        if r.get("name") and val not in (None, ""):
+            d[r["name"].strip()] = float(str(val).replace(",", ""))
+    return d
+
+def load_claims(p, d):
+    rows, bad = [], []
+    if not p: return rows, bad
+    for i, r in enumerate(csv.DictReader(open(p, newline="", encoding="utf-8")), 2):
+        claim, val, url, quote = (r.get(k, "") or "" for k in ("claim", "value", "url", "quote"))
+        try: v = float(str(val).replace(",", ""))
+        except ValueError: bad.append(f"claims.csv line {i}: value '{val}' is not a number"); continue
+        if url.strip() == "computed":
+            try: got = eval(quote, {"__builtins__": {}}, {"d": d, "sum": sum, "len": len, "round": round, "abs": abs, "min": min, "max": max})
+            except Exception as e: bad.append(f"claims.csv line {i}: cannot compute {quote!r}: {e}"); continue
+            if not close(v, got, decimals(str(val))): bad.append(f"claims.csv line {i}: {claim}: {val} but {quote} = {got:.4g}")
+        else:
+            if not url.startswith("http"): bad.append(f"claims.csv line {i}: {claim}: no source URL")
+            if str(val).replace(",", "") not in quote.replace(",", "") and str(val) not in quote:
+                bad.append(f"claims.csv line {i}: {claim}: the value {val} is not in the quoted sentence")
+        rows.append((claim, v, decimals(str(val))))
+    return rows, bad
+
+def numbers(text):
+    out = []
+    for m in NUM.finditer(text):
+        cur, tok, unit = (m.group(1) or ""), m.group(2), (m.group(3) or "").strip().lower()
+        x = float(tok.replace(",", ""))
+        before, after = text[max(0, m.start() - 12):m.start()].lower(), text[m.end():m.end() + 10].lower()
+        if not unit and 1900 <= x <= 2099 and "." not in tok: continue                       # a year
+        if not unit and re.search(MONTHS + r"\s*$", before) and x <= 31: continue              # "Nov 8"
+        if not unit and re.match(r"\s*" + MONTHS, after) and x <= 31: continue                 # "8 Nov"
+        if before.endswith("#") or (re.match(r"\.\s", text[m.end():m.end()+2]) and m.start() > 0 and text[m.start()-1] == "\n"): continue
+        out.append((m.group(0).strip(), x, unit, decimals(tok), cur))
+    return out
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("files", nargs="+"); ap.add_argument("--data", required=True); ap.add_argument("--claims")
+    a = ap.parse_args()
+    d = load_data(a.data)
+    if not d: sys.exit("no rows in data.csv (need name,value)")
+    claims, bad = load_claims(a.claims, d)
+    vals = list(d.values())
+    pool = vals + [sum(vals)] + [sum(vals) - v for v in vals]                                   # totals with and without one outlier
+    allowed_counts = {len(d), len(d) - 1}
+    untraced = []
+    for f in a.files:
+        text = Path(f).read_text(encoding="utf-8")
+        for raw, x, unit, dec, cur in numbers(text):
+            if not unit and x in allowed_counts: continue                                        # "Top 17", "the other 16"
+            if unit in ("%", "x", "times") or cur in ("C$", "A$", "€", "£"):
+                ok = False                                                                        # other currencies too: data.csv has one                                                                        # ratios and shares need a claim
+            else:
+                scale = SCALE.get(unit, 1.0)                                                      # data is in the base unit (say $M)
+                c = x * scale; tol = min(0.5 * 10 ** (-dec) * scale, 0.05 * c) + 1e-9           # "$1.72B" is 1720 +/- 5; "$1B" is not 750
+                ok = any(abs(c - v) <= tol for v in pool)
+            ok = ok or any(close(x, v, dec) or close(x, v, cd) for _, v, cd in claims)
+            if not ok: untraced.append(f"{Path(f).name}: {raw}")
+    if bad or untraced:
+        print("FAIL")
+        for b in bad: print("  " + b)
+        for u in untraced: print("  untraced: " + u + "  (add it to data.csv, or a claims.csv row with url and exact quote, or a computed row)")
+        sys.exit(1)
+    print(f"PASS: every number in {len(a.files)} file(s) traces to data.csv ({len(d)} rows) or claims.csv ({len(claims)} rows)")
+
+if __name__ == "__main__":
+    main()

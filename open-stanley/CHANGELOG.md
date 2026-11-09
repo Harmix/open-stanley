@@ -2,6 +2,16 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.18.0 — 2026-11-09
+
+What one user's Sunday took eight rounds of prompts to get, so the next user gets it on the first run.
+
+- `stanley-trace` (new script): every number in a post, the graphic's text and the first comment must trace to `data.csv` (a value, a total, the same value in the next unit) or to `claims.csv` (a URL and an exact quote containing the value, or a computed expression). Other currencies, percentages and ratios always need a claim. Tested on the real Toronto atlas post: it flags exactly the numbers that had no source.
+- atlas: `references/data-check.md`, the routine that finally made a "Top N" right after four rounds by eye: a rulebook written before any checking (with the date rule asked of the user once), two coverage sweeps by different methods plus the biggest names searched by name, a claims ledger, a blind rebuild by a second agent, `stanley-trace` until PASS, one adversarial pass. Topic choice: the audience's own world (city, industry, peers) over a platform's share chart; a rejected atlas topic is replaced in the same run.
+- `stanley-chart`: the default is now the style the user approved after rejecting three: portrait 1080x1350, paper background, a newspaper grotesk, one muted colour per `group` with a legend, white logos, a key for boxes too small to label, `status=target` drawn dashed, `--note` for the outlier left out, `--asof` bottom right, and `--unit '${}M'` prints $750M. No mono font, no dark dashboard, no rainbow.
+- write and critic: the two-sentence test (is something surprising, funny or personal in the first two sentences?), because the user stopped reading two of three weekly drafts after two sentences; experiments told result first; never frame the author as smarter than the model or others; personal tool tricks are not posts for a general audience; links in the first comment; thank only people who are in the post.
+- mine: a story about someone else's decision still in progress gets `status: hold` with `hold_until`; weekly drafts skip it and list it. rituals: a rejected draft is replaced in the same lane in the same run.
+
 ## 0.17.2 — 2026-11-09
 
 - Nothing is reported as posted until it is seen live. A scout run told the user a comment was posted when the text was still in LinkedIn's comment box: its check searched the page text, which includes the box. `references/verify-live.md` reloads the post and looks for the text outside every editor, under the user's name (tested on a saved comment and on unsent text). `comment-add` refuses a posted comment without `--verified "<what you saw>"`, and `post-add --via publish` refuses without it; scout, drain, publish and the stanley rules say to check first.
