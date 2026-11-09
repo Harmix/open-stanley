@@ -11,5 +11,6 @@ Every week the plugin reads the last 30 to 50 public posts of one creator who is
 The same study runs inside the plugin for your own field (`/open-stanley:study`).
 
 <!-- teardowns:start -->
+- [James Hawkins](james-hawkins.html) (LinkedIn, 45 posts read 9 Nov 2026): his pictures bring the reach, his text jokes bring the comments, and his reshares of PostHog sit at the bottom.
 - [Dharmesh Shah](dharmesh-shah.html) (LinkedIn, 45 posts read 7 Nov 2026): his best post shows the exact prompt he gave his own product; quote-shares of testimonials sit at the bottom.
 <!-- teardowns:end -->

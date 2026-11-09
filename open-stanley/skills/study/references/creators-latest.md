@@ -2,6 +2,17 @@
 
 One entry per creator, newest read first. An entry here replaces the same creator's entry in `creators-2026-09.md`, because shapes drift with platforms. Each entry is written by a creator-teardown run from the public page `docs/creators/<slug>.md` in the Open Stanley repo, in the same commit, so every user gets it with the next plugin update. Shapes and numbers read in that run only; tags from `shape-vocabulary.md`; never a sentence of the creator's, and fragments under six words.
 
+## James Hawkins, LinkedIn (65,287 followers), read 2026-11-09, 45 posts
+
+Page: `docs/creators/james-hawkins.md`. Co-founder of PostHog; almost every post is a joke about startups or AI, and none of his own 40 captions names PostHog. 45 posts in under three weeks: two a day at fixed times (first between 7 and 9 Pacific, second between 10 and noon), reshares at other hours. Median 234 reactions and 17 comments (259 engagement); bottom quarter under 95, top quarter 789 and above.
+
+- Parody list: `body:steps` used as a joke, ranking or listing something most founders know (email formats, an AI lab's interview loop, a side project's "tech stack"), last line flips it. 7 posts, median 901, 5 of 7 above the median; the email ranking drew 95 comments, the most in the set. The long nine-item list and the invented product did worst of the lists (143, 108).
+- Picture plus one line: a screenshot or meme with a caption of 0 to 17 words. 19 posts, median 493, 13 above the median, and all three of his biggest posts (2,440, 1,443, 1,379).
+- Setup with a twist: a fake-sincere or fake-news text whose last line admits the joke. 14 posts, spread from 6 to 787, median 200.
+- Reshare of the company or colleagues: 5 posts, all under 111. Same pattern as Dharmesh Shah's reshares of praise: borrowed posts sit at the bottom.
+- Cross-post: among the 23 posts at or above his median, text jokes get 9 to 11 comments per 100 reactions and pictures 4. Pictures bring reach, text brings replies.
+- Cross-post: the first post of the day beats the second for every kind; for text jokes the six posted first have a median of 267 and the eight posted second 84 (post times decoded from the activity IDs).
+
 ## Dharmesh Shah, LinkedIn (1,202,381 followers), read 2026-11-07, 45 posts
 
 Page: `docs/creators/dharmesh-shah.md`. Median 315 reactions and 74 comments (389 engagement); bottom quarter under 175, top quarter 691 and above. 21 of 45 posts mention his product, and those land in both quarters, so the build of the post decides the result, not the topic.
