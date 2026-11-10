@@ -20,6 +20,7 @@ What to fill in, and where to find it:
 - **Languages**: the languages of their posts and of their messages. A second language is written in that language from the story, never translated line by line, and needs its own exemplars in `voice.md`. → `languages:`.
 - **Audience and goal**: their role, company and customers from memory and sources; the goal from what the company sells (followers, inbound leads, credibility for direct sales, hiring, a personal brand). → `audience:`, `goal:`.
 - **Drafts or questions**: default full drafts they edit; offer `drafting: questions` (the story, one question, two or three angles, no prose) if their own posts are already well written and frequent, or if they say they write themselves.
+- **Likes**: `likes: ask` by default (the recap lists the comments that only need a like and likes them after a yes); offer `likes: auto` so it likes them itself. Never more than likes without a yes.
 - **The machine**: read the RAM on the device (`sysctl -n hw.memsize` on a Mac, `free -g` on Linux) rather than asking. 8 GB or less gets the light schedule in step 8. → `machine:` in `my-human.md`.
 
 Ask a question only for what nothing above can answer, and then one at a time. Creators they admire, if they mention any, go to step 3.

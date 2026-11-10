@@ -2,6 +2,16 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.19.3 — 2026-11-10
+
+What a recap took three rounds of corrections to learn, now the default for everyone.
+
+- recap triages every incoming comment into reply, like only and ignore, and drafts only for the reply tier (a real question, a disagreement with substance, someone building something adjacent). When unsure, like only.
+- "Already replied" and "already liked" are read from the thread's structure after a reload right before reporting (the user's nested "Author" reply, a filled thumb with a count), not from page text: people reply by hand between runs, and a second click on a liked thumb removes the like.
+- Likes: `likes: ask` by default, `likes: auto` when the user turns it on; clicked from a screenshot and confirmed on screen. Never text without a yes.
+- Reply drafts are shown under the commenter's full text (and the user's original comment), never as a summary, and never carry a commitment the user did not make.
+- scout decides first whether the user agrees, disagrees or has nothing to add; with nothing to add it shows the target without a comment.
+
 ## 0.19.2 — 2026-11-09
 
 From the first review of 0.19.0.
