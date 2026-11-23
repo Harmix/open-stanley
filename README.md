@@ -49,6 +49,10 @@ The full comparison, with what the paid tools do better, is in [docs/compare.md]
 **Does it post for me?** It schedules and posts through your own logged-in browser after you say yes to the exact text; nothing goes out unapproved.
 **Will the posts sound like AI?** Every draft starts from your words and goes through an audit for the patterns LinkedIn demotes (try it on any post, no install: [does this post sound like AI?](https://harmix.github.io/open-stanley/audit.html)); the first account went from a 1,150-impression median to a post with 85,934 impressions in its first week (November 2026), 91% of the account's 90-day reach from outside its network.
 **Does it need a LinkedIn API key?** No. It reads and posts through the browser you are logged into.
+**How much does it cost?** $0. It is MIT-licensed. You pay only for the Claude plan you already have (Pro or Max for Cowork and Claude Code).
+**Which platforms?** LinkedIn and X first; Threads, Substack Notes, Bluesky, Mastodon, Reddit and Instagram or TikTok captions through the same logged-in browser. Short video ideas for Reels, TikTok and Shorts come from the `video` skill.
+**What does it read?** Whatever your agent can reach: meeting notetakers (Pam, Fathom, Granola, Fireflies), Slack, Gmail, Calendar, Drive, Notion, GitHub, chats you name in Telegram or WhatsApp Web, and voice notes. Setup tells you if there are too few sources to find good stories.
+**Who is it for?** Founders, operators and researchers who have real work to talk about but no time or ideas to post consistently. It is not a team approval tool (Supergrow is better there) and not a viral-post feed (Taplio is).
 
 ## Newsletter, tips, teardowns
 
