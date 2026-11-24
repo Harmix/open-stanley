@@ -2,6 +2,14 @@
 
 All notable changes to this plugin. Versions follow semver: MAJOR for a change that breaks the vault format or a skill's contract, MINOR for a new skill/script/rule set, PATCH for rule tweaks and fixes. Users only receive updates when `version` in `.claude-plugin/plugin.json` is bumped; the marketplace entry and this file must carry the same number (enforced by `tests/test_plugin_structure.py`).
 
+## 0.19.4 — 2026-11-24
+
+The directory's automatic check said the plugin "uses a credential from the user's machine". No real key was ever in the repo; three passages read that way and are changed.
+
+- `recommended.mcp.json`: the Deepgram sample uses the placeholder `YOUR_DEEPGRAM_API_KEY` instead of a `user_config` value the manifest never declared.
+- `stanley` operating rules: a key is added by the user where the server or tool asks for it; the plugin never reads a key, token or cookie from the user's machine, environment or config files.
+- Research notes: no longer suggest reading `~/.claude.json` to find connected servers (ask the user and check the tool names instead), and no git token for private marketplaces.
+
 ## 0.19.3 — 2026-11-10
 
 What a recap took three rounds of corrections to learn, now the default for everyone.

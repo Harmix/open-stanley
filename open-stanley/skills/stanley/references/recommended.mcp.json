@@ -1,5 +1,5 @@
 {
-  "_comment": "Optional servers that complement open-stanley. NOT auto-loaded. Copy the entries you want into your project's .mcp.json, or run the equivalent `claude mcp add` commands. Remote servers use OAuth; nothing here needs a secret in the file except where a ${user_config...} placeholder appears.",
+  "_comment": "Optional servers that complement open-stanley. NOT auto-loaded. Copy the entries you want into your project's .mcp.json, or run the equivalent `claude mcp add` commands. Remote servers use OAuth. YOUR_DEEPGRAM_API_KEY is a placeholder: never put a real key in a file, pass it when you add the server yourself.",
   "_claude_mcp_add": [
     "claude mcp add --transport http pam https://api.pam.harmix.ai/v1/mcp/memory",
     "claude mcp add --transport http exa https://mcp.exa.ai/mcp",
@@ -23,6 +23,6 @@
     "canva": { "type": "http", "url": "https://mcp.canva.com/mcp" },
     "replicate": { "type": "http", "url": "https://mcp.replicate.com" },
     "playwright": { "type": "stdio", "command": "npx", "args": ["-y", "@playwright/mcp@latest"] },
-    "deepgram": { "type": "stdio", "command": "dg", "args": ["mcp"], "env": { "DEEPGRAM_API_KEY": "${user_config.deepgram_key}" } }
+    "deepgram": { "type": "stdio", "command": "dg", "args": ["mcp"], "env": { "DEEPGRAM_API_KEY": "YOUR_DEEPGRAM_API_KEY" } }
   }
 }

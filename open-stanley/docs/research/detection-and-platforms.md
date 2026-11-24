@@ -315,7 +315,7 @@ Commands:
 - `claude-plugins-official` — curated by Anthropic, auto-registered on first interactive launch. No application process; Anthropic picks.
 - `claude-community` — `/plugin marketplace add anthropics/claude-plugins-community`, install as `@claude-community`. **Open submission** via in-app forms: claude.ai/admin-settings/directory/submissions/plugins/new (needs Team/Enterprise + directory management) or platform.claude.com/plugins/submit (individual authors). Review runs `claude plugin validate` plus automated safety screening; approved plugins are **pinned to a commit SHA** in the catalog with CI bumping the pin as you push; the public catalog **syncs nightly**.
 
-Private/team distribution: host `marketplace.json` in a private repo; `gh auth setup-git` or a git URL rewrite with a token for background auto-updates. Container pre-seeding via `CLAUDE_CODE_PLUGIN_CACHE_DIR` at build and `CLAUDE_CODE_PLUGIN_SEED_DIR` at runtime.
+Private/team distribution: host `marketplace.json` in a private repo and follow the Claude Code docs for team setup. A plugin never handles the user's git or account credentials.
 
 ### 3.3 Skills
 
@@ -371,7 +371,7 @@ Three distinct systems — do not conflate them:
 There is **no first-class "list my connected MCP servers" tool** exposed to skills. Four practical routes, best to worst:
 
 1. **`claude mcp list` via Bash** — the canonical answer in Claude Code. Returns each server with a status glyph: `✔ Connected`, `! Needs authentication`, `✘ Failed to connect`, `⏸ Pending approval`, `⊘ Disabled for this project`. `claude mcp get <name>` gives detail including **tool count**, auth status, and cached-vs-live state (v2.1.221+). This is the right primitive for a skill that must adapt to whatever the user has.
-2. **Read the config files** — `.mcp.json` at project root (project scope, version-controlled, supports `${VAR:-default}` expansion), `~/.claude.json` (local scope per-project *and* user scope). Precedence, highest first: **local → project → user → plugin-provided → claude.ai connectors**.
+2. **Ask the user** which connectors they have, and confirm with route 3. Don't open the user's config files: they can hold secrets, and a plugin must not read credentials from the user's machine.
 3. **Inspect the tool namespace** — every MCP tool is `mcp__<server>__<tool>`; plugin-bundled ones are `mcp__plugin_<plugin>_<server>__<tool>`. A skill can pattern-match available tool names to infer capability ("is there anything matching `mcp__.*__.*slack.*send`?"). In this session's harness, deferred tools surface by name in system reminders and are loaded with `ToolSearch("select:...")` — a skill can search the registry by keyword rather than by exact server name.
 4. **Agent SDK** — `setMcpServers()` / the `mcpServers` client config, for programmatic control.
 
